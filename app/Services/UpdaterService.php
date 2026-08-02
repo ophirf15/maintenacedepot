@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\AppVersion;
+use App\Support\SharedHosting;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
@@ -112,6 +113,10 @@ class UpdaterService
         Artisan::call('down', ['--retry' => 60]);
 
         $filesApplied = false;
+        $deploy = [
+            'flattened' => SharedHosting::isFlattened(),
+            'manifest' => null,
+        ];
 
         try {
             $zipPath = storage_path('app/update-package.zip');
@@ -143,7 +148,7 @@ class UpdaterService
 
             $packageRoot = $this->resolvePackageRoot($extractTo);
             $this->overlayPackage($packageRoot, base_path());
-            $this->mirrorWebAssetsForSharedHosting();
+            $deploy = array_merge($deploy, $this->syncWebRootAssets());
             $filesApplied = true;
 
             Artisan::call('migrate', ['--force' => true]);
@@ -153,22 +158,29 @@ class UpdaterService
             $this->writeInstalledVersion($latest);
             $this->recordAppliedVersion($latest, $previous, $info['release_notes'] ?? null);
 
-            return ['ok' => true, 'version' => $latest];
+            return [
+                'ok' => true,
+                'version' => $latest,
+                'deploy' => $deploy,
+            ];
         } catch (\Throwable $e) {
-            Log::error('Update failed', ['error' => $e->getMessage(), 'files_applied' => $filesApplied]);
+            Log::error('Update failed', [
+                'error' => $e->getMessage(),
+                'files_applied' => $filesApplied,
+                'deploy' => $deploy,
+            ]);
 
             return [
                 'ok' => false,
                 'message' => $e->getMessage(),
                 'files_applied' => $filesApplied,
+                'deploy' => $deploy,
             ];
         } finally {
             Artisan::call('up');
-            // Always refresh caches after a successful file overlay — even if version
-            // bookkeeping fails — otherwise shared hosts keep serving stale config/JS.
             if ($filesApplied) {
                 try {
-                    $this->mirrorWebAssetsForSharedHosting();
+                    $this->syncWebRootAssets();
                     Artisan::call('config:clear');
                     Artisan::call('cache:clear');
                     Artisan::call('view:clear');
@@ -208,6 +220,7 @@ class UpdaterService
 
     protected function overlayPackage(string $from, string $to): void
     {
+        $flat = SharedHosting::isFlattened($to);
         $iterator = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($from, \FilesystemIterator::SKIP_DOTS),
             \RecursiveIteratorIterator::SELF_FIRST
@@ -219,24 +232,145 @@ class UpdaterService
                 continue;
             }
 
-            $target = $to.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relative);
+            $targets = $this->resolveOverlayTargets($to, $relative, $flat);
 
-            if ($item->isDir()) {
-                if (! is_dir($target)) {
-                    mkdir($target, 0755, true);
+            foreach ($targets as $target) {
+                if ($item->isDir()) {
+                    if (! is_dir($target)) {
+                        mkdir($target, 0755, true);
+                    }
+
+                    continue;
                 }
 
-                continue;
-            }
-
-            $dir = dirname($target);
-            if (! is_dir($dir)) {
-                mkdir($dir, 0755, true);
-            }
-            if (! @copy($item->getPathname(), $target)) {
-                throw new \RuntimeException("Unable to update file: {$relative}");
+                $dir = dirname($target);
+                if (! is_dir($dir)) {
+                    mkdir($dir, 0755, true);
+                }
+                if (! @copy($item->getPathname(), $target)) {
+                    throw new \RuntimeException("Unable to update file: {$relative} → {$target}");
+                }
             }
         }
+
+        if ($flat) {
+            $this->writeFlattenedIndexPhp($to);
+        }
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected function resolveOverlayTargets(string $to, string $relative, bool $flat): array
+    {
+        $relative = ltrim(str_replace('\\', '/', $relative), '/');
+        $primary = $to.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relative);
+        $targets = [$primary];
+
+        if (! $flat || ! str_starts_with($relative, 'public/')) {
+            return $targets;
+        }
+
+        $webRelative = substr($relative, strlen('public/'));
+
+        // Package public/index.php uses ../vendor paths — never overwrite the flat index with it.
+        if ($webRelative === 'index.php' || $webRelative === '') {
+            return $targets;
+        }
+
+        $targets[] = $to.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $webRelative);
+
+        return array_values(array_unique($targets));
+    }
+
+    protected function writeFlattenedIndexPhp(string $to): void
+    {
+        $path = $to.DIRECTORY_SEPARATOR.'index.php';
+        if (! @file_put_contents($path, SharedHosting::flattenedIndexPhp())) {
+            throw new \RuntimeException('Unable to write flattened index.php');
+        }
+    }
+
+    /**
+     * Ensure web-visible build/brand assets exist where the browser and @vite expect them.
+     *
+     * @return array{flattened: bool, manifest: string|null, mirrored: list<string>}
+     */
+    protected function syncWebRootAssets(): array
+    {
+        $flat = SharedHosting::isFlattened();
+        $mirrored = [];
+
+        $packageBuild = base_path('public/build');
+        $webBuild = $flat ? base_path('build') : public_path('build');
+
+        if (is_dir($packageBuild)) {
+            File::ensureDirectoryExists($webBuild);
+            File::copyDirectory($packageBuild, $webBuild);
+            $mirrored[] = $webBuild;
+
+            // Keep both trees identical on flat hosts (Laravel may still resolve either).
+            if ($flat && realpath($packageBuild) !== realpath($webBuild)) {
+                File::ensureDirectoryExists($packageBuild);
+                File::copyDirectory($webBuild, $packageBuild);
+                $mirrored[] = $packageBuild;
+            }
+        }
+
+        if ($flat) {
+            foreach (['.htaccess', 'favicon.ico', 'favicon.svg', 'manifest.webmanifest', 'sw.js', 'VERSION'] as $file) {
+                $src = base_path('public/'.$file);
+                if (is_file($src)) {
+                    @copy($src, base_path($file));
+                    $mirrored[] = base_path($file);
+                }
+            }
+
+            if (is_dir(base_path('public/brand'))) {
+                File::ensureDirectoryExists(base_path('brand'));
+                File::copyDirectory(base_path('public/brand'), base_path('brand'));
+                $mirrored[] = base_path('brand');
+            }
+
+            if (is_dir(base_path('public/icons'))) {
+                File::ensureDirectoryExists(base_path('icons'));
+                File::copyDirectory(base_path('public/icons'), base_path('icons'));
+                $mirrored[] = base_path('icons');
+            }
+
+            $this->writeFlattenedIndexPhp(base_path());
+        }
+
+        $manifest = $flat ? base_path('build/manifest.json') : public_path('build/manifest.json');
+        if (! is_file($manifest)) {
+            // Last resort: find any manifest written by the package.
+            foreach ([base_path('build/manifest.json'), base_path('public/build/manifest.json')] as $candidate) {
+                if (is_file($candidate)) {
+                    $manifest = $candidate;
+                    break;
+                }
+            }
+        }
+
+        if (! is_file($manifest)) {
+            throw new \RuntimeException(
+                'Update package is missing build/manifest.json after sync. Flattened='.($flat ? 'yes' : 'no')
+            );
+        }
+
+        // On flat hosts the browser loads /build/* from the app root.
+        if ($flat && ! is_file(base_path('build/manifest.json'))) {
+            File::ensureDirectoryExists(base_path('build'));
+            File::copyDirectory(dirname($manifest), base_path('build'));
+        }
+
+        return [
+            'flattened' => $flat,
+            'manifest' => is_file(base_path('build/manifest.json'))
+                ? base_path('build/manifest.json')
+                : $manifest,
+            'mirrored' => array_values(array_unique($mirrored)),
+        ];
     }
 
     protected function shouldSkipRelative(string $relative): bool
@@ -260,37 +394,10 @@ class UpdaterService
         return false;
     }
 
-    /**
-     * When index.php lives at the app root (shared-host flatten), mirror built assets
-     * so /build/* URLs resolve without a nested public/ document root.
-     */
-    protected function mirrorWebAssetsForSharedHosting(): void
-    {
-        if (! is_file(base_path('index.php')) || ! is_dir(base_path('public/build'))) {
-            return;
-        }
-
-        File::ensureDirectoryExists(base_path('build'));
-        File::copyDirectory(base_path('public/build'), base_path('build'));
-
-        foreach (['.htaccess', 'favicon.ico', 'favicon.svg', 'manifest.webmanifest', 'sw.js'] as $file) {
-            $src = base_path('public/'.$file);
-            if (is_file($src)) {
-                @copy($src, base_path($file));
-            }
-        }
-
-        if (is_dir(base_path('public/brand'))) {
-            File::ensureDirectoryExists(base_path('brand'));
-            File::copyDirectory(base_path('public/brand'), base_path('brand'));
-        }
-    }
-
     protected function recordAppliedVersion(string $latest, string $previous, ?string $releaseNotes): void
     {
         AppVersion::query()->where('is_current', true)->update(['is_current' => false]);
 
-        // Idempotent: re-running the same version (or a partial prior attempt) must not 500.
         AppVersion::query()->updateOrCreate(
             ['version' => $latest],
             [
@@ -307,9 +414,7 @@ class UpdaterService
     protected function writeInstalledVersion(string $version): void
     {
         file_put_contents(base_path('VERSION'), $version.PHP_EOL);
-        if (is_dir(public_path())) {
-            @file_put_contents(public_path('VERSION'), $version.PHP_EOL);
-        }
+        @file_put_contents(public_path('VERSION'), $version.PHP_EOL);
 
         $envPath = base_path('.env');
         if (is_file($envPath) && ! app()->environment('testing')) {

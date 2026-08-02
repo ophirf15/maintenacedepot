@@ -1,11 +1,12 @@
 <?php
 
+use App\Support\SharedHosting;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 
-return Application::configure(basePath: dirname(__DIR__))
+$app = Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         api: __DIR__.'/../routes/api.php',
@@ -32,3 +33,11 @@ return Application::configure(basePath: dirname(__DIR__))
             fn (Request $request) => $request->is('api/*'),
         );
     })->create();
+
+// Shared hosting (e.g. Bluehost): index.php lives next to artisan, so the web
+// root is the app root — not base_path('public').
+if (SharedHosting::isFlattened($app->basePath())) {
+    $app->usePublicPath($app->basePath());
+}
+
+return $app;
