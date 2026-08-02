@@ -57,11 +57,15 @@ router.beforeEach(async (to) => {
         return { name: 'install' };
     }
 
+    if (auth.config?.installed && to.name === 'install') {
+        return auth.isAuthenticated ? { name: 'dashboard' } : { name: 'login' };
+    }
+
     if (to.meta.auth && !auth.isAuthenticated) {
         return { name: 'login', query: { redirect: to.fullPath } };
     }
 
-    if (to.meta.guest && auth.isAuthenticated && to.name !== 'install') {
+    if (to.meta.guest && auth.isAuthenticated) {
         return { name: 'dashboard' };
     }
 });

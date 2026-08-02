@@ -58,6 +58,10 @@ class InstallController extends Controller
             'seed_demo_data' => 'boolean',
         ]);
 
+        if ($this->alreadyInstalled()) {
+            return response()->json(['message' => 'Application is already installed.'], 403);
+        }
+
         // Migrations must run before any install-state queries (fresh host DBs have no tables yet).
         // Keep DDL outside the data transaction — MySQL commits DDL implicitly.
         Artisan::call('migrate', ['--force' => true]);
@@ -66,7 +70,7 @@ class InstallController extends Controller
         $state = $this->currentState();
 
         if ($state->is_installed) {
-            return response()->json(['message' => 'Application is already installed.'], 422);
+            return response()->json(['message' => 'Application is already installed.'], 403);
         }
 
         $admin = DB::transaction(function () use ($data, $state) {
@@ -114,6 +118,15 @@ class InstallController extends Controller
                 'admin_email' => $admin->email,
             ],
         ], 201);
+    }
+
+    protected function alreadyInstalled(): bool
+    {
+        if (! Schema::hasTable('installation_state')) {
+            return false;
+        }
+
+        return (bool) InstallationState::query()->value('is_installed');
     }
 
     protected function currentState(): InstallationState

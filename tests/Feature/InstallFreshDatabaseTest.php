@@ -47,4 +47,31 @@ class InstallFreshDatabaseTest extends TestCase
         $this->assertTrue((bool) InstallationState::query()->value('is_installed'));
         $this->assertTrue(User::query()->where('email', 'admin@example.com')->first()->hasRole('it_admin'));
     }
+
+    public function test_install_run_is_rejected_when_already_installed(): void
+    {
+        InstallationState::query()->create([
+            'instance_uuid' => (string) \Illuminate\Support\Str::uuid(),
+            'is_installed' => true,
+            'current_step' => 'complete',
+            'completed_steps' => ['welcome', 'database', 'admin', 'complete'],
+            'installed_version' => '1.0.0',
+            'installed_at' => now(),
+        ]);
+
+        $before = User::query()->count();
+
+        $this->postJson('/api/install/run', [
+            'admin_name' => 'Intruder',
+            'admin_email' => 'intruder@example.com',
+            'admin_password' => 'Password1!secure',
+            'app_name' => 'Hijacked',
+            'seed_demo_data' => false,
+        ])
+            ->assertForbidden()
+            ->assertJsonPath('message', 'Application is already installed.');
+
+        $this->assertSame($before, User::query()->count());
+        $this->assertDatabaseMissing('users', ['email' => 'intruder@example.com']);
+    }
 }
