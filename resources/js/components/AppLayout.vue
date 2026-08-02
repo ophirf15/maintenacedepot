@@ -129,8 +129,8 @@
             <Icon name="book" :size="20" />
           </RouterLink>
 
-          <RouterLink to="/cart" class="btn-ghost relative h-11 w-11 px-0 shrink-0" title="Cart">
-            <Icon name="cart" :size="22" />
+          <RouterLink to="/cart" class="btn-ghost relative h-11 w-11 px-0 shrink-0" title="Tool bag" aria-label="Tool bag">
+            <Icon name="toolbag" :size="22" />
             <span
               v-if="cart.lines.length"
               class="absolute top-1 right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-solid px-1 text-[0.6rem] font-bold text-white"

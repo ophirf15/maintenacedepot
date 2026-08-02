@@ -1,17 +1,17 @@
 <template>
   <div class="space-y-5 max-w-3xl">
     <PageHeader
-      title="Your cart"
+      title="Your tool bag"
       subtitle="Review the tools, choose pick-up and return dates, then submit the request."
-      icon="cart"
+      icon="toolbag"
       back-to="/catalog"
       back-label="Back to catalog"
     />
 
     <EmptyState
       v-if="!cart.lines.length"
-      icon="cart"
-      title="Your cart is empty"
+      icon="toolbag"
+      title="Your tool bag is empty"
       hint="Add tools from the catalog first."
     >
       <RouterLink to="/catalog" class="btn-primary btn-sm">
@@ -149,7 +149,7 @@
         <div class="flex items-center justify-between gap-3">
           <button type="button" class="btn-ghost btn-sm" @click="cart.clear()">
             <Icon name="trash" :size="16" />
-            Empty cart
+            Empty tool bag
           </button>
           <button type="submit" :disabled="submitting" class="btn-primary">
             <Icon :name="submitting ? 'refresh' : 'arrow-right'" :size="18" />

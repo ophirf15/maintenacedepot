@@ -81,7 +81,7 @@
           @click="addToCart"
         >
           <Icon name="plus" :size="17" />
-          Add this unit to cart
+          Add this unit to tool bag
         </button>
         <RouterLink v-if="canManage" :to="`/inventory/items/${item.id}`" class="btn-secondary">
           <Icon name="edit" :size="17" />
@@ -140,7 +140,7 @@ function addToCart() {
     specs: item.value.specs || [],
     image_url: item.value.image_url || null,
   });
-  toasts.success(`Added ${label} to your cart`);
+  toasts.success(`Added ${label} to your tool bag`);
   router.push('/cart');
 }
 

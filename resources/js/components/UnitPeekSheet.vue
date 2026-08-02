@@ -117,7 +117,7 @@
           @click="emit('add', item)"
         >
           <Icon name="plus" :size="17" />
-          Add this unit to cart
+          Add this unit to tool bag
         </button>
         <button type="button" class="btn-secondary" @click="emit('close')">Close</button>
       </footer>

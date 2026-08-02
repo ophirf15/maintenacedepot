@@ -14,8 +14,8 @@
       >
         <template #actions>
           <RouterLink to="/cart" class="btn-primary btn-sm">
-            <Icon name="cart" :size="17" />
-            Cart ({{ cart.lines.length }})
+            <Icon name="toolbag" :size="17" />
+            Tool bag ({{ cart.lines.length }})
           </RouterLink>
         </template>
       </PageHeader>
@@ -126,7 +126,7 @@
                   @click="borrowSpecific(tt, item)"
                 >
                   <Icon name="plus" :size="16" />
-                  Add this unit to cart
+                  Add this unit to tool bag
                 </button>
               </li>
             </ul>
@@ -333,7 +333,7 @@ function borrowAnyAvailable(tt) {
     label: tt.name,
     icon: toolTypeIcon(tt),
   });
-  toasts.success(`Added ${tt.name} (any free unit) to your cart`);
+  toasts.success(`Added ${tt.name} (any free unit) to your tool bag`);
 }
 
 function borrowSpecific(tt, item) {
@@ -351,7 +351,7 @@ function borrowSpecific(tt, item) {
     specs: item.specs || [],
     image_url: item.image_url || null,
   });
-  toasts.success(`Added ${label} to your cart`);
+  toasts.success(`Added ${label} to your tool bag`);
 }
 
 onMounted(async () => {

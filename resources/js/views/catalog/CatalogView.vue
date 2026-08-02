@@ -7,8 +7,8 @@
     >
       <template #actions>
         <RouterLink to="/cart" class="btn-secondary btn-sm">
-          <Icon name="cart" :size="17" />
-          Cart
+          <Icon name="toolbag" :size="17" />
+          Tool bag
           <span
             v-if="cart.lines.length"
             class="ml-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-solid px-1 text-[0.65rem] font-bold text-white"
