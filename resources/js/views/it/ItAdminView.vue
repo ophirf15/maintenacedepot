@@ -579,14 +579,53 @@
 
       <!-- Updates -->
       <div v-else-if="tab === 'updater'" class="space-y-4 p-4 sm:p-5">
-        <button class="btn-secondary" :disabled="checkingUpdate" @click="checkUpdate">
-          <Icon name="refresh" :size="17" />
-          {{ checkingUpdate ? 'Checking…' : 'Check for updates' }}
-        </button>
-        <pre
-          v-if="updateInfo"
-          class="overflow-auto rounded-xl border border-line bg-neutral-50 p-3 font-mono text-xs text-neutral-700"
-        >{{ JSON.stringify(updateInfo, null, 2) }}</pre>
+        <div class="flex flex-wrap items-center gap-3">
+          <button class="btn-secondary" :disabled="checkingUpdate || applyingUpdate" @click="checkUpdate">
+            <Icon name="refresh" :size="17" />
+            {{ checkingUpdate ? 'Checking…' : 'Check for updates' }}
+          </button>
+          <button
+            v-if="updateInfo?.update_available"
+            class="btn-primary"
+            :disabled="applyingUpdate || checkingUpdate"
+            @click="applyUpdate"
+          >
+            <Icon :name="applyingUpdate ? 'refresh' : 'download'" :size="17" />
+            {{ applyingUpdate ? 'Updating…' : `Install v${updateInfo.latest}` }}
+          </button>
+        </div>
+
+        <div v-if="updateInfo" class="space-y-3 rounded-xl border border-line bg-neutral-50 p-4 text-sm">
+          <dl class="grid gap-2 sm:grid-cols-2">
+            <div>
+              <dt class="muted text-xs">Installed</dt>
+              <dd class="font-medium text-neutral-900">v{{ updateInfo.current || '—' }}</dd>
+            </div>
+            <div>
+              <dt class="muted text-xs">Latest on GitHub</dt>
+              <dd class="font-medium text-neutral-900">
+                {{ updateInfo.latest ? `v${updateInfo.latest}` : '—' }}
+              </dd>
+            </div>
+          </dl>
+
+          <p v-if="updateInfo.update_available" class="text-brand-700">
+            A newer version is ready. Install keeps your database, .env, and uploaded files.
+          </p>
+          <p v-else-if="updateInfo.message" class="muted">{{ updateInfo.message }}</p>
+          <p v-else class="muted">You are on the latest version.</p>
+
+          <div v-if="updateInfo.release_notes" class="space-y-1">
+            <p class="text-xs font-medium uppercase tracking-wide muted">Release notes</p>
+            <pre
+              class="max-h-48 overflow-auto whitespace-pre-wrap rounded-lg border border-line bg-white p-3 text-xs text-neutral-700"
+            >{{ updateInfo.release_notes }}</pre>
+          </div>
+        </div>
+
+        <p v-if="applyingUpdate" class="text-sm muted">
+          The site may briefly go into maintenance mode. Keep this tab open until it finishes.
+        </p>
       </div>
     </section>
   </div>
@@ -690,7 +729,7 @@ const PANELS = {
     label: 'Updates',
     icon: 'refresh',
     title: 'App updates',
-    hint: 'See whether a newer version of the app is available.',
+    hint: 'Check GitHub for a newer release and install it on this server.',
   },
 };
 
@@ -863,6 +902,7 @@ const backups = ref([]);
 const backingUp = ref(false);
 const updateInfo = ref(null);
 const checkingUpdate = ref(false);
+const applyingUpdate = ref(false);
 
 const LABEL_FIELD_DEFS = {
   qr: { label: 'QR code', hint: 'Scan target — flip left/right under Placement.' },
@@ -1273,6 +1313,43 @@ async function checkUpdate() {
     toasts.error(e.response?.data?.message || 'Could not check for updates.');
   } finally {
     checkingUpdate.value = false;
+  }
+}
+
+async function applyUpdate() {
+  if (!updateInfo.value?.update_available || !updateInfo.value?.download_url) {
+    toasts.error('No update package is available to install.');
+    return;
+  }
+  if (
+    !window.confirm(
+      `Install Maintenance Depot v${updateInfo.value.latest} now? The site will pause briefly while files and database updates are applied.`,
+    )
+  ) {
+    return;
+  }
+
+  applyingUpdate.value = true;
+  try {
+    const { data } = await api.post('/updater/apply', {
+      download_url: updateInfo.value.download_url,
+    });
+    if (!data.data?.ok) {
+      toasts.error(data.data?.message || 'Update did not finish.');
+      return;
+    }
+    toasts.success(`Updated to v${data.data.version}. Reloading…`);
+    updateInfo.value = {
+      ...updateInfo.value,
+      current: data.data.version,
+      update_available: false,
+      latest: data.data.version,
+    };
+    window.setTimeout(() => window.location.reload(), 1200);
+  } catch (e) {
+    toasts.error(e.response?.data?.message || e.response?.data?.data?.message || 'Could not install the update.');
+  } finally {
+    applyingUpdate.value = false;
   }
 }
 

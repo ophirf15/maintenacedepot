@@ -20,7 +20,7 @@ return [
         ? env('DEPOT_VERSION')
         : (is_file(base_path('VERSION'))
             ? trim((string) file_get_contents(base_path('VERSION')))
-            : '1.0.1'),
+            : '1.0.2'),
 
     'github_repo' => env('DEPOT_GITHUB_REPO', null),
 ];

@@ -809,7 +809,8 @@ export const MANUAL_SECTIONS = [
       { name: 'Permission chips', where: 'Jobs', does: 'Toggles what that job may do.', anyOf: ['manage_roles', 'manage_it'] },
       { name: 'Alert channel matrix Save choices', where: 'Alerts', does: 'In app / Email / Text per notification type.' },
       { name: 'Make a backup now / Download', where: 'Backups', does: 'Creates or downloads backup archives (IT only).', anyOf: ['manage_it'] },
-      { name: 'Check for updates', where: 'Updates', does: 'Queries configured update source (if enabled).', anyOf: ['manage_updates', 'manage_it'] },
+      { name: 'Check for updates', where: 'Updates', does: 'Queries GitHub Releases for a newer package.', anyOf: ['manage_updates', 'manage_it'] },
+      { name: 'Install v…', where: 'Updates', does: 'Downloads the update zip, overlays app files, runs migrations, then reloads.', anyOf: ['manage_updates', 'manage_it'] },
     ],
     tips: [
       'SMTP password, Twilio auth token, SAML certificate, and GitHub token are stored encrypted and are not returned when you reload the form.',
