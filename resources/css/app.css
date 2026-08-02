@@ -1,0 +1,209 @@
+@import 'tailwindcss';
+
+@source '../../resources/js/**/*.vue';
+@source '../../resources/views/**/*.blade.php';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans: 'Inter', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Inter', 'Segoe UI', ui-sans-serif, system-ui, sans-serif;
+
+    /* Sidebar / dark surfaces — charcoal from brand kit */
+    --color-ink-950: #1e262a;
+    --color-ink-900: #252e33;
+    --color-ink-800: #2f3a40;
+    --color-ink-700: #3d4a52;
+
+    /* Neutral page surfaces (overridden in .dark) */
+    --color-surface: #f7f7f8;
+    --color-surface-raised: #ffffff;
+    --color-line: #e6e6ea;
+    --color-content: #1e262a;
+    --color-content-muted: #71717a;
+
+    /* Brand + semantic accents — orange from brand kit (#E7660B) */
+    --color-brand-700: #c45509;
+    --color-brand-600: #e7660b;
+    --color-brand-500: #f07820;
+    --color-brand-100: #fde9d8;
+    --color-warn-600: #b45309;
+    --color-warn-100: #fef3c7;
+    --color-danger-600: #b42318;
+    --color-danger-100: #fee4e2;
+    --color-info-600: #1570cd;
+    --color-info-100: #e0f0fe;
+}
+
+html {
+    background: var(--color-surface);
+    color-scheme: light;
+}
+
+html.dark {
+    color-scheme: dark;
+    --color-surface: #0f0f12;
+    --color-surface-raised: #18181c;
+    --color-line: #2a2a33;
+    --color-content: #f4f4f5;
+    --color-content-muted: #a1a1aa;
+    --color-brand-100: #3a1f0c;
+    --color-warn-100: #3b2610;
+    --color-danger-100: #3f1512;
+    --color-info-100: #0f2a45;
+}
+
+body {
+    font-family: var(--font-sans);
+    background: var(--color-surface);
+    color: var(--color-content);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* ---------------------------------------------------------------------------
+   Shared building blocks. Views compose these so the whole app stays visually
+   consistent and touch targets stay large enough for gloved hands on phones.
+   --------------------------------------------------------------------------- */
+@layer components {
+    .card {
+        @apply rounded-2xl border border-line;
+        background: var(--color-surface-raised);
+    }
+
+    .card-pad {
+        @apply rounded-2xl border border-line p-4 sm:p-5;
+        background: var(--color-surface-raised);
+    }
+
+    .card-hover {
+        @apply transition;
+    }
+
+    .card-hover:hover {
+        border-color: color-mix(in srgb, var(--color-line) 60%, var(--color-content));
+        box-shadow: 0 8px 24px -12px color-mix(in srgb, var(--color-content) 18%, transparent);
+    }
+
+    .page-title {
+        @apply text-xl sm:text-2xl font-semibold tracking-tight;
+        color: var(--color-content);
+    }
+
+    .section-title {
+        @apply text-sm font-semibold;
+        color: var(--color-content);
+    }
+
+    .muted {
+        color: var(--color-content-muted);
+    }
+
+    /* Shared button base. Tailwind v4 cannot @apply one custom class inside
+       another, so every variant opts into the base through this selector list. */
+    .btn,
+    .btn-primary,
+    .btn-dark,
+    .btn-secondary,
+    .btn-ghost,
+    .btn-danger {
+        @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 h-11 text-sm font-semibold
+               transition disabled:opacity-45 disabled:cursor-not-allowed select-none;
+    }
+
+    .btn-sm {
+        @apply h-9 px-3 text-[0.8125rem] rounded-lg;
+    }
+
+    .btn-primary {
+        @apply bg-brand-700 text-white hover:bg-brand-600 shadow-[0_1px_2px_rgba(9,9,11,0.16)];
+    }
+
+    .btn-dark {
+        @apply bg-ink-900 text-white hover:bg-ink-800;
+    }
+
+    .btn-secondary {
+        @apply border border-line;
+        background: var(--color-surface-raised);
+        color: var(--color-content);
+    }
+
+    .btn-secondary:hover {
+        background: color-mix(in srgb, var(--color-surface) 70%, var(--color-surface-raised));
+    }
+
+    .btn-ghost {
+        color: var(--color-content);
+    }
+
+    .btn-ghost:hover {
+        background: color-mix(in srgb, var(--color-surface) 40%, var(--color-line));
+    }
+
+    .btn-danger {
+        @apply border border-danger-100 text-danger-600;
+        background: var(--color-surface-raised);
+    }
+
+    .btn-danger:hover {
+        background: color-mix(in srgb, var(--color-danger-100) 60%, transparent);
+    }
+
+    .input,
+    .select,
+    .textarea {
+        @apply w-full rounded-xl border border-line px-3 text-sm
+               focus:outline-none focus:border-brand-500
+               focus:ring-2 focus:ring-brand-500/15;
+        background: var(--color-surface-raised);
+        color: var(--color-content);
+    }
+
+    .input::placeholder,
+    .textarea::placeholder {
+        color: var(--color-content-muted);
+        opacity: 0.7;
+    }
+
+    .input,
+    .select {
+        @apply h-11;
+    }
+
+    .textarea {
+        @apply py-2.5;
+    }
+
+    .label {
+        @apply block text-xs font-semibold uppercase tracking-wide mb-1.5;
+        color: var(--color-content-muted);
+    }
+
+    .chip {
+        @apply inline-flex items-center gap-1.5 rounded-full border border-line px-3 h-9
+               text-sm font-medium transition;
+        background: var(--color-surface-raised);
+        color: var(--color-content);
+    }
+
+    .chip:hover {
+        background: color-mix(in srgb, var(--color-surface) 70%, var(--color-surface-raised));
+    }
+
+    .chip-active {
+        @apply bg-ink-900 text-white border-ink-900 hover:bg-ink-900;
+    }
+
+    .dark .chip-active {
+        @apply bg-white text-ink-900 border-white hover:bg-white;
+    }
+
+    .skeleton {
+        @apply animate-pulse rounded-2xl;
+        background: color-mix(in srgb, var(--color-line) 70%, transparent);
+    }
+
+    .divide-rows > * + * {
+        @apply border-t border-line;
+    }
+}

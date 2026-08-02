@@ -1,0 +1,32 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, curl, zip, gd
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: composer install --no-dev --optimize-autoloader --no-interaction
+      - run: npm ci
+      - run: npm run build
+      - name: Pack release zip
+        run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          mkdir -p dist
+          rsync -a --exclude=node_modules --exclude=.git --exclude=tests --exclude=dist ./ dist/depot-borrow/
+          cd dist && zip -r "../depot-borrow-${VERSION}.zip" depot-borrow
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: depot-borrow-*.zip
+          generate_release_notes: true
