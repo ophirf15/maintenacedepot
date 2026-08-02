@@ -4,12 +4,34 @@ namespace App\Services;
 
 use App\Models\AppVersion;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use ZipArchive;
 
 class UpdaterService
 {
+    /** Paths / patterns that must never be overwritten by an update package. */
+    protected array $preserveRelative = [
+        '.env',
+        '.env.backup',
+        '.env.local',
+        '.env.production',
+        'auth.json',
+        'database/database.sqlite',
+    ];
+
+    protected array $skipDirectoryPrefixes = [
+        'storage/app/public/',
+        'storage/app/private/',
+        'storage/framework/',
+        'storage/logs/',
+        'storage/pail/',
+        'node_modules/',
+        '.git/',
+        'tests/',
+    ];
+
     public function __construct(private SettingsService $settings) {}
 
     public function currentVersion(): string
@@ -50,7 +72,6 @@ class UpdaterService
             $latest = ltrim((string) $response->json('tag_name'), 'v');
             $notes = $response->json('body');
             $assets = collect($response->json('assets') ?? []);
-            // Prefer the dedicated update package, then the canonical zip, then any zip.
             $asset = $assets->first(fn ($a) => str_ends_with($a['name'] ?? '', '-update.zip'))
                 ?? $assets->first(function ($a) {
                     $name = $a['name'] ?? '';
@@ -92,7 +113,10 @@ class UpdaterService
 
         try {
             $zipPath = storage_path('app/update-package.zip');
-            $bytes = Http::timeout(120)->get($url)->body();
+            $bytes = Http::timeout(180)->get($url)->body();
+            if ($bytes === '' || $bytes === false) {
+                throw new \RuntimeException('Downloaded update package was empty');
+            }
             file_put_contents($zipPath, $bytes);
 
             $extractTo = storage_path('app/update-extract');
@@ -108,11 +132,15 @@ class UpdaterService
             $zip->extractTo($extractTo);
             $zip->close();
 
-            // In production the release zip contains pre-built app; here we run migrations.
+            $packageRoot = $this->resolvePackageRoot($extractTo);
+            $this->overlayPackage($packageRoot, base_path());
+            $this->mirrorWebAssetsForSharedHosting();
+
             Artisan::call('migrate', ['--force' => true]);
 
             $previous = $this->currentVersion();
             $latest = $info['latest'];
+            $this->writeInstalledVersion($latest);
 
             AppVersion::query()->where('is_current', true)->update(['is_current' => false]);
             AppVersion::query()->create([
@@ -128,6 +156,8 @@ class UpdaterService
             Artisan::call('up');
             Artisan::call('config:clear');
             Artisan::call('cache:clear');
+            Artisan::call('view:clear');
+            Artisan::call('route:clear');
 
             return ['ok' => true, 'version' => $latest];
         } catch (\Throwable $e) {
@@ -136,6 +166,133 @@ class UpdaterService
 
             return ['ok' => false, 'message' => $e->getMessage()];
         }
+    }
+
+    protected function resolvePackageRoot(string $extractTo): string
+    {
+        if (is_file($extractTo.DIRECTORY_SEPARATOR.'artisan')
+            || is_file($extractTo.DIRECTORY_SEPARATOR.'VERSION')
+            || is_dir($extractTo.DIRECTORY_SEPARATOR.'app')
+        ) {
+            return $extractTo;
+        }
+
+        foreach (scandir($extractTo) ?: [] as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
+            $candidate = $extractTo.DIRECTORY_SEPARATOR.$item;
+            if (is_dir($candidate) && (
+                is_file($candidate.DIRECTORY_SEPARATOR.'artisan')
+                || is_file($candidate.DIRECTORY_SEPARATOR.'VERSION')
+                || is_dir($candidate.DIRECTORY_SEPARATOR.'app')
+            )) {
+                return $candidate;
+            }
+        }
+
+        throw new \RuntimeException('Update package root not found in zip');
+    }
+
+    protected function overlayPackage(string $from, string $to): void
+    {
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($from, \FilesystemIterator::SKIP_DOTS),
+            \RecursiveIteratorIterator::SELF_FIRST
+        );
+
+        foreach ($iterator as $item) {
+            $relative = str_replace('\\', '/', substr($item->getPathname(), strlen($from) + 1));
+            if ($relative === '' || $this->shouldSkipRelative($relative)) {
+                continue;
+            }
+
+            $target = $to.DIRECTORY_SEPARATOR.str_replace('/', DIRECTORY_SEPARATOR, $relative);
+
+            if ($item->isDir()) {
+                if (! is_dir($target)) {
+                    mkdir($target, 0755, true);
+                }
+
+                continue;
+            }
+
+            $dir = dirname($target);
+            if (! is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+            if (! @copy($item->getPathname(), $target)) {
+                throw new \RuntimeException("Unable to update file: {$relative}");
+            }
+        }
+    }
+
+    protected function shouldSkipRelative(string $relative): bool
+    {
+        $relative = ltrim(str_replace('\\', '/', $relative), '/');
+
+        if (in_array($relative, $this->preserveRelative, true)) {
+            return true;
+        }
+
+        foreach ($this->skipDirectoryPrefixes as $prefix) {
+            if (str_starts_with($relative, $prefix)) {
+                return true;
+            }
+        }
+
+        if (str_ends_with($relative, '.sqlite') || str_ends_with($relative, '.sqlite-journal')) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * When index.php lives at the app root (shared-host flatten), mirror built assets
+     * so /build/* URLs resolve without a nested public/ document root.
+     */
+    protected function mirrorWebAssetsForSharedHosting(): void
+    {
+        if (! is_file(base_path('index.php')) || ! is_dir(base_path('public/build'))) {
+            return;
+        }
+
+        File::ensureDirectoryExists(base_path('build'));
+        File::copyDirectory(base_path('public/build'), base_path('build'));
+
+        foreach (['.htaccess', 'favicon.ico', 'favicon.svg', 'manifest.webmanifest', 'sw.js'] as $file) {
+            $src = base_path('public/'.$file);
+            if (is_file($src)) {
+                @copy($src, base_path($file));
+            }
+        }
+
+        if (is_dir(base_path('public/brand'))) {
+            File::ensureDirectoryExists(base_path('brand'));
+            File::copyDirectory(base_path('public/brand'), base_path('brand'));
+        }
+    }
+
+    protected function writeInstalledVersion(string $version): void
+    {
+        file_put_contents(base_path('VERSION'), $version.PHP_EOL);
+        if (is_dir(public_path())) {
+            @file_put_contents(public_path('VERSION'), $version.PHP_EOL);
+        }
+
+        $envPath = base_path('.env');
+        if (is_file($envPath) && ! app()->environment('testing')) {
+            $env = (string) file_get_contents($envPath);
+            if (preg_match('/^DEPOT_VERSION=.*$/m', $env)) {
+                $env = preg_replace('/^DEPOT_VERSION=.*$/m', 'DEPOT_VERSION='.$version, $env) ?? $env;
+            } else {
+                $env = rtrim($env).PHP_EOL.'DEPOT_VERSION='.$version.PHP_EOL;
+            }
+            file_put_contents($envPath, $env);
+        }
+
+        config(['depot.version' => $version]);
     }
 
     protected function rrmdir(string $dir): void

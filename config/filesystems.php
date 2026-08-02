@@ -33,7 +33,9 @@ return [
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
+            // Do not use /storage — that URL is for the public disk (uploads/logos).
             'serve' => true,
+            'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/local-storage',
             'throw' => false,
             'report' => false,
         ],
@@ -43,6 +45,8 @@ return [
             'root' => storage_path('app/public'),
             'url' => rtrim(env('APP_URL', 'http://localhost'), '/').'/storage',
             'visibility' => 'public',
+            // Serve uploads via Laravel when public/storage symlink is missing (shared hosting).
+            'serve' => true,
             'throw' => false,
             'report' => false,
         ],

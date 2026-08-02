@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\InstallationState;
 use App\Services\AuditLogger;
 use App\Services\AuthService;
 use App\Services\SettingsService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class AuthController extends Controller
 {
@@ -18,15 +20,32 @@ class AuthController extends Controller
 
     public function config()
     {
+        $installed = false;
+        $branding = [];
+        $public = [];
+        $samlEnabled = false;
+        $ssoUrl = null;
+
+        if (Schema::hasTable('installation_state')) {
+            $installed = (bool) (InstallationState::query()->value('is_installed') ?? false);
+        }
+
+        if (Schema::hasTable('settings')) {
+            $branding = $this->settings->group('branding');
+            $public = $this->settings->publicMap();
+            $samlEnabled = $this->auth->samlEnabled();
+            $ssoUrl = $this->settings->get('saml', 'sso_url');
+        }
+
         return response()->json([
-            'branding' => $this->settings->group('branding'),
-            'public' => $this->settings->publicMap(),
+            'branding' => $branding,
+            'public' => $public,
             'saml' => [
-                'enabled' => $this->auth->samlEnabled(),
-                'sso_url' => $this->settings->get('saml', 'sso_url'),
+                'enabled' => $samlEnabled,
+                'sso_url' => $ssoUrl,
             ],
             'version' => config('depot.version'),
-            'installed' => \App\Models\InstallationState::query()->value('is_installed') ?? false,
+            'installed' => $installed,
         ]);
     }
 

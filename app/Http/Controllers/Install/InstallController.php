@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class InstallController extends Controller
@@ -20,6 +21,19 @@ class InstallController extends Controller
 
     public function status()
     {
+        if (! Schema::hasTable('installation_state')) {
+            return response()->json([
+                'data' => [
+                    'is_installed' => false,
+                    'current_step' => 'welcome',
+                    'completed_steps' => [],
+                    'installed_version' => null,
+                    'installed_at' => null,
+                    'version' => config('depot.version'),
+                ],
+            ]);
+        }
+
         $state = $this->currentState();
 
         return response()->json([
@@ -36,12 +50,6 @@ class InstallController extends Controller
 
     public function run(Request $request)
     {
-        $state = $this->currentState();
-
-        if ($state->is_installed) {
-            return response()->json(['message' => 'Application is already installed.'], 422);
-        }
-
         $data = $request->validate([
             'admin_name' => 'required|string|max:190',
             'admin_email' => 'required|email|max:190',
@@ -50,9 +58,18 @@ class InstallController extends Controller
             'seed_demo_data' => 'boolean',
         ]);
 
-        $admin = DB::transaction(function () use ($data, $state) {
-            Artisan::call('migrate', ['--force' => true]);
+        // Migrations must run before any install-state queries (fresh host DBs have no tables yet).
+        // Keep DDL outside the data transaction — MySQL commits DDL implicitly.
+        Artisan::call('migrate', ['--force' => true]);
+        $this->ensureStorageDirectories();
 
+        $state = $this->currentState();
+
+        if ($state->is_installed) {
+            return response()->json(['message' => 'Application is already installed.'], 422);
+        }
+
+        $admin = DB::transaction(function () use ($data, $state) {
             (new RolesAndPermissionsSeeder)->run();
 
             $admin = User::query()->updateOrCreate(
@@ -106,5 +123,27 @@ class InstallController extends Controller
             'is_installed' => false,
             'current_step' => 'welcome',
         ]);
+    }
+
+    protected function ensureStorageDirectories(): void
+    {
+        foreach ([
+            storage_path('app/public/branding'),
+            storage_path('framework/cache/data'),
+            storage_path('framework/sessions'),
+            storage_path('framework/views'),
+            storage_path('logs'),
+        ] as $dir) {
+            if (! is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+        }
+
+        // Best-effort symlink; PublicStorageController covers hosts that disallow it.
+        $link = public_path('storage');
+        $target = storage_path('app/public');
+        if (! file_exists($link) && is_dir($target)) {
+            @symlink($target, $link);
+        }
     }
 }

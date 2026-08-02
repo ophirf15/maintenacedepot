@@ -46,11 +46,14 @@ Open http://127.0.0.1:8000
 ### Publishing a release
 
 ```bash
-git tag v1.2.0
-git push origin v1.2.0
+# bump VERSION file first (e.g. 1.0.1), commit, then:
+git tag v1.0.1
+git push origin v1.0.1
 ```
 
-The **Release** GitHub Action builds assets, packs install/update zips (secrets and local data excluded), and attaches them to the GitHub Release. You can also run the workflow manually (**Actions → Release → Run workflow**).
+The **Release** GitHub Action builds assets, packs install/update zips (secrets and local data excluded), and attaches them to the GitHub Release. Existing installs use **IT Admin → Updates** to pull `maintenance-depot-{version}-update.zip`.
+
+You can also run the workflow manually (**Actions → Release → Run workflow**).
 
 ## Phases shipped
 
@@ -69,7 +72,7 @@ php artisan db:seed --class=DemoDataSeeder
 ## Environment highlights
 
 ```
-DEPOT_VERSION=1.0.0
+DEPOT_VERSION=           # optional; otherwise uses VERSION file from the release
 DEPOT_GITHUB_REPO=your-org/depot-borrow
 ```
 

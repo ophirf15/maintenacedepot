@@ -12,7 +12,15 @@ return [
     |
     */
 
-    'version' => env('DEPOT_VERSION', '1.0.0'),
+    /*
+    | Prefer DEPOT_VERSION from .env when set; otherwise the VERSION file written
+    | by release packaging / the in-app updater.
+    */
+    'version' => filled(env('DEPOT_VERSION'))
+        ? env('DEPOT_VERSION')
+        : (is_file(base_path('VERSION'))
+            ? trim((string) file_get_contents(base_path('VERSION')))
+            : '1.0.1'),
 
     'github_repo' => env('DEPOT_GITHUB_REPO', null),
 ];
