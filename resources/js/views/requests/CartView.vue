@@ -33,11 +33,11 @@
             :key="line._key || idx"
             class="flex items-center gap-3 px-4 py-3"
           >
-            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500 shrink-0">
+            <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-100 text-content-muted shrink-0">
               <Icon :name="line.icon || 'package'" :size="20" />
             </span>
             <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-neutral-900 truncate">{{ lineLabel(line) }}</p>
+              <p class="text-sm font-medium text-content truncate">{{ lineLabel(line) }}</p>
               <p class="text-xs muted flex items-center gap-1">
                 <Icon :name="line.request_mode === 'specific_item' ? 'pin' : 'sparkles'" :size="12" />
                 {{ line.request_mode === 'specific_item' ? 'This exact unit' : 'Any free unit' }}

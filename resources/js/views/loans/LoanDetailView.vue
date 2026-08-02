@@ -40,16 +40,16 @@
       <!-- Tools on this loan -->
       <section class="card">
         <header class="flex items-center gap-2 p-4 pb-3">
-          <Icon name="boxes" :size="18" class="text-neutral-400" />
+          <Icon name="boxes" :size="18" class="text-content-muted" />
           <p class="section-title">Tools on this loan</p>
         </header>
         <ul class="divide-rows border-t border-line">
           <li v-for="li in loanItems" :key="li.id" class="flex flex-wrap items-center gap-3 px-4 py-3">
-            <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-500 shrink-0">
+            <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 text-content-muted shrink-0">
               <Icon name="package" :size="18" />
             </span>
             <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-neutral-900 truncate">{{ itemLabel(li) }}</p>
+              <p class="text-sm font-medium text-content truncate">{{ itemLabel(li) }}</p>
               <p class="text-xs muted flex flex-wrap items-center gap-x-2.5 gap-y-1 mt-0.5">
                 <span v-if="li.item?.asset_tag" class="font-mono">{{ li.item.asset_tag }}</span>
                 <span v-if="li.item?.tool_type?.name" class="flex items-center gap-1">
@@ -76,7 +76,7 @@
         <RouterLink
           v-if="loan.borrow_request"
           :to="`/requests/${loan.borrow_request.id}`"
-          class="flex items-center gap-2 border-t border-line px-4 py-3 text-sm font-medium text-brand-700 hover:bg-neutral-50"
+          class="flex items-center gap-2 border-t border-line px-4 py-3 text-sm font-medium text-brand-700 hover:bg-surface"
         >
           <Icon name="clipboard" :size="16" />
           See the request this came from
@@ -112,7 +112,7 @@
           </div>
 
           <div v-for="row in checkoutForm" :key="row.item_id" class="card p-3.5 space-y-3.5">
-            <p class="text-sm font-semibold text-neutral-900">{{ row.name }}</p>
+            <p class="text-sm font-semibold text-content">{{ row.name }}</p>
 
             <div>
               <label class="label">Scan or type the QR code (optional)</label>
@@ -136,9 +136,9 @@
               </div>
             </div>
 
-            <div class="rounded-xl border border-line bg-neutral-50 p-3">
+            <div class="rounded-xl border border-line bg-surface p-3">
               <div class="flex items-center justify-between gap-3">
-                <span class="flex items-center gap-2 text-sm font-medium text-neutral-700">
+                <span class="flex items-center gap-2 text-sm font-medium text-content-muted">
                   <Icon name="fuel" :size="18" :class="fuelTextClass(row.fuel_pct_out)" />
                   Fuel when it leaves
                 </span>
@@ -173,7 +173,7 @@
           </div>
 
           <div v-for="group in companionSuggestions" :key="group.item_id" class="card p-3.5 space-y-3">
-            <p class="text-sm font-semibold text-neutral-900">With {{ group.item_label }}</p>
+            <p class="text-sm font-semibold text-content">With {{ group.item_label }}</p>
 
             <div v-if="group.companions?.length" class="space-y-2">
               <p class="label">Add companion (scan or pick)</p>
@@ -189,7 +189,7 @@
                   {{ c.label }}
                 </button>
               </div>
-              <div v-for="att in companionsFor(group.item_id)" :key="att.item_id" class="rounded-lg bg-neutral-50 p-2">
+              <div v-for="att in companionsFor(group.item_id)" :key="att.item_id" class="rounded-lg bg-surface p-2">
                 <label class="label">Scan code for {{ att.label }}</label>
                 <input v-model="att.qr_token" type="text" class="input font-mono" placeholder="Optional scan" autocomplete="off" />
               </div>
@@ -219,7 +219,7 @@
           </div>
 
           <div v-if="checkoutBlocking.length" class="space-y-2">
-            <label class="flex items-start gap-2.5 rounded-xl bg-neutral-50 p-3 text-sm text-neutral-700">
+            <label class="flex items-start gap-2.5 rounded-xl bg-surface p-3 text-sm text-content-muted">
               <input v-model="maintenanceOverride" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-neutral-300" />
               <span>
                 Override and allow pick-up anyway
@@ -258,11 +258,11 @@
 
         <div class="space-y-4 border-t border-line p-4 sm:p-5">
           <div v-for="row in returnForm" :key="row.item_id" class="card p-3.5 space-y-3.5">
-            <p class="text-sm font-semibold text-neutral-900">{{ row.name }}</p>
+            <p class="text-sm font-semibold text-content">{{ row.name }}</p>
 
-            <div class="rounded-xl border border-line bg-neutral-50 p-3">
+            <div class="rounded-xl border border-line bg-surface p-3">
               <div class="flex items-center justify-between gap-3">
-                <span class="flex items-center gap-2 text-sm font-medium text-neutral-700">
+                <span class="flex items-center gap-2 text-sm font-medium text-content-muted">
                   <Icon name="fuel" :size="18" :class="fuelTextClass(row.fuel_pct)" />
                   Fuel now
                 </span>
@@ -309,7 +309,7 @@
               </div>
             </div>
 
-            <label class="flex items-start gap-2.5 rounded-xl bg-neutral-50 p-3 text-sm text-neutral-700">
+            <label class="flex items-start gap-2.5 rounded-xl bg-surface p-3 text-sm text-content-muted">
               <input v-model="row.damage_found" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-neutral-300" />
               <span>
                 Something is broken
@@ -324,7 +324,7 @@
               placeholder="What is wrong? Short words are fine."
             />
 
-            <label class="flex items-start gap-2.5 rounded-xl bg-warn-100/50 p-3 text-sm text-neutral-700">
+            <label class="flex items-start gap-2.5 rounded-xl bg-warn-100/50 p-3 text-sm text-content-muted">
               <input v-model="row.end_of_life_soon" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-neutral-300" />
               <span>
                 This tool is near the end of its life
@@ -371,11 +371,11 @@
           </div>
 
           <div v-if="consumableReviewForm.length" class="card p-3.5 space-y-3">
-            <p class="text-sm font-semibold text-neutral-900">Confirm consumables used</p>
+            <p class="text-sm font-semibold text-content">Confirm consumables used</p>
             <div
               v-for="row in consumableReviewForm"
               :key="row.id"
-              class="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-neutral-50 px-3 py-2 text-sm"
+              class="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-surface px-3 py-2 text-sm"
             >
               <span>
                 {{ row.label }}
@@ -386,7 +386,7 @@
           </div>
 
           <div v-for="row in reviewForm" :key="row.item_id" class="card p-3.5 space-y-3.5">
-            <p class="text-sm font-semibold text-neutral-900">{{ row.name }}</p>
+            <p class="text-sm font-semibold text-content">{{ row.name }}</p>
 
             <div class="grid grid-cols-2 gap-2">
               <button
@@ -394,7 +394,7 @@
                 :key="r.value"
                 type="button"
                 class="flex items-center justify-center gap-2 rounded-xl border px-3 h-12 text-sm font-semibold transition"
-                :class="row.overall_result === r.value ? r.onClass : 'border-line bg-white text-neutral-700 hover:bg-neutral-50'"
+                :class="row.overall_result === r.value ? r.onClass : 'border-line bg-surface-raised text-content-muted hover:bg-surface'"
                 @click="row.overall_result = r.value"
               >
                 <Icon :name="r.icon" :size="18" />
@@ -402,9 +402,9 @@
               </button>
             </div>
 
-            <div class="rounded-xl border border-line bg-neutral-50 p-3">
+            <div class="rounded-xl border border-line bg-surface p-3">
               <div class="flex items-center justify-between gap-3">
-                <span class="flex items-center gap-2 text-sm font-medium text-neutral-700">
+                <span class="flex items-center gap-2 text-sm font-medium text-content-muted">
                   <Icon name="fuel" :size="18" :class="fuelTextClass(row.fuel_pct)" />
                   Fuel when returned
                 </span>
@@ -451,7 +451,7 @@
               </div>
             </div>
 
-            <label class="flex items-start gap-2.5 rounded-xl bg-neutral-50 p-3 text-sm text-neutral-700">
+            <label class="flex items-start gap-2.5 rounded-xl bg-surface p-3 text-sm text-content-muted">
               <input v-model="row.damage_found" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-neutral-300" />
               <span>
                 Damage found
@@ -466,7 +466,7 @@
               placeholder="What is wrong?"
             />
 
-            <label class="flex items-start gap-2.5 rounded-xl bg-warn-100/50 p-3 text-sm text-neutral-700">
+            <label class="flex items-start gap-2.5 rounded-xl bg-warn-100/50 p-3 text-sm text-content-muted">
               <input v-model="row.end_of_life_soon" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-neutral-300" />
               <span>
                 Flag for replacement soon
@@ -479,7 +479,7 @@
               <input v-model="row.notes" type="text" class="input" placeholder="Anything the next person should know" />
             </div>
 
-            <label class="flex items-start gap-2.5 rounded-xl border border-danger-100 bg-danger-100/50 p-3 text-sm text-neutral-700">
+            <label class="flex items-start gap-2.5 rounded-xl border border-danger-100 bg-danger-100/50 p-3 text-sm text-content-muted">
               <input v-model="row.take_out_of_service" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-neutral-300" @change="onTakeOut(row)" />
               <span class="flex items-start gap-2">
                 <Icon name="alert" :size="16" class="mt-0.5 text-danger-600 shrink-0" />
@@ -506,7 +506,7 @@
       <!-- Rare: ask to keep the tools longer -->
       <section v-if="['checked_out', 'return_pending'].includes(loan.status)" class="card">
         <header class="flex items-center gap-2.5 p-4 sm:p-5 pb-3">
-          <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-500 shrink-0">
+          <span class="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 text-content-muted shrink-0">
             <Icon name="clock" :size="18" />
           </span>
           <div>
@@ -518,7 +518,7 @@
         <ul v-if="loan.extensions?.length" class="divide-rows border-t border-line">
           <li v-for="ext in loan.extensions" :key="ext.id" class="flex flex-wrap items-center gap-3 px-4 py-3">
             <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-neutral-900">Asked to keep until {{ formatDateTime(ext.requested_due_at) }}</p>
+              <p class="text-sm font-medium text-content">Asked to keep until {{ formatDateTime(ext.requested_due_at) }}</p>
               <p v-if="ext.reason" class="text-xs muted">“{{ ext.reason }}”</p>
             </div>
             <StatusBadge :status="ext.status" />
@@ -599,8 +599,8 @@ const CONDITIONS = [
 ];
 
 const RESULTS = [
-  { value: 'pass', label: 'Looks good', icon: 'check-circle', onClass: 'border-brand-700 bg-brand-700 text-white' },
-  { value: 'fail', label: 'Problem found', icon: 'alert', onClass: 'border-danger-600 bg-danger-600 text-white' },
+  { value: 'pass', label: 'Looks good', icon: 'check-circle', onClass: 'border-brand-solid bg-brand-solid text-white' },
+  { value: 'fail', label: 'Problem found', icon: 'alert', onClass: 'border-danger-solid bg-danger-solid text-white' },
 ];
 
 const checkoutForm = ref([]);
@@ -683,10 +683,10 @@ function fuelTextClass(pct) {
 }
 
 function fuelBarClass(pct) {
-  if (pct <= 20) return 'bg-danger-600';
-  if (pct <= 50) return 'bg-warn-600';
+  if (pct <= 20) return 'bg-danger-solid';
+  if (pct <= 50) return 'bg-warn-solid';
 
-  return 'bg-brand-700';
+  return 'bg-brand-solid';
 }
 
 function itemLabel(li) {

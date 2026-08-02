@@ -35,7 +35,7 @@
       <form class="card space-y-4 p-4" @submit.prevent="saveCategory">
         <div class="flex items-center gap-2">
           <Icon name="plus" :size="18" class="text-brand-700" />
-          <h2 class="font-semibold text-neutral-900">
+          <h2 class="font-semibold text-content">
             {{ categoryForm.id ? 'Edit this group' : 'Add a tool group' }}
           </h2>
         </div>
@@ -91,7 +91,7 @@
             <Icon :name="iconFor(cat)" :size="24" />
           </span>
           <div class="min-w-0 flex-1">
-            <p class="truncate font-semibold text-neutral-900">{{ cat.name }}</p>
+            <p class="truncate font-semibold text-content">{{ cat.name }}</p>
             <p class="text-xs muted">{{ cat.tool_types_count || 0 }} tool types</p>
           </div>
           <button type="button" class="btn-secondary btn-sm" @click="editCategory(cat)">
@@ -107,7 +107,7 @@
       <form class="card space-y-4 p-4" @submit.prevent="saveToolType">
         <div class="flex items-center gap-2">
           <Icon name="plus" :size="18" class="text-brand-700" />
-          <h2 class="font-semibold text-neutral-900">
+          <h2 class="font-semibold text-content">
             {{ toolTypeForm.id ? 'Edit this tool type' : 'Add a tool type' }}
           </h2>
         </div>
@@ -149,10 +149,10 @@
           <IconPicker v-model="toolTypeForm.icon" :suggest-from="toolTypeForm.name" />
         </div>
 
-        <div v-if="toolTypeForm.id" class="space-y-3 rounded-xl border border-line bg-neutral-50/80 p-3">
+        <div v-if="toolTypeForm.id" class="space-y-3 rounded-xl border border-line bg-surface/80 p-3">
           <div class="flex items-center justify-between gap-2">
             <div>
-              <p class="text-sm font-semibold text-neutral-900">Spec fields</p>
+              <p class="text-sm font-semibold text-content">Spec fields</p>
               <p class="text-xs muted">Things that differ per unit — PSI, ladder height, amps…</p>
             </div>
           </div>
@@ -160,7 +160,7 @@
             <li
               v-for="field in editingSpecFields"
               :key="field.id"
-              class="flex flex-wrap items-center gap-2 rounded-lg border border-line bg-white px-3 py-2 text-sm"
+              class="flex flex-wrap items-center gap-2 rounded-lg border border-line bg-surface-raised px-3 py-2 text-sm"
             >
               <span class="min-w-0 flex-1 font-medium">{{ field.label }}<span v-if="field.unit" class="muted"> ({{ field.unit }})</span></span>
               <button type="button" class="btn-ghost btn-sm text-danger-600" @click="removeSpecField(field)">
@@ -183,16 +183,16 @@
           </button>
         </div>
 
-        <div v-if="toolTypeForm.id" class="space-y-3 rounded-xl border border-line bg-neutral-50/80 p-3">
+        <div v-if="toolTypeForm.id" class="space-y-3 rounded-xl border border-line bg-surface/80 p-3">
           <div>
-            <p class="text-sm font-semibold text-neutral-900">Often needs</p>
+            <p class="text-sm font-semibold text-content">Often needs</p>
             <p class="text-xs muted">Companion or consumable types suggested at pick-up (e.g. batteries for cordless drills).</p>
           </div>
           <ul v-if="typeLinks.length" class="space-y-2">
             <li
               v-for="(link, idx) in typeLinks"
               :key="`${link.child_tool_type_id}-${link.role}-${idx}`"
-              class="flex flex-wrap items-center gap-2 rounded-lg border border-line bg-white px-3 py-2 text-sm"
+              class="flex flex-wrap items-center gap-2 rounded-lg border border-line bg-surface-raised px-3 py-2 text-sm"
             >
               <span class="min-w-0 flex-1 font-medium">
                 {{ linkLabel(link) }}
@@ -247,7 +247,7 @@
             <Icon :name="iconFor(tt)" :size="24" />
           </span>
           <div class="min-w-0 flex-1">
-            <p class="truncate font-semibold text-neutral-900">{{ tt.name }}</p>
+            <p class="truncate font-semibold text-content">{{ tt.name }}</p>
             <p class="truncate text-xs muted">
               {{ tt.category?.name || 'No group' }} · {{ tt.items_count || 0 }} units
             </p>

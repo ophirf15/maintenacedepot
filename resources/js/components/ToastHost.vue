@@ -26,10 +26,10 @@ import { useToastStore } from '../stores/toast';
 const toasts = useToastStore();
 
 const TONE_CLASSES = {
-  brand: 'bg-white border-brand-700/20 text-brand-700',
-  danger: 'bg-white border-danger-600/25 text-danger-600',
-  info: 'bg-white border-info-600/20 text-info-600',
-  warn: 'bg-white border-warn-600/25 text-warn-600',
+  brand: 'bg-surface-raised border-brand-700/35 text-brand-700',
+  danger: 'bg-surface-raised border-danger-600/35 text-danger-600',
+  info: 'bg-surface-raised border-info-600/35 text-info-600',
+  warn: 'bg-surface-raised border-warn-600/40 text-warn-600',
 };
 </script>
 

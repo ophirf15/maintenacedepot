@@ -59,7 +59,7 @@
           </span>
 
           <div class="min-w-0 flex-1">
-            <p class="font-semibold text-neutral-900 leading-snug">{{ l.summary || l.items_label || 'Loan' }}</p>
+            <p class="font-semibold text-content leading-snug">{{ l.summary || l.items_label || 'Loan' }}</p>
 
             <p class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs muted">
               <span class="font-mono">{{ l.reference || `#${l.id}` }}</span>
@@ -69,7 +69,7 @@
               </span>
             </p>
 
-            <p v-if="hintFor(l)" class="mt-1.5 flex items-start gap-1.5 text-xs text-neutral-600">
+            <p v-if="hintFor(l)" class="mt-1.5 flex items-start gap-1.5 text-xs text-content-muted">
               <Icon name="info" :size="13" class="mt-0.5" />
               {{ hintFor(l) }}
             </p>
@@ -154,7 +154,7 @@ const TILE_CLASSES = {
 };
 
 function tileClasses(loan) {
-  return TILE_CLASSES[badgeStatus(loan)] || 'bg-neutral-100 text-neutral-500';
+  return TILE_CLASSES[badgeStatus(loan)] || 'bg-neutral-100 text-content-muted';
 }
 
 const TILE_ICONS = {

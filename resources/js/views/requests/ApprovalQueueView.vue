@@ -43,7 +43,7 @@
           </span>
 
           <div class="min-w-0 flex-1">
-            <p class="font-semibold text-neutral-900 leading-snug">{{ r.summary }}</p>
+            <p class="font-semibold text-content leading-snug">{{ r.summary }}</p>
             <p class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs muted">
               <span class="font-mono">{{ r.reference }}</span>
               <span class="flex items-center gap-1">
@@ -62,12 +62,12 @@
             v-if="canDecide"
             :name="expanded === r.id ? 'chevron-up' : 'chevron-down'"
             :size="18"
-            class="text-neutral-400"
+            class="text-content-muted"
           />
         </button>
 
-        <div v-if="!canDecide" class="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-neutral-50/70 px-4 py-3">
-          <p class="flex items-start gap-1.5 text-sm text-neutral-600">
+        <div v-if="!canDecide" class="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-surface/70 px-4 py-3">
+          <p class="flex items-start gap-1.5 text-sm text-content-muted">
             <Icon name="info" :size="16" class="mt-0.5 shrink-0" />
             You changed something, so {{ borrowerName(r) }} must accept before pick-up.
           </p>
@@ -77,7 +77,7 @@
           </RouterLink>
         </div>
 
-        <div v-else-if="expanded === r.id" class="border-t border-line bg-neutral-50/70">
+        <div v-else-if="expanded === r.id" class="border-t border-line bg-surface/70">
           <p v-if="detailLoading" class="p-4 text-sm muted">Loading the details…</p>
 
           <template v-else-if="forms[r.id]">
@@ -88,11 +88,11 @@
                 class="card p-3.5 space-y-3"
               >
                 <div class="flex items-start gap-3">
-                  <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-500 shrink-0">
+                  <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 text-content-muted shrink-0">
                     <Icon name="package" :size="18" />
                   </span>
                   <div class="min-w-0 flex-1">
-                    <p class="text-sm font-semibold text-neutral-900">{{ line.label }}</p>
+                    <p class="text-sm font-semibold text-content">{{ line.label }}</p>
                     <p class="text-xs muted">
                       Asked for {{ formatQty(line.quantity) }}
                       <span v-if="line.request_mode === 'tool_type'"> · any free unit</span>
@@ -151,7 +151,7 @@
             </div>
 
             <div class="border-t border-line px-4 py-3 space-y-3">
-              <button type="button" class="flex items-center gap-1.5 text-sm font-medium text-neutral-600 hover:text-neutral-900" @click="forms[r.id].showMore = !forms[r.id].showMore">
+              <button type="button" class="flex items-center gap-1.5 text-sm font-medium text-content-muted hover:text-content" @click="forms[r.id].showMore = !forms[r.id].showMore">
                 <Icon :name="forms[r.id].showMore ? 'chevron-up' : 'chevron-down'" :size="16" />
                 {{ forms[r.id].showMore ? 'Hide extra options' : 'Change dates or add a note' }}
               </button>
@@ -175,7 +175,7 @@
                   <label class="label">Message to the borrower (if you changed something)</label>
                   <textarea v-model="forms[r.id].modification_note" rows="2" class="textarea" placeholder="Explain the change in simple words" />
                 </div>
-                <label class="flex items-start gap-2.5 rounded-xl bg-neutral-50 p-3 text-sm text-neutral-700">
+                <label class="flex items-start gap-2.5 rounded-xl bg-surface p-3 text-sm text-content-muted">
                   <input v-model="forms[r.id].force_finalize" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-neutral-300" />
                   <span>
                     Approve now without waiting for the borrower
@@ -185,7 +185,7 @@
               </div>
             </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-white px-4 py-3">
+            <div class="flex flex-wrap items-center justify-between gap-3 border-t border-line bg-surface-raised px-4 py-3">
               <p v-if="forms[r.id].error" class="flex items-center gap-1.5 text-sm text-danger-600">
                 <Icon name="alert" :size="16" />
                 {{ forms[r.id].error }}

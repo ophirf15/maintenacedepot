@@ -6,15 +6,16 @@
  * always looks the same everywhere in the app.
  */
 const TONES = {
-  neutral: 'bg-neutral-100 text-neutral-700 border-neutral-200',
-  info: 'bg-info-100 text-info-600 border-info-600/20',
-  brand: 'bg-brand-100 text-brand-700 border-brand-700/20',
-  warn: 'bg-warn-100 text-warn-600 border-warn-600/25',
-  danger: 'bg-danger-100 text-danger-600 border-danger-600/20',
+  // Semantic surfaces/text so dark mode stays ≥4.5:1 (no fixed Tailwind greys).
+  neutral: 'bg-surface text-content-muted border-line',
+  info: 'bg-info-100 text-info-600 border-info-600/35',
+  brand: 'bg-brand-100 text-brand-700 border-brand-700/35',
+  warn: 'bg-warn-100 text-warn-600 border-warn-600/40',
+  danger: 'bg-danger-100 text-danger-600 border-danger-600/35',
 };
 
 const DOTS = {
-  neutral: 'bg-neutral-400',
+  neutral: 'bg-content-muted',
   info: 'bg-info-600',
   brand: 'bg-brand-600',
   warn: 'bg-warn-600',

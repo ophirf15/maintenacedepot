@@ -10,7 +10,7 @@
         <label class="label" for="cons-q">Search</label>
         <input id="cons-q" v-model="q" type="search" class="input" placeholder="Name, supplier, or part number" />
       </div>
-      <label class="flex items-center gap-2 rounded-xl border border-line bg-white px-3 py-2.5 text-sm">
+      <label class="flex items-center gap-2 rounded-xl border border-line bg-surface-raised px-3 py-2.5 text-sm">
         <input v-model="lowStockOnly" type="checkbox" class="h-4 w-4 rounded border-neutral-300" />
         Low stock only
       </label>
@@ -35,7 +35,7 @@
       <li v-for="item in items" :key="item.id" class="card p-4 space-y-3">
         <div class="flex flex-wrap items-start justify-between gap-3">
           <div class="min-w-0">
-            <router-link :to="`/inventory/items/${item.id}`" class="font-semibold text-neutral-900 hover:underline">
+            <router-link :to="`/inventory/items/${item.id}`" class="font-semibold text-content hover:underline">
               {{ item.label || item.name }}
             </router-link>
             <p class="mt-0.5 text-xs muted">
@@ -47,7 +47,7 @@
           <div class="text-right">
             <p
               class="text-xl font-semibold tabular-nums"
-              :class="Number(item.stock_qty) <= Number(item.reorder_point || 0) ? 'text-warn-600' : 'text-neutral-900'"
+              :class="Number(item.stock_qty) <= Number(item.reorder_point || 0) ? 'text-warn-600' : 'text-content'"
             >
               {{ Number(item.stock_qty) }}
               <span class="text-sm font-normal muted">{{ item.stock_unit || 'ea' }}</span>
@@ -67,7 +67,7 @@
           </button>
         </div>
 
-        <div v-if="activeId === item.id" class="rounded-xl border border-line bg-neutral-50 p-3 space-y-2">
+        <div v-if="activeId === item.id" class="rounded-xl border border-line bg-surface p-3 space-y-2">
           <label class="label">{{ mode === 'restock' ? 'Add quantity' : 'Set on-hand quantity' }}</label>
           <input v-model.number="qtyInput" type="number" min="0" step="0.01" class="input" />
           <input v-model="notesInput" type="text" class="input" placeholder="Notes (optional)" />

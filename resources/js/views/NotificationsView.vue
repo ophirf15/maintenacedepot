@@ -26,13 +26,13 @@
         >
           <span
             class="flex h-10 w-10 items-center justify-center rounded-xl shrink-0"
-            :class="n.read_at ? 'bg-neutral-100 text-neutral-400' : 'bg-brand-100 text-brand-700'"
+            :class="n.read_at ? 'bg-neutral-100 text-content-muted' : 'bg-brand-100 text-brand-700'"
           >
             <Icon :name="n.data?.icon || 'bell'" :size="19" />
           </span>
           <div class="min-w-0 flex-1">
-            <p class="text-sm font-semibold text-neutral-900">{{ n.data?.title || 'Update' }}</p>
-            <p class="text-sm text-neutral-700 mt-0.5">{{ n.data?.body }}</p>
+            <p class="text-sm font-semibold text-content">{{ n.data?.title || 'Update' }}</p>
+            <p class="text-sm text-content-muted mt-0.5">{{ n.data?.body }}</p>
             <p class="text-xs muted mt-1">{{ formatWhen(n.created_at) }}</p>
           </div>
           <span v-if="!n.read_at" class="mt-1.5 h-2 w-2 rounded-full bg-brand-600 shrink-0" />

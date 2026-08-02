@@ -91,7 +91,7 @@
 
           <div
             v-if="debugLink"
-            class="rounded-xl border border-info-600/25 bg-info-100 p-3 text-xs break-all text-neutral-800"
+            class="rounded-xl border border-info-600/25 bg-info-100 p-3 text-xs break-all text-content"
           >
             <p class="mb-1 flex items-center gap-1.5 font-semibold text-info-600">
               <Icon name="info" :size="14" />
@@ -113,10 +113,10 @@
           </a>
         </div>
 
-        <div class="flex items-start gap-2 rounded-xl bg-neutral-50 p-3 text-xs muted">
+        <div class="flex items-start gap-2 rounded-xl bg-surface p-3 text-xs muted">
           <Icon name="info" :size="14" class="mt-0.5" />
           <span>
-            <span class="font-semibold text-neutral-700">Demo login:</span>
+            <span class="font-semibold text-content-muted">Demo login:</span>
             admin@depotborrow.test / password
           </span>
         </div>

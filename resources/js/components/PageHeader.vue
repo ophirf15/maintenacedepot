@@ -11,7 +11,7 @@
         <RouterLink
           v-if="backTo"
           :to="backTo"
-          class="inline-flex items-center gap-1 text-sm font-medium text-neutral-500 hover:text-neutral-900 mb-1"
+          class="inline-flex items-center gap-1 text-sm font-medium text-content-muted hover:text-content mb-1"
         >
           <Icon name="chevron-left" :size="16" />
           {{ backLabel }}

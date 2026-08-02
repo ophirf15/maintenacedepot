@@ -18,20 +18,27 @@
     /* Neutral page surfaces (overridden in .dark) */
     --color-surface: #f7f7f8;
     --color-surface-raised: #ffffff;
-    --color-line: #e6e6ea;
+    /* ≥3:1 vs white / surface for UI boundaries (WCAG 1.4.11) */
+    --color-line: #8e8e99;
     --color-content: #1e262a;
-    --color-content-muted: #71717a;
+    /* ≥4.5:1 on surface / surface-raised for body and helper text (WCAG 2.2 AA) */
+    --color-content-muted: #5c5c66;
 
-    /* Brand + semantic accents — orange from brand kit (#E7660B) */
-    --color-brand-700: #c45509;
+    /* Brand + semantic accents — orange from brand kit (#E7660B)
+       brand-700 = text/icon accent (≥4.5:1 on surfaces)
+       brand-solid = filled controls with white label text */
+    --color-brand-700: #a84408;
+    --color-brand-solid: #a84408;
     --color-brand-600: #e7660b;
     --color-brand-500: #f07820;
     --color-brand-100: #fde9d8;
-    --color-warn-600: #b45309;
+    --color-warn-600: #9a4a08;
+    --color-warn-solid: #9a4a08;
     --color-warn-100: #fef3c7;
     --color-danger-600: #b42318;
+    --color-danger-solid: #b42318;
     --color-danger-100: #fee4e2;
-    --color-info-600: #1570cd;
+    --color-info-600: #0b5cad;
     --color-info-100: #e0f0fe;
 }
 
@@ -47,13 +54,61 @@ html.dark {
     color-scheme: dark;
     --color-surface: #0f0f12;
     --color-surface-raised: #18181c;
-    --color-line: #2a2a33;
+    /* ≥3:1 vs surface-raised for UI boundaries (WCAG 1.4.11) */
+    --color-line: #6a6a78;
     --color-content: #f4f4f5;
-    --color-content-muted: #a1a1aa;
+    --color-content-muted: #b4b4be;
+    /* Text accents lightened for ≥4.5:1 on dark raised surfaces */
+    --color-brand-700: #f08a3a;
+    --color-brand-solid: #b45309;
+    --color-brand-600: #ea8034;
+    --color-brand-500: #f07820;
     --color-brand-100: #3a1f0c;
+    --color-warn-600: #f0a04a;
+    --color-warn-solid: #b45309;
     --color-warn-100: #3b2610;
+    --color-danger-600: #f07166;
+    --color-danger-solid: #c73c32;
     --color-danger-100: #3f1512;
+    --color-info-600: #6bb0ef;
     --color-info-100: #0f2a45;
+}
+
+/*
+ * Safety net: leftover Tailwind palette utilities that stay fixed light-theme
+ * greys. Remap them in dark mode so titles never go black-on-black again.
+ */
+html.dark .text-neutral-950,
+html.dark .text-neutral-900,
+html.dark .text-neutral-800,
+html.dark .text-zinc-900,
+html.dark .text-gray-900 {
+    color: var(--color-content);
+}
+html.dark .text-neutral-700,
+html.dark .text-neutral-600,
+html.dark .text-neutral-500,
+html.dark .text-neutral-400,
+html.dark .text-zinc-600,
+html.dark .text-zinc-500,
+html.dark .text-gray-600,
+html.dark .text-gray-500 {
+    color: var(--color-content-muted);
+}
+html.dark .bg-neutral-50,
+html.dark .bg-neutral-100,
+html.dark .bg-zinc-50,
+html.dark .bg-gray-50,
+html.dark .hover\:bg-neutral-50:hover,
+html.dark .hover\:bg-neutral-100:hover {
+    background-color: color-mix(in srgb, var(--color-surface) 88%, var(--color-surface-raised));
+}
+html.dark .bg-white {
+    background-color: var(--color-surface-raised);
+}
+html.dark .border-neutral-200,
+html.dark .border-neutral-300 {
+    border-color: var(--color-line);
 }
 
 body {
@@ -62,6 +117,26 @@ body {
     color: var(--color-content);
     -webkit-font-smoothing: antialiased;
     overscroll-behavior-y: none;
+}
+
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+    padding: 0.65rem 1rem;
+    border-radius: 0.75rem;
+    background: var(--color-brand-solid);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+}
+.skip-link:focus {
+    left: 0.75rem;
+    top: calc(0.75rem + env(safe-area-inset-top, 0px));
+    outline: 2px solid #fff;
+    outline-offset: 2px;
 }
 
 #app {
@@ -178,7 +253,13 @@ button,
     }
 
     .btn-primary {
-        @apply bg-brand-700 text-white hover:bg-brand-600 shadow-[0_1px_2px_rgba(9,9,11,0.16)];
+        background: var(--color-brand-solid);
+        color: #fff;
+        box-shadow: 0 1px 2px rgba(9, 9, 11, 0.16);
+    }
+
+    .btn-primary:hover {
+        background: color-mix(in srgb, var(--color-brand-solid) 82%, #000);
     }
 
     .btn-dark {
@@ -216,16 +297,35 @@ button,
     .select,
     .textarea {
         @apply w-full rounded-xl border border-line px-3 text-sm
-               focus:outline-none focus:border-brand-500
-               focus:ring-2 focus:ring-brand-500/15;
+               focus:outline-none focus:border-brand-600
+               focus:ring-2 focus:ring-brand-600/45;
         background: var(--color-surface-raised);
         color: var(--color-content);
+    }
+
+    /* Visible keyboard focus for controls that rely on btn / chip classes (WCAG 2.4.7 / 2.4.13). */
+    .btn:focus-visible,
+    .btn-primary:focus-visible,
+    .btn-dark:focus-visible,
+    .btn-secondary:focus-visible,
+    .btn-ghost:focus-visible,
+    .btn-danger:focus-visible,
+    .chip:focus-visible,
+    .bottom-tab:focus-visible,
+    .nav-link:focus-visible,
+    .sheet-link:focus-visible,
+    a:focus-visible,
+    button:focus-visible,
+    [role='button']:focus-visible,
+    summary:focus-visible {
+        outline: 2px solid var(--color-brand-600);
+        outline-offset: 2px;
     }
 
     .input::placeholder,
     .textarea::placeholder {
         color: var(--color-content-muted);
-        opacity: 0.7;
+        opacity: 1;
     }
 
     .input,

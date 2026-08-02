@@ -22,7 +22,7 @@
       </PageHeader>
 
       <p class="-mt-2 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs muted">
-        <span class="font-mono font-semibold text-neutral-800">#{{ item.numeric_id }}</span>
+        <span class="font-mono font-semibold text-content">#{{ item.numeric_id }}</span>
         <span aria-hidden="true">·</span>
         <Icon name="qr" :size="13" />
         <span class="font-mono">{{ item.asset_tag }}</span>
@@ -31,7 +31,7 @@
       <div class="grid gap-4 sm:gap-5 sm:grid-cols-2">
         <section class="card overflow-hidden">
           <header class="flex items-center gap-2 border-b border-line p-4 sm:p-5">
-            <Icon name="info" :size="18" class="text-neutral-400" />
+            <Icon name="info" :size="18" class="text-content-muted" />
             <p class="section-title">About this tool</p>
           </header>
           <dl class="divide-rows text-sm">
@@ -40,7 +40,7 @@
                 <Icon :name="row.icon" :size="15" />
                 {{ row.label }}
               </dt>
-              <dd class="text-right font-medium text-neutral-900" :class="row.capitalize ? 'capitalize' : ''">
+              <dd class="text-right font-medium text-content" :class="row.capitalize ? 'capitalize' : ''">
                 {{ row.value }}
               </dd>
             </div>
@@ -50,7 +50,7 @@
         <div class="space-y-4 sm:space-y-5">
           <section class="card-pad space-y-4">
             <div class="flex items-center gap-2">
-              <Icon name="camera" :size="18" class="text-neutral-400" />
+              <Icon name="camera" :size="18" class="text-content-muted" />
               <p class="section-title">Photo of this unit</p>
             </div>
             <p class="text-sm muted">Helps crews pick the right one when units look alike.</p>
@@ -62,7 +62,7 @@
               <input
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
-                class="input h-auto py-2.5 text-xs file:mr-3 file:rounded-lg file:border-0 file:bg-neutral-100 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-neutral-700"
+                class="input h-auto py-2.5 text-xs file:mr-3 file:rounded-lg file:border-0 file:bg-neutral-100 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-content-muted"
                 aria-label="Choose a photo"
                 @change="onImageChange"
               />
@@ -75,7 +75,7 @@
 
           <section v-if="specFields.length" class="card-pad space-y-3">
             <div class="flex items-center gap-2">
-              <Icon name="ruler" :size="18" class="text-neutral-400" />
+              <Icon name="ruler" :size="18" class="text-content-muted" />
               <p class="section-title">Specs for this unit</p>
             </div>
             <p class="text-sm muted">Things that differ between units of this type, like PSI or height.</p>
@@ -101,7 +101,7 @@
 
           <section class="card-pad space-y-4">
             <div class="flex items-center gap-2">
-              <Icon name="qr" :size="18" class="text-neutral-400" />
+              <Icon name="qr" :size="18" class="text-content-muted" />
               <p class="section-title">Printable label</p>
             </div>
             <p class="text-sm muted">QR for scanning, barcode (larger sizes) + 6-digit ID, and the tool name.</p>
@@ -118,7 +118,7 @@
               <img
                 :src="qrUrl"
                 alt="Label preview"
-                class="max-h-48 w-full rounded-xl border border-line bg-white object-contain p-2"
+                class="max-h-48 w-full rounded-xl border border-line bg-surface-raised object-contain p-2"
               />
               <div class="flex flex-wrap gap-2">
                 <button type="button" class="btn-secondary btn-sm" @click="downloadQr">
@@ -149,7 +149,7 @@
 
           <section class="card-pad space-y-3">
             <div class="flex items-center gap-2">
-              <Icon name="book" :size="18" class="text-neutral-400" />
+              <Icon name="book" :size="18" class="text-content-muted" />
               <p class="section-title">Instruction book</p>
             </div>
             <p class="text-sm muted">The maker's manual, so crews can look up how to use it safely.</p>
@@ -167,7 +167,7 @@
               <input
                 type="file"
                 accept=".pdf,.doc,.docx"
-                class="input h-auto py-2.5 text-xs file:mr-3 file:rounded-lg file:border-0 file:bg-neutral-100 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-neutral-700"
+                class="input h-auto py-2.5 text-xs file:mr-3 file:rounded-lg file:border-0 file:bg-neutral-100 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-content-muted"
                 aria-label="Choose a manual file"
                 @change="onFileChange"
               />
@@ -182,7 +182,7 @@
 
       <section class="card-pad space-y-3">
         <div class="flex items-center gap-2">
-          <Icon name="boxes" :size="18" class="text-neutral-400" />
+          <Icon name="boxes" :size="18" class="text-content-muted" />
           <p class="section-title">Goes together with{{ item.is_kit ? ' (this is a set)' : '' }}</p>
         </div>
         <p class="text-sm muted">
@@ -193,10 +193,10 @@
           <li
             v-for="child in item.linked_children"
             :key="child.id"
-            class="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-neutral-50 px-3 py-2 text-sm"
+            class="flex flex-wrap items-center justify-between gap-2 rounded-xl bg-surface px-3 py-2 text-sm"
           >
             <span class="min-w-0">
-              <span class="font-medium text-neutral-900">{{ child.label || child.asset_tag }}</span>
+              <span class="font-medium text-content">{{ child.label || child.asset_tag }}</span>
               <span class="ml-2 text-xs muted capitalize">{{ child.pivot?.role || 'companion' }}</span>
               <span v-if="child.pivot?.is_required" class="ml-1 text-xs text-warn-600">· suggested</span>
             </span>
@@ -221,17 +221,17 @@
           <div>
             <label class="label">Search item to link</label>
             <input v-model="linkSearch" type="search" class="input" placeholder="Name or tag" @input="searchLinkTargets" />
-            <ul v-if="linkResults.length" class="mt-1 max-h-40 overflow-auto rounded-xl border border-line bg-white text-sm">
+            <ul v-if="linkResults.length" class="mt-1 max-h-40 overflow-auto rounded-xl border border-line bg-surface-raised text-sm">
               <li
                 v-for="hit in linkResults"
                 :key="hit.id"
-                class="cursor-pointer border-b border-line px-3 py-2 hover:bg-neutral-50 last:border-0"
+                class="cursor-pointer border-b border-line px-3 py-2 hover:bg-surface last:border-0"
                 @click="selectLinkTarget(hit)"
               >
                 {{ hit.label || hit.name }} <span class="muted">#{{ hit.id }}</span>
               </li>
             </ul>
-            <p v-if="linkTarget" class="mt-1 text-xs text-neutral-700">Selected: {{ linkTarget.label || linkTarget.name }}</p>
+            <p v-if="linkTarget" class="mt-1 text-xs text-content-muted">Selected: {{ linkTarget.label || linkTarget.name }}</p>
           </div>
           <div>
             <label class="label">Link as</label>
@@ -253,7 +253,7 @@
 
       <section v-if="item.is_consumable" class="card-pad space-y-3">
         <div class="flex items-center gap-2">
-          <Icon name="package" :size="18" class="text-neutral-400" />
+          <Icon name="package" :size="18" class="text-content-muted" />
           <p class="section-title">Stock &amp; reordering</p>
         </div>
         <div class="grid gap-3 sm:grid-cols-2">
@@ -296,7 +296,7 @@
         <ul v-if="movements.length" class="divide-rows text-sm">
           <li v-for="m in movements" :key="m.id" class="flex justify-between gap-2 py-2">
             <span class="muted">{{ m.reason }} · {{ m.notes || '—' }}</span>
-            <span class="tabular-nums font-medium" :class="Number(m.delta) < 0 ? 'text-danger-600' : 'text-neutral-900'">
+            <span class="tabular-nums font-medium" :class="Number(m.delta) < 0 ? 'text-danger-600' : 'text-content'">
               {{ Number(m.delta) > 0 ? '+' : '' }}{{ Number(m.delta) }} → {{ Number(m.balance_after) }}
             </span>
           </li>
@@ -305,7 +305,7 @@
 
       <section v-if="damagePhotos.length" class="card-pad space-y-3">
         <div class="flex items-center gap-2">
-          <Icon name="camera" :size="18" class="text-neutral-400" />
+          <Icon name="camera" :size="18" class="text-content-muted" />
           <p class="section-title">Damage photos</p>
         </div>
         <div class="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -323,7 +323,7 @@
 
       <section v-if="item.maintenance_plans?.length" class="card overflow-hidden">
         <header class="flex items-start gap-2 border-b border-line p-4 sm:p-5">
-          <Icon name="wrench" :size="18" class="mt-0.5 text-neutral-400" />
+          <Icon name="wrench" :size="18" class="mt-0.5 text-content-muted" />
           <div>
             <p class="section-title">Servicing plans</p>
             <p class="text-sm muted">Regular checks and services booked for this tool.</p>
@@ -335,7 +335,7 @@
             :key="p.id"
             class="flex items-center justify-between gap-3 px-4 sm:px-5 py-3 text-sm"
           >
-            <span class="min-w-0 truncate font-medium text-neutral-900">{{ p.name }}</span>
+            <span class="min-w-0 truncate font-medium text-content">{{ p.name }}</span>
             <StatusBadge
               :status="p.is_active ? 'available' : 'unavailable'"
               :label="p.is_active ? 'Running' : 'Paused'"

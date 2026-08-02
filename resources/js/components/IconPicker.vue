@@ -11,7 +11,7 @@
         <Icon :name="modelValue || suggested" :size="20" />
       </span>
       <span class="min-w-0 flex-1">
-        <span class="block truncate text-sm font-medium text-neutral-900">
+        <span class="block truncate text-sm font-medium text-content">
           {{ readable(modelValue || suggested) }}
         </span>
         <span class="block text-xs muted">
@@ -24,7 +24,7 @@
     <div v-if="open" class="card space-y-3 p-3">
       <div class="flex items-center gap-2">
         <div class="relative flex-1">
-          <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
+          <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-content-muted">
             <Icon name="search" :size="16" />
           </span>
           <input
@@ -53,7 +53,7 @@
           :class="
             name === modelValue
               ? 'border-brand-600 bg-brand-50 text-brand-800'
-              : 'border-line text-neutral-600 hover:border-brand-300 hover:bg-neutral-50'
+              : 'border-line text-content-muted hover:border-brand-300 hover:bg-surface'
           "
           :title="readable(name)"
           @click="choose(name)"

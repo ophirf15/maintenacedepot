@@ -26,7 +26,7 @@
             :alt="item.label"
             class="h-full w-full object-cover"
           />
-          <div v-else class="flex h-full items-center justify-center text-neutral-400">
+          <div v-else class="flex h-full items-center justify-center text-content-muted">
             <Icon :name="iconFor(item.tool_type)" :size="48" />
           </div>
         </div>
@@ -43,20 +43,20 @@
             <span
               v-for="spec in item.specs"
               :key="spec.key"
-              class="inline-flex items-center rounded-xl border border-line bg-neutral-50 px-3 py-1.5 text-sm font-medium text-neutral-800"
+              class="inline-flex items-center rounded-xl border border-line bg-surface px-3 py-1.5 text-sm font-medium text-content"
             >
               <span class="muted mr-1.5 text-xs">{{ spec.label }}</span>
               {{ spec.display }}
             </span>
           </div>
 
-          <p v-if="item.description" class="text-sm text-neutral-700">{{ item.description }}</p>
+          <p v-if="item.description" class="text-sm text-content-muted">{{ item.description }}</p>
         </div>
       </div>
 
       <section v-if="damagePhotos.length" class="card-pad space-y-3">
         <div class="flex items-center gap-2">
-          <Icon name="camera" :size="18" class="text-neutral-400" />
+          <Icon name="camera" :size="18" class="text-content-muted" />
           <p class="section-title">Damage photos</p>
         </div>
         <p class="text-sm muted">Pictures from defect reports on this unit.</p>
@@ -66,7 +66,7 @@
             :key="photo.id"
             :href="photo.url"
             target="_blank"
-            class="aspect-square overflow-hidden rounded-xl border border-line bg-neutral-50"
+            class="aspect-square overflow-hidden rounded-xl border border-line bg-surface"
           >
             <img :src="photo.url" :alt="photo.original_name" class="h-full w-full object-cover" />
           </a>

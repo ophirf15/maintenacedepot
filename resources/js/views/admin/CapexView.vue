@@ -41,7 +41,7 @@
       <section v-for="(group, year) in grouped" :key="year" class="card overflow-hidden">
         <header class="flex flex-wrap items-center justify-between gap-2 border-b border-line p-4 sm:p-5">
           <div class="flex items-center gap-2">
-            <Icon name="calendar" :size="18" class="text-neutral-400" />
+            <Icon name="calendar" :size="18" class="text-content-muted" />
             <p class="section-title">Replace in {{ year }}</p>
           </div>
           <p class="text-xs muted">
@@ -52,17 +52,17 @@
         <ul class="divide-rows">
           <li v-for="row in group" :key="row.asset_tag" class="p-3 sm:p-4">
             <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
-              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500">
+              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-content-muted">
                 <Icon name="package" :size="20" />
               </span>
 
               <div class="min-w-0 flex-1 basis-48">
-                <p class="truncate font-medium text-neutral-900">{{ row.name }}</p>
+                <p class="truncate font-medium text-content">{{ row.name }}</p>
                 <p class="font-mono text-xs muted">{{ row.asset_tag }}</p>
               </div>
 
               <div class="text-right">
-                <p class="font-semibold text-neutral-900">{{ money(row.net_replacement_cost ?? row.replacement_cost) }}</p>
+                <p class="font-semibold text-content">{{ money(row.net_replacement_cost ?? row.replacement_cost) }}</p>
                 <p class="text-xs muted">net to replace</p>
               </div>
             </div>
@@ -71,7 +71,7 @@
               <span
                 v-for="reason in reasonList(row)"
                 :key="reason"
-                class="inline-flex items-center gap-1 rounded-full border border-line bg-neutral-50 px-2 py-0.5 text-[0.7rem] font-semibold text-neutral-700"
+                class="inline-flex items-center gap-1 rounded-full border border-line bg-surface px-2 py-0.5 text-[0.7rem] font-semibold text-content-muted"
               >
                 <Icon :name="reasonIcon(reason)" :size="12" />
                 {{ reasonLabel(reason) }}

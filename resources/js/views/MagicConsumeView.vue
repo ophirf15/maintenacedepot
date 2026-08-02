@@ -18,7 +18,7 @@
             <Icon name="x-circle" :size="30" />
           </span>
           <div>
-            <p class="font-semibold text-neutral-900">This link no longer works</p>
+            <p class="font-semibold text-content">This link no longer works</p>
             <p class="mt-1 text-sm muted">{{ error }}</p>
           </div>
           <RouterLink to="/login" class="btn-primary">
@@ -31,7 +31,7 @@
           <span class="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-100 text-brand-700">
             <Icon name="check-circle" :size="30" />
           </span>
-          <p class="font-semibold text-neutral-900">You're in. Taking you to the app…</p>
+          <p class="font-semibold text-content">You're in. Taking you to the app…</p>
         </template>
       </div>
     </div>

@@ -39,37 +39,37 @@
           <p class="section-title">What is wrong</p>
         </div>
 
-        <p class="text-sm text-neutral-800 whitespace-pre-line">
+        <p class="text-sm text-content whitespace-pre-line">
           {{ ticket.description || 'Nobody wrote extra details.' }}
         </p>
 
         <dl class="grid sm:grid-cols-2 gap-3 text-sm">
           <div class="flex items-start gap-2.5">
-            <Icon name="user" :size="18" class="mt-0.5 text-neutral-400" />
+            <Icon name="user" :size="18" class="mt-0.5 text-content-muted" />
             <div>
               <dt class="text-xs muted">Reported by</dt>
-              <dd class="font-medium text-neutral-900">{{ ticket.reporter?.name || 'Unknown' }}</dd>
+              <dd class="font-medium text-content">{{ ticket.reporter?.name || 'Unknown' }}</dd>
             </div>
           </div>
           <div class="flex items-start gap-2.5">
-            <Icon name="calendar" :size="18" class="mt-0.5 text-neutral-400" />
+            <Icon name="calendar" :size="18" class="mt-0.5 text-content-muted" />
             <div>
               <dt class="text-xs muted">Reported on</dt>
-              <dd class="font-medium text-neutral-900">{{ formatDateTime(ticket.created_at) }}</dd>
+              <dd class="font-medium text-content">{{ formatDateTime(ticket.created_at) }}</dd>
             </div>
           </div>
           <div class="flex items-start gap-2.5">
-            <Icon :name="typeMeta.icon" :size="18" class="mt-0.5 text-neutral-400" />
+            <Icon :name="typeMeta.icon" :size="18" class="mt-0.5 text-content-muted" />
             <div>
               <dt class="text-xs muted">Kind of problem</dt>
-              <dd class="font-medium text-neutral-900">{{ typeMeta.label }}</dd>
+              <dd class="font-medium text-content">{{ typeMeta.label }}</dd>
             </div>
           </div>
           <div class="flex items-start gap-2.5">
-            <Icon name="wrench" :size="18" class="mt-0.5 text-neutral-400" />
+            <Icon name="wrench" :size="18" class="mt-0.5 text-content-muted" />
             <div>
               <dt class="text-xs muted">Who is fixing it</dt>
-              <dd class="font-medium text-neutral-900">{{ ticket.assignee?.name || 'Nobody yet' }}</dd>
+              <dd class="font-medium text-content">{{ ticket.assignee?.name || 'Nobody yet' }}</dd>
             </div>
           </div>
         </dl>
@@ -77,7 +77,7 @@
 
       <section class="card-pad space-y-3">
         <div class="flex items-center gap-2">
-          <Icon name="camera" :size="18" class="text-neutral-400" />
+          <Icon name="camera" :size="18" class="text-content-muted" />
           <p class="section-title">Damage photos</p>
         </div>
         <div v-if="photos.length" class="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -108,16 +108,16 @@
 
       <section class="card-pad">
         <div class="flex items-center gap-2 mb-3">
-          <Icon name="package" :size="18" class="text-neutral-400" />
+          <Icon name="package" :size="18" class="text-content-muted" />
           <p class="section-title">The tool</p>
         </div>
 
         <div v-if="ticket.item" class="flex items-start gap-3">
-          <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500 shrink-0">
+          <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-neutral-100 text-content-muted shrink-0">
             <Icon name="package" :size="21" />
           </span>
           <div class="min-w-0">
-            <p class="font-medium text-neutral-900">{{ ticket.item.label }}</p>
+            <p class="font-medium text-content">{{ ticket.item.label }}</p>
             <p class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5 text-xs muted">
               <span v-if="ticket.item.asset_tag" class="flex items-center gap-1">
                 <Icon name="qr" :size="13" />
@@ -136,14 +136,14 @@
 
       <section class="card">
         <header class="flex items-center gap-2 p-4 pb-3">
-          <Icon name="hammer" :size="18" class="text-neutral-400" />
+          <Icon name="hammer" :size="18" class="text-content-muted" />
           <p class="section-title">What we did</p>
         </header>
 
         <ul v-if="ticket.work_orders?.length" class="divide-rows border-t border-line">
           <li v-for="wo in ticket.work_orders" :key="wo.id" class="flex flex-wrap items-center gap-3 px-4 py-3">
             <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-neutral-900">{{ wo.title }}</p>
+              <p class="text-sm font-medium text-content">{{ wo.title }}</p>
               <p class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5 text-xs muted">
                 <span class="font-mono">{{ wo.reference }}</span>
                 <span v-if="wo.completed_at" class="flex items-center gap-1">
@@ -164,7 +164,7 @@
           <Icon name="check-circle" :size="18" class="text-brand-700" />
           <p class="section-title">Fixed</p>
         </div>
-        <p class="text-sm text-neutral-800 whitespace-pre-line">
+        <p class="text-sm text-content whitespace-pre-line">
           {{ ticket.resolution_notes || 'No notes were written.' }}
         </p>
         <p class="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs muted">
@@ -185,7 +185,7 @@
 
       <section v-if="canManage && isOpen" class="card-pad space-y-4">
         <div class="flex items-center gap-2">
-          <Icon name="tool" :size="18" class="text-neutral-400" />
+          <Icon name="tool" :size="18" class="text-content-muted" />
           <p class="section-title">What do you want to do?</p>
         </div>
 
@@ -222,7 +222,7 @@
             </div>
           </div>
 
-          <label class="flex items-start gap-2.5 rounded-xl bg-neutral-50 p-3 text-sm text-neutral-700">
+          <label class="flex items-start gap-2.5 rounded-xl bg-surface p-3 text-sm text-content-muted">
             <input v-model="resolveForm.restore_to_service" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-neutral-300" />
             <span>
               This tool can be used again

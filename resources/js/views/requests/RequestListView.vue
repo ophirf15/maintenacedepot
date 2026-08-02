@@ -35,10 +35,10 @@
         <li
           v-for="entry in waitlist"
           :key="entry.id"
-          class="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-neutral-50/80 px-3 py-2.5"
+          class="flex flex-wrap items-center gap-3 rounded-xl border border-line bg-surface/80 px-3 py-2.5"
         >
           <div class="min-w-0 flex-1">
-            <p class="text-sm font-medium text-neutral-900">
+            <p class="text-sm font-medium text-content">
               {{ entry.tool_type?.name || 'Tool' }}
               <span v-if="entry.item" class="muted font-normal">· {{ entry.item.label }}</span>
             </p>
@@ -74,11 +74,11 @@
     <ul v-else class="space-y-2.5">
       <li v-for="r in requests" :key="r.id">
         <RouterLink :to="`/requests/${r.id}`" class="card card-hover flex items-center gap-3 p-4">
-          <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500 shrink-0">
+          <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-neutral-100 text-content-muted shrink-0">
             <Icon name="clipboard" :size="20" />
           </span>
           <div class="min-w-0 flex-1">
-            <p class="font-medium text-neutral-900 leading-snug">{{ r.summary }}</p>
+            <p class="font-medium text-content leading-snug">{{ r.summary }}</p>
             <p class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-xs muted">
               <span class="font-mono">{{ r.reference }}</span>
               <span class="flex items-center gap-1">

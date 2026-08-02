@@ -22,7 +22,7 @@
 
     <section class="card overflow-hidden">
       <header class="flex items-start gap-3 border-b border-line p-4 sm:p-5">
-        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500">
+        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-content-muted">
           <Icon :name="panel.icon" :size="20" />
         </span>
         <div class="min-w-0">
@@ -40,7 +40,7 @@
         <div v-for="f in settingsTab.fields" :key="f.key">
           <label
             v-if="f.type === 'checkbox'"
-            class="flex items-start gap-2.5 rounded-xl bg-neutral-50 p-3 text-sm text-neutral-700"
+            class="flex items-start gap-2.5 rounded-xl bg-surface p-3 text-sm text-content-muted"
           >
             <input
               v-model="settingsForm[f.key]"
@@ -70,7 +70,7 @@
             <div v-else-if="f.type === 'image_upload'" class="space-y-3">
               <div
                 v-if="brandingImagePreview(f.key)"
-                class="flex items-center gap-3 rounded-xl border border-line bg-neutral-50 p-3"
+                class="flex items-center gap-3 rounded-xl border border-line bg-surface p-3"
               >
                 <img
                   :src="brandingImagePreview(f.key)"
@@ -78,7 +78,7 @@
                   class="h-14 max-w-[160px] object-contain"
                 />
                 <div class="min-w-0 flex-1">
-                  <p class="truncate text-xs font-mono text-neutral-600">{{ settingsForm[f.key] }}</p>
+                  <p class="truncate text-xs font-mono text-content-muted">{{ settingsForm[f.key] }}</p>
                   <p class="text-xs muted">{{ f.hint || '' }}</p>
                 </div>
               </div>
@@ -123,7 +123,7 @@
 
       <!-- People -->
       <div v-else-if="tab === 'users'" class="space-y-5 p-4 sm:p-5">
-        <form class="space-y-3 rounded-xl bg-neutral-50 p-3.5" @submit.prevent="createUser">
+        <form class="space-y-3 rounded-xl bg-surface p-3.5" @submit.prevent="createUser">
           <p class="label mb-0">Add someone</p>
           <div class="grid gap-3 sm:grid-cols-2">
             <div>
@@ -151,11 +151,11 @@
 
         <ul v-if="users.length" class="card divide-rows overflow-hidden">
           <li v-for="u in users" :key="u.id" class="flex flex-wrap items-center gap-3 px-4 py-3">
-            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-neutral-500">
+            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-100 text-content-muted">
               <Icon name="user" :size="18" />
             </span>
             <div class="min-w-0 flex-1 basis-48">
-              <p class="truncate text-sm font-medium text-neutral-900">{{ u.name }}</p>
+              <p class="truncate text-sm font-medium text-content">{{ u.name }}</p>
               <p class="truncate text-xs muted">{{ u.email }}</p>
               <p class="mt-0.5 flex items-center gap-1 text-xs muted">
                 <Icon name="shield" :size="13" />
@@ -173,7 +173,7 @@
 
       <!-- Roles and permissions -->
       <div v-else-if="tab === 'roles'" class="space-y-5 p-4 sm:p-5">
-        <form class="flex flex-col gap-2 rounded-xl bg-neutral-50 p-3.5 sm:flex-row sm:items-end" @submit.prevent="createRole">
+        <form class="flex flex-col gap-2 rounded-xl bg-surface p-3.5 sm:flex-row sm:items-end" @submit.prevent="createRole">
           <div class="min-w-0 flex-1">
             <label class="label">New job name</label>
             <input v-model="roleForm.name" type="text" required class="input" placeholder="depot_admin" />
@@ -186,7 +186,7 @@
 
         <div v-for="r in roles" :key="r.id" class="card-pad space-y-3">
           <div class="flex items-center gap-2">
-            <Icon name="shield" :size="17" class="text-neutral-400" />
+            <Icon name="shield" :size="17" class="text-content-muted" />
             <p class="section-title">{{ r.name }}</p>
           </div>
           <div class="flex flex-wrap gap-2">
@@ -211,7 +211,7 @@
 
       <!-- Sites -->
       <div v-else-if="tab === 'properties'" class="space-y-5 p-4 sm:p-5">
-        <form class="space-y-3 rounded-xl bg-neutral-50 p-3.5" @submit.prevent="createProperty">
+        <form class="space-y-3 rounded-xl bg-surface p-3.5" @submit.prevent="createProperty">
           <p class="label mb-0">Add a site</p>
           <div class="grid gap-3 sm:grid-cols-3">
             <div>
@@ -236,9 +236,9 @@
         <ul v-if="properties.length" class="card divide-rows overflow-hidden">
           <li v-for="p in properties" :key="p.id" class="flex items-center justify-between gap-3 px-4 py-3">
             <div class="flex min-w-0 items-center gap-2.5">
-              <Icon name="building" :size="17" class="shrink-0 text-neutral-400" />
+              <Icon name="building" :size="17" class="shrink-0 text-content-muted" />
               <div class="min-w-0">
-                <p class="truncate text-sm font-medium text-neutral-900">{{ p.name }}</p>
+                <p class="truncate text-sm font-medium text-content">{{ p.name }}</p>
                 <p class="font-mono text-xs muted">{{ p.code }}</p>
               </div>
             </div>
@@ -253,7 +253,7 @@
 
       <!-- Equipment statuses -->
       <div v-else-if="tab === 'statuses'" class="space-y-5 p-4 sm:p-5">
-        <form class="space-y-3 rounded-xl bg-neutral-50 p-3.5" @submit.prevent="createStatus">
+        <form class="space-y-3 rounded-xl bg-surface p-3.5" @submit.prevent="createStatus">
           <p class="label mb-0">Add a status</p>
           <div class="grid gap-3 sm:grid-cols-3">
             <div>
@@ -289,7 +289,7 @@
 
       <!-- Extra fields -->
       <div v-else-if="tab === 'custom_fields'" class="space-y-5 p-4 sm:p-5">
-        <form class="space-y-3 rounded-xl bg-neutral-50 p-3.5" @submit.prevent="createField">
+        <form class="space-y-3 rounded-xl bg-surface p-3.5" @submit.prevent="createField">
           <p class="label mb-0">Add a field</p>
           <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             <div>
@@ -320,10 +320,10 @@
         <ul v-if="customFields.length" class="card divide-rows overflow-hidden">
           <li v-for="f in customFields" :key="f.id" class="flex items-center justify-between gap-3 px-4 py-3">
             <div class="min-w-0">
-              <p class="truncate text-sm font-medium text-neutral-900">{{ f.label }}</p>
+              <p class="truncate text-sm font-medium text-content">{{ f.label }}</p>
               <p class="font-mono text-xs muted">{{ f.entity_type }}.{{ f.key }}</p>
             </div>
-            <span class="shrink-0 rounded-full border border-line bg-neutral-50 px-2.5 py-1 text-xs font-medium text-neutral-600">
+            <span class="shrink-0 rounded-full border border-line bg-surface px-2.5 py-1 text-xs font-medium text-content-muted">
               {{ fieldTypeLabel(f.field_type) }}
             </span>
           </li>
@@ -336,7 +336,7 @@
         <ul v-if="notificationTypes.length" class="card divide-rows overflow-hidden">
           <li v-for="type in notificationTypes" :key="type.id" class="space-y-2.5 px-4 py-3">
             <div class="min-w-0">
-              <p class="text-sm font-medium text-neutral-900">{{ type.name }}</p>
+              <p class="text-sm font-medium text-content">{{ type.name }}</p>
               <p class="text-xs muted">{{ type.group }}</p>
             </div>
             <div class="flex flex-wrap gap-2">
@@ -388,11 +388,11 @@
             </p>
 
             <div class="space-y-2">
-              <p class="text-xs font-medium uppercase tracking-wide text-neutral-500">Fields</p>
+              <p class="text-xs font-medium uppercase tracking-wide text-content-muted">Fields</p>
               <label
                 v-for="field in activeToggleFields"
                 :key="field.key"
-                class="flex items-start gap-2.5 rounded-xl bg-neutral-50 p-3 text-sm text-neutral-700"
+                class="flex items-start gap-2.5 rounded-xl bg-surface p-3 text-sm text-content-muted"
               >
                 <input
                   v-model="labelLayout[labelSizeKey][field.key]"
@@ -401,14 +401,14 @@
                   @change="onLabelDraftChange"
                 />
                 <span>
-                  <span class="font-medium text-neutral-900">{{ field.label }}</span>
+                  <span class="font-medium text-content">{{ field.label }}</span>
                   <span v-if="field.hint" class="mt-0.5 block text-xs muted">{{ field.hint }}</span>
                 </span>
               </label>
             </div>
 
             <div class="space-y-3 rounded-xl border border-line p-3">
-              <p class="text-xs font-medium uppercase tracking-wide text-neutral-500">Placement &amp; style</p>
+              <p class="text-xs font-medium uppercase tracking-wide text-content-muted">Placement &amp; style</p>
 
               <div>
                 <label class="label" for="label-qr-side">QR position</label>
@@ -464,7 +464,7 @@
                 </select>
               </div>
 
-              <label class="flex items-start gap-2.5 rounded-xl bg-neutral-50 p-3 text-sm text-neutral-700">
+              <label class="flex items-start gap-2.5 rounded-xl bg-surface p-3 text-sm text-content-muted">
                 <input
                   v-model="labelLayout[labelSizeKey].logo"
                   type="checkbox"
@@ -472,7 +472,7 @@
                   @change="onLogoToggle"
                 />
                 <span>
-                  <span class="font-medium text-neutral-900">Print logo</span>
+                  <span class="font-medium text-content">Print logo</span>
                   <span class="mt-0.5 block text-xs muted">
                     Uses Branding → Logo path
                     <span v-if="logoPathPreview"> ({{ logoPathPreview }})</span>
@@ -487,9 +487,9 @@
                   <li
                     v-for="(key, idx) in orderedStackKeys"
                     :key="key"
-                    class="flex items-center justify-between gap-2 rounded-lg bg-neutral-50 px-3 py-2 text-sm"
+                    class="flex items-center justify-between gap-2 rounded-lg bg-surface px-3 py-2 text-sm"
                   >
-                    <span class="font-medium text-neutral-900">{{ stackFieldLabel(key) }}</span>
+                    <span class="font-medium text-content">{{ stackFieldLabel(key) }}</span>
                     <span class="flex gap-1">
                       <button
                         type="button"
@@ -535,8 +535,8 @@
             </div>
           </div>
 
-          <div class="flex flex-col items-center justify-center rounded-xl border border-dashed border-line bg-neutral-50 p-4">
-            <p class="mb-3 text-xs font-medium uppercase tracking-wide text-neutral-500">
+          <div class="flex flex-col items-center justify-center rounded-xl border border-dashed border-line bg-surface p-4">
+            <p class="mb-3 text-xs font-medium uppercase tracking-wide text-content-muted">
               Live preview
               <span v-if="labelPreviewDirty" class="ml-1 font-normal normal-case text-amber-700">(unsaved draft)</span>
             </p>
@@ -544,7 +544,7 @@
               v-if="labelPreviewUrl"
               :src="labelPreviewUrl"
               alt="Label preview"
-              class="max-w-full bg-white shadow-sm"
+              class="max-w-full bg-surface-raised shadow-sm"
               :style="labelPreviewStyle"
             />
             <p v-else class="text-sm muted">Adjust fields to see a sample label.</p>
@@ -565,7 +565,7 @@
         <ul v-if="backups.length" class="card divide-rows overflow-hidden">
           <li v-for="b in backups" :key="b.name" class="flex items-center justify-between gap-3 px-4 py-3">
             <div class="min-w-0">
-              <p class="truncate font-mono text-xs text-neutral-900">{{ b.name }}</p>
+              <p class="truncate font-mono text-xs text-content">{{ b.name }}</p>
               <p class="text-xs muted">{{ (b.size_bytes / 1024).toFixed(0) }} KB</p>
             </div>
             <a :href="`/api/backups/${b.name}/download`" class="btn-secondary btn-sm">
@@ -595,15 +595,15 @@
           </button>
         </div>
 
-        <div v-if="updateInfo" class="space-y-3 rounded-xl border border-line bg-neutral-50 p-4 text-sm">
+        <div v-if="updateInfo" class="space-y-3 rounded-xl border border-line bg-surface p-4 text-sm">
           <dl class="grid gap-2 sm:grid-cols-2">
             <div>
               <dt class="muted text-xs">Installed</dt>
-              <dd class="font-medium text-neutral-900">v{{ updateInfo.current || '—' }}</dd>
+              <dd class="font-medium text-content">v{{ updateInfo.current || '—' }}</dd>
             </div>
             <div>
               <dt class="muted text-xs">Latest on GitHub</dt>
-              <dd class="font-medium text-neutral-900">
+              <dd class="font-medium text-content">
                 {{ updateInfo.latest ? `v${updateInfo.latest}` : '—' }}
               </dd>
             </div>
@@ -618,7 +618,7 @@
           <div v-if="updateInfo.release_notes" class="space-y-1">
             <p class="text-xs font-medium uppercase tracking-wide muted">Release notes</p>
             <pre
-              class="max-h-48 overflow-auto whitespace-pre-wrap rounded-lg border border-line bg-white p-3 text-xs text-neutral-700"
+              class="max-h-48 overflow-auto whitespace-pre-wrap rounded-lg border border-line bg-surface-raised p-3 text-xs text-content-muted"
             >{{ updateInfo.release_notes }}</pre>
           </div>
         </div>

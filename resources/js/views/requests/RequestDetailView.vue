@@ -34,11 +34,11 @@
         <div class="flex items-start gap-2.5">
           <Icon name="help" :size="20" class="mt-0.5 text-warn-600 shrink-0" />
           <div>
-            <p class="font-semibold text-neutral-900">The depot changed something</p>
-            <p v-if="request.modification_note" class="mt-1 text-sm text-neutral-700">“{{ request.modification_note }}”</p>
-            <ul class="mt-2 space-y-3 text-sm text-neutral-700">
-              <li v-for="line in request.lines" :key="line.id" class="rounded-xl border border-warn-600/20 bg-white/70 p-3">
-                <p class="flex items-center gap-1.5 font-medium text-neutral-900">
+            <p class="font-semibold text-content">The depot changed something</p>
+            <p v-if="request.modification_note" class="mt-1 text-sm text-content-muted">“{{ request.modification_note }}”</p>
+            <ul class="mt-2 space-y-3 text-sm text-content-muted">
+              <li v-for="line in request.lines" :key="line.id" class="rounded-xl border border-warn-600/20 bg-surface-raised/70 p-3">
+                <p class="flex items-center gap-1.5 font-medium text-content">
                   <Icon name="arrow-right" :size="14" />
                   You asked for {{ line.label }}
                 </p>
@@ -83,7 +83,7 @@
       </section>
 
       <section v-if="request.status === 'draft'" class="card-pad flex flex-wrap items-center justify-between gap-3">
-        <p class="text-sm text-neutral-700">You have not sent this to the depot yet.</p>
+        <p class="text-sm text-content-muted">You have not sent this to the depot yet.</p>
         <button class="btn-primary btn-sm" :disabled="acting" @click="submitRequest">
           <Icon name="arrow-right" :size="16" />
           Send request to depot
@@ -94,8 +94,8 @@
         <div class="flex items-start gap-2.5">
           <Icon name="package" :size="20" class="mt-0.5 text-brand-700" />
           <div>
-            <p class="font-semibold text-neutral-900">Your tools are reserved</p>
-            <p class="text-sm text-neutral-700">Show the depot this loan when you pick up.</p>
+            <p class="font-semibold text-content">Your tools are reserved</p>
+            <p class="text-sm text-content-muted">Show the depot this loan when you pick up.</p>
           </div>
         </div>
         <RouterLink :to="`/loans/${request.loan.id}`" class="btn-primary btn-sm">
@@ -111,7 +111,7 @@
           </span>
           <div>
             <p class="label mb-0">Pick up</p>
-            <p class="text-sm font-semibold text-neutral-900">{{ formatDateTime(request.needed_from) || 'Not set' }}</p>
+            <p class="text-sm font-semibold text-content">{{ formatDateTime(request.needed_from) || 'Not set' }}</p>
           </div>
         </div>
         <div class="flex items-start gap-3">
@@ -120,19 +120,19 @@
           </span>
           <div>
             <p class="label mb-0">Return by</p>
-            <p class="text-sm font-semibold text-neutral-900">{{ formatDateTime(request.needed_until) || 'Not set' }}</p>
+            <p class="text-sm font-semibold text-content">{{ formatDateTime(request.needed_until) || 'Not set' }}</p>
           </div>
         </div>
       </section>
 
       <section class="card">
         <header class="flex items-center gap-2 p-4 pb-3">
-          <Icon name="boxes" :size="18" class="text-neutral-400" />
+          <Icon name="boxes" :size="18" class="text-content-muted" />
           <p class="section-title">Tools on this request</p>
         </header>
         <ul class="divide-rows border-t border-line">
           <li v-for="line in request.lines" :key="line.id" class="flex items-center gap-3 px-4 py-3">
-            <span class="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg bg-neutral-100 text-neutral-500 shrink-0">
+            <span class="flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg bg-neutral-100 text-content-muted shrink-0">
               <img
                 v-if="line.allocated_item?.image_url || line.item?.image_url"
                 :src="line.allocated_item?.image_url || line.item?.image_url"
@@ -142,7 +142,7 @@
               <Icon v-else name="package" :size="18" />
             </span>
             <div class="min-w-0 flex-1">
-              <p class="text-sm font-medium text-neutral-900 truncate">{{ line.label }}</p>
+              <p class="text-sm font-medium text-content truncate">{{ line.label }}</p>
               <p class="text-xs muted">
                 Quantity {{ Number(line.quantity) }}
                 <span v-if="line.allocated_item"> · you get <strong>{{ line.allocated_item.label }}</strong></span>
@@ -155,7 +155,7 @@
                 <span
                   v-for="spec in (line.allocated_item?.specs || line.item?.specs || []).slice(0, 4)"
                   :key="spec.key"
-                  class="rounded-md border border-line bg-neutral-50 px-1.5 py-0.5 text-[0.65rem] font-medium text-neutral-700"
+                  class="rounded-md border border-line bg-surface px-1.5 py-0.5 text-[0.65rem] font-medium text-content-muted"
                 >{{ spec.label }}: {{ spec.display }}</span>
               </div>
             </div>
@@ -166,7 +166,7 @@
 
       <section class="card-pad">
         <div class="flex items-center gap-2 mb-4">
-          <Icon name="history" :size="18" class="text-neutral-400" />
+          <Icon name="history" :size="18" class="text-content-muted" />
           <p class="section-title">What happened so far</p>
         </div>
         <ol class="space-y-0">
@@ -174,14 +174,14 @@
             <div class="flex flex-col items-center">
               <span
                 class="flex h-6 w-6 items-center justify-center rounded-full"
-                :class="event.at ? 'bg-brand-700 text-white' : 'bg-neutral-200 text-neutral-400'"
+                :class="event.at ? 'bg-brand-solid text-white' : 'bg-neutral-200 text-content-muted'"
               >
                 <Icon :name="event.at ? 'check' : event.icon" :size="13" :stroke-width="2.4" />
               </span>
               <span v-if="idx < timeline.length - 1" class="w-px flex-1 bg-line my-1" />
             </div>
             <div class="pb-4">
-              <p class="text-sm font-medium" :class="event.at ? 'text-neutral-900' : 'text-neutral-400'">{{ event.label }}</p>
+              <p class="text-sm font-medium" :class="event.at ? 'text-content' : 'text-content-muted'">{{ event.label }}</p>
               <p v-if="event.at" class="text-xs muted">{{ formatDateTime(event.at) }}</p>
             </div>
           </li>

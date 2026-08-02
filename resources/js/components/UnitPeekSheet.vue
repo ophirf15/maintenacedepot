@@ -9,9 +9,9 @@
     <div class="card flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl">
       <header class="flex items-start gap-3 border-b border-line p-4">
         <div class="min-w-0 flex-1">
-          <p class="truncate font-semibold text-neutral-900">{{ item?.label || item?.asset_tag || 'Unit' }}</p>
+          <p class="truncate font-semibold text-content">{{ item?.label || item?.asset_tag || 'Unit' }}</p>
           <p class="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-xs muted">
-            <span class="font-mono font-semibold text-neutral-800">#{{ item?.numeric_id }}</span>
+            <span class="font-mono font-semibold text-content">#{{ item?.numeric_id }}</span>
             <span v-if="item?.asset_tag">· {{ item.asset_tag }}</span>
             <span v-if="item?.depot?.name">· {{ item.depot.name }}</span>
           </p>
@@ -46,7 +46,7 @@
                 :alt="photo.label || `Photo ${index + 1}`"
                 class="h-full w-full object-contain"
               />
-              <div v-else class="flex flex-col items-center gap-2 text-neutral-400">
+              <div v-else class="flex flex-col items-center gap-2 text-content-muted">
                 <Icon :name="fallbackIcon" :size="48" />
                 <span class="text-xs">No photo yet</span>
               </div>
@@ -75,7 +75,7 @@
                 v-for="(_, i) in photos"
                 :key="i"
                 class="h-1.5 w-1.5 rounded-full"
-                :class="i === activePhoto ? 'bg-brand-700' : 'bg-white/70'"
+                :class="i === activePhoto ? 'bg-brand-solid' : 'bg-surface-raised/70'"
               />
             </div>
           </template>
@@ -94,7 +94,7 @@
                 <span
                   v-for="spec in specs"
                   :key="spec.key"
-                  class="inline-flex items-center rounded-xl border border-line bg-neutral-50 px-3 py-1.5 text-sm font-medium text-neutral-800"
+                  class="inline-flex items-center rounded-xl border border-line bg-surface px-3 py-1.5 text-sm font-medium text-content"
                 >
                   <span class="muted mr-1.5 text-xs">{{ spec.label }}</span>
                   {{ spec.display }}
@@ -103,7 +103,7 @@
               <p v-else class="text-sm muted">No specs recorded for this unit yet.</p>
             </div>
 
-            <p v-if="item?.description" class="text-sm text-neutral-700">{{ item.description }}</p>
+            <p v-if="item?.description" class="text-sm text-content-muted">{{ item.description }}</p>
             <p v-if="item?.condition" class="text-sm capitalize muted">Condition: {{ item.condition }}</p>
           </template>
         </div>

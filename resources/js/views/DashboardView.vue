@@ -43,7 +43,7 @@
       <section class="card min-w-0 overflow-hidden">
         <header class="flex items-center justify-between gap-3 px-3.5 py-3 sm:p-5 sm:pb-3">
           <div class="flex items-center gap-2 min-w-0">
-            <Icon name="clipboard" :size="18" class="text-neutral-400 shrink-0" />
+            <Icon name="clipboard" :size="18" class="text-content-muted shrink-0" />
             <p class="section-title truncate">{{ isAdmin ? 'Latest requests' : 'My requests' }}</p>
           </div>
           <RouterLink to="/requests" class="shrink-0 text-sm font-medium text-brand-700 hover:underline">See all</RouterLink>
@@ -52,10 +52,10 @@
           <li v-for="r in recentRequests" :key="r.id" class="min-w-0">
             <RouterLink
               :to="`/requests/${r.id}`"
-              class="flex min-w-0 items-start gap-2 px-3.5 sm:px-5 py-3 hover:bg-neutral-50 sm:items-center"
+              class="flex min-w-0 items-start gap-2 px-3.5 sm:px-5 py-3 hover:bg-surface sm:items-center"
             >
               <div class="min-w-0 flex-1 overflow-hidden">
-                <p class="text-sm font-medium text-neutral-900 truncate">{{ r.summary }}</p>
+                <p class="text-sm font-medium text-content truncate">{{ r.summary }}</p>
                 <p class="text-xs muted mt-0.5 font-mono truncate">{{ r.reference }}</p>
                 <div class="mt-1.5 sm:hidden">
                   <StatusBadge :status="r.status" compact />
@@ -72,7 +72,7 @@
       <section class="card min-w-0 overflow-hidden">
         <header class="flex items-center justify-between gap-3 px-3.5 py-3 sm:p-5 sm:pb-3">
           <div class="flex items-center gap-2 min-w-0">
-            <Icon name="handshake" :size="18" class="text-neutral-400 shrink-0" />
+            <Icon name="handshake" :size="18" class="text-content-muted shrink-0" />
             <p class="section-title truncate">{{ isAdmin ? 'Active loans' : 'My loans' }}</p>
           </div>
           <RouterLink to="/loans" class="shrink-0 text-sm font-medium text-brand-700 hover:underline">See all</RouterLink>
@@ -81,10 +81,10 @@
           <li v-for="l in recentLoans" :key="l.id" class="min-w-0">
             <RouterLink
               :to="`/loans/${l.id}`"
-              class="flex min-w-0 items-start gap-2 px-3.5 sm:px-5 py-3 hover:bg-neutral-50 sm:items-center"
+              class="flex min-w-0 items-start gap-2 px-3.5 sm:px-5 py-3 hover:bg-surface sm:items-center"
             >
               <div class="min-w-0 flex-1 overflow-hidden">
-                <p class="text-sm font-medium text-neutral-900 truncate">{{ l.summary }}</p>
+                <p class="text-sm font-medium text-content truncate">{{ l.summary }}</p>
                 <p class="text-xs muted mt-0.5 flex items-center gap-1.5 truncate">
                   <Icon name="calendar" :size="13" class="shrink-0" />
                   <span class="truncate">{{ dueLabel(l) }}</span>

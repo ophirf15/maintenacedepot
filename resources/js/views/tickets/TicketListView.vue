@@ -56,7 +56,7 @@
 
       <label
         class="flex items-start gap-2.5 rounded-xl border p-3 text-sm transition"
-        :class="form.takes_out_of_service ? 'border-danger-600/25 bg-danger-100 text-danger-600' : 'border-line bg-neutral-50 text-neutral-700'"
+        :class="form.takes_out_of_service ? 'border-danger-600/25 bg-danger-100 text-danger-600' : 'border-line bg-surface text-content-muted'"
       >
         <input v-model="form.takes_out_of_service" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-neutral-300" />
         <span class="flex items-start gap-2">
@@ -129,7 +129,7 @@
           </span>
 
           <div class="min-w-0 flex-1">
-            <p class="font-semibold text-neutral-900 leading-snug">{{ summarise(t) }}</p>
+            <p class="font-semibold text-content leading-snug">{{ summarise(t) }}</p>
             <p class="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs muted">
               <span class="font-mono">{{ t.reference }}</span>
               <span v-if="t.item?.asset_tag" class="flex items-center gap-1">
@@ -156,7 +156,7 @@
             </div>
           </div>
 
-          <Icon name="chevron-right" :size="18" class="mt-3 text-neutral-400" />
+          <Icon name="chevron-right" :size="18" class="mt-3 text-content-muted" />
         </RouterLink>
       </li>
     </ul>
@@ -201,7 +201,7 @@ const SEVERITY_TINTS = {
   critical: 'bg-danger-100 text-danger-600',
   high: 'bg-danger-100 text-danger-600',
   medium: 'bg-warn-100 text-warn-600',
-  low: 'bg-neutral-100 text-neutral-500',
+  low: 'bg-neutral-100 text-content-muted',
 };
 
 const status = ref('');

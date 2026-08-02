@@ -68,7 +68,7 @@
               :key="a.value"
               type="button"
               class="flex items-center justify-center gap-2 rounded-xl border h-12 px-3 text-sm font-semibold transition"
-              :class="form.action === a.value ? 'border-ink-900 bg-ink-900 text-white' : 'border-line bg-[var(--color-surface-raised)] text-neutral-700 hover:bg-[var(--color-surface)]'"
+              :class="form.action === a.value ? 'border-ink-900 bg-ink-900 text-white' : 'border-line bg-[var(--color-surface-raised)] text-content-muted hover:bg-[var(--color-surface)]'"
               @click="form.action = a.value"
             >
               <Icon :name="a.icon" :size="18" />
@@ -428,7 +428,7 @@ function stateTile(status) {
   if (status === 'synced') return 'bg-brand-100 text-brand-700';
   if (status === 'failed') return 'bg-danger-100 text-danger-600';
 
-  return 'bg-neutral-100 text-neutral-500';
+  return 'bg-neutral-100 text-content-muted';
 }
 
 function stateText(status) {

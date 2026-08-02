@@ -61,7 +61,7 @@
 
     <form v-if="showForm" class="card overflow-hidden" @submit.prevent="createItem">
       <header class="flex items-center gap-2 border-b border-line p-4 sm:p-5">
-        <Icon name="plus" :size="18" class="text-neutral-400" />
+        <Icon name="plus" :size="18" class="text-content-muted" />
         <p class="section-title">Add a tool</p>
       </header>
 
@@ -135,14 +135,14 @@
           <input v-model="form.warranty_expires_on" type="date" class="input" />
         </div>
 
-        <label class="flex items-start gap-2.5 rounded-xl bg-neutral-50 p-3 text-sm text-neutral-700">
+        <label class="flex items-start gap-2.5 rounded-xl bg-surface p-3 text-sm text-content-muted">
           <input v-model="form.is_loanable" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-neutral-300" />
           <span>
             People can borrow it
             <span class="block text-xs muted">Untick for tools that stay at the depot.</span>
           </span>
         </label>
-        <label class="flex items-start gap-2.5 rounded-xl bg-neutral-50 p-3 text-sm text-neutral-700">
+        <label class="flex items-start gap-2.5 rounded-xl bg-surface p-3 text-sm text-content-muted">
           <input v-model="form.is_consumable" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-neutral-300" />
           <span>
             It gets used up
@@ -197,7 +197,7 @@
 
     <form class="flex flex-wrap items-center gap-2" @submit.prevent="load()">
       <div class="relative min-w-0 flex-1 sm:max-w-sm">
-        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400">
+        <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-content-muted">
           <Icon name="search" :size="17" />
         </span>
         <input
@@ -238,7 +238,7 @@
       <li
         v-for="item in items"
         :key="item.id"
-        class="flex flex-wrap items-center gap-3 p-3 sm:p-4 hover:bg-neutral-50"
+        class="flex flex-wrap items-center gap-3 p-3 sm:p-4 hover:bg-surface"
       >
         <input
           v-model="selected"
@@ -248,7 +248,7 @@
           :aria-label="`Pick ${item.label || item.asset_tag} for labels`"
         />
 
-        <span class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-neutral-100 text-neutral-500">
+        <span class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-neutral-100 text-content-muted">
           <img v-if="item.image_url" :src="item.image_url" alt="" class="h-full w-full object-cover" />
           <Icon v-else :name="iconForItem(item)" :size="20" />
         </span>
@@ -256,7 +256,7 @@
         <div class="min-w-0 flex-1 basis-48">
           <RouterLink
             :to="`/inventory/items/${item.id}`"
-            class="block truncate font-medium text-neutral-900 hover:text-brand-700"
+            class="block truncate font-medium text-content hover:text-brand-700"
           >
             {{ item.label || item.asset_tag }}
           </RouterLink>

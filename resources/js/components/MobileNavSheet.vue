@@ -90,18 +90,18 @@
                     class="flex h-9 w-9 items-center justify-center rounded-xl"
                     :class="isActive(link.to)
                       ? 'bg-brand-100 text-brand-700'
-                      : 'bg-neutral-100 text-neutral-600 dark:bg-white/5 dark:text-neutral-300'"
+                      : 'bg-neutral-100 text-content-muted dark:bg-white/5 dark:text-neutral-300'"
                   >
                     <Icon :name="link.icon" :size="18" />
                   </span>
                   <span class="min-w-0 flex-1 truncate text-[0.95rem] font-medium">{{ link.label }}</span>
                   <span
                     v-if="link.badge"
-                    class="rounded-full bg-warn-600 px-1.5 py-0.5 text-[0.65rem] font-bold text-white leading-none min-w-[1.15rem] text-center"
+                    class="rounded-full bg-warn-solid px-1.5 py-0.5 text-[0.65rem] font-bold text-white leading-none min-w-[1.15rem] text-center"
                   >
                     {{ link.badge }}
                   </span>
-                  <Icon name="chevron-right" :size="16" class="text-neutral-300 shrink-0 dark:text-neutral-600" />
+                  <Icon name="chevron-right" :size="16" class="text-neutral-300 shrink-0 dark:text-content-muted" />
                 </RouterLink>
               </li>
             </ul>
@@ -109,7 +109,7 @@
 
           <section class="mb-2 overflow-hidden rounded-2xl border border-line bg-surface">
             <button type="button" class="sheet-link w-full text-left" @click="$emit('cycle-theme')">
-              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-neutral-100 text-neutral-600 dark:bg-white/5 dark:text-neutral-300">
+              <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-neutral-100 text-content-muted dark:bg-white/5 dark:text-neutral-300">
                 <Icon :name="themeIcon" :size="18" />
               </span>
               <span class="min-w-0 flex-1 truncate text-[0.95rem] font-medium">Appearance</span>

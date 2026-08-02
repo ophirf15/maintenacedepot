@@ -44,7 +44,7 @@
     <div v-if="tab === 'types'" class="space-y-3">
       <form v-if="canManage" class="card-pad space-y-4" @submit.prevent="createType">
         <div class="flex items-center gap-2">
-          <Icon name="plus" :size="18" class="text-neutral-400" />
+          <Icon name="plus" :size="18" class="text-content-muted" />
           <p class="section-title">Add a kind of service</p>
         </div>
 
@@ -61,7 +61,7 @@
           </div>
         </div>
 
-        <label class="flex items-start gap-2.5 rounded-xl bg-neutral-50 p-3 text-sm text-neutral-700">
+        <label class="flex items-start gap-2.5 rounded-xl bg-surface p-3 text-sm text-content-muted">
           <input v-model="typeForm.requires_downtime" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-neutral-300" />
           <span>
             Nobody can use the tool during this service
@@ -93,11 +93,11 @@
 
       <ul v-else class="space-y-2">
         <li v-for="t in types" :key="t.id" class="card flex flex-wrap items-center gap-3 p-4">
-          <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500 shrink-0">
+          <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-neutral-100 text-content-muted shrink-0">
             <Icon :name="kindMeta(t.kind).icon" :size="20" />
           </span>
           <div class="min-w-0 flex-1">
-            <p class="text-sm font-semibold text-neutral-900">{{ t.name }}</p>
+            <p class="text-sm font-semibold text-content">{{ t.name }}</p>
             <p class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-0.5 text-xs muted">
               <span>{{ kindMeta(t.kind).label }}</span>
               <span v-if="t.requires_downtime" class="flex items-center gap-1 text-warn-600 font-medium">
@@ -118,7 +118,7 @@
     <div v-else-if="tab === 'plans'" class="space-y-3">
       <form v-if="canManage" class="card-pad space-y-4" @submit.prevent="createPlan">
         <div class="flex items-center gap-2">
-          <Icon name="calendar" :size="18" class="text-neutral-400" />
+          <Icon name="calendar" :size="18" class="text-content-muted" />
           <p class="section-title">Add a service plan</p>
         </div>
 
@@ -174,7 +174,7 @@
           </div>
         </div>
 
-        <label class="flex items-start gap-2.5 rounded-xl bg-neutral-50 p-3 text-sm text-neutral-700">
+        <label class="flex items-start gap-2.5 rounded-xl bg-surface p-3 text-sm text-content-muted">
           <input v-model="planForm.blocks_checkout_when_overdue" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-neutral-300" />
           <span>
             Block pick-up until serviced
@@ -218,8 +218,8 @@
             <Icon :name="planTint(p).icon" :size="20" />
           </span>
           <div class="min-w-0 flex-1">
-            <p class="text-sm font-semibold text-neutral-900">{{ p.name }}</p>
-            <p class="text-xs text-neutral-700 mt-0.5">{{ planTarget(p) }}</p>
+            <p class="text-sm font-semibold text-content">{{ p.name }}</p>
+            <p class="text-xs text-content-muted mt-0.5">{{ planTarget(p) }}</p>
             <p class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs muted">
               <span v-if="p.maintenance_type?.name" class="flex items-center gap-1">
                 <Icon name="settings" :size="13" />
@@ -252,7 +252,7 @@
     <div v-else class="space-y-3">
       <form v-if="canManage" class="card-pad space-y-4" @submit.prevent="createWorkOrder">
         <div class="flex items-center gap-2">
-          <Icon name="hammer" :size="18" class="text-neutral-400" />
+          <Icon name="hammer" :size="18" class="text-content-muted" />
           <p class="section-title">Add a job</p>
         </div>
 
@@ -306,8 +306,8 @@
               <Icon :name="wo.status === 'completed' ? 'check-circle' : 'wrench'" :size="20" />
             </span>
             <div class="min-w-0 flex-1">
-              <p class="text-sm font-semibold text-neutral-900">{{ wo.title }}</p>
-              <p class="text-xs text-neutral-700 mt-0.5">{{ wo.item?.label || `Tool #${wo.item_id}` }}</p>
+              <p class="text-sm font-semibold text-content">{{ wo.title }}</p>
+              <p class="text-xs text-content-muted mt-0.5">{{ wo.item?.label || `Tool #${wo.item_id}` }}</p>
               <p class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-1 text-xs muted">
                 <span class="font-mono">{{ wo.reference }}</span>
                 <span v-if="wo.item?.asset_tag" class="flex items-center gap-1">
@@ -332,10 +332,10 @@
 
           <div
             v-if="canManage && wo.status !== 'completed' && completeForms[wo.id]"
-            class="rounded-xl bg-neutral-50 p-3 space-y-3"
+            class="rounded-xl bg-surface p-3 space-y-3"
           >
             <p class="section-title flex items-center gap-2">
-              <Icon name="clipboard" :size="16" class="text-neutral-400" />
+              <Icon name="clipboard" :size="16" class="text-content-muted" />
               Log the work
             </p>
 
@@ -497,7 +497,7 @@ function planTint(plan) {
 
   return {
     card: '',
-    badge: 'bg-neutral-100 text-neutral-500',
+    badge: 'bg-neutral-100 text-content-muted',
     icon: 'check-circle',
     status: 'available',
     label: 'On track',

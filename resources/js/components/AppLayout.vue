@@ -1,5 +1,8 @@
 <template>
   <div class="app-shell bg-surface md:flex overflow-x-hidden">
+    <a href="#main-content" class="skip-link">
+      Skip to main content
+    </a>
     <!-- Desktop sidebar (Material-style permanent rail content) -->
     <aside
       class="hidden md:sticky md:top-0 md:z-auto md:flex md:h-screen w-[17rem] shrink-0
@@ -27,7 +30,7 @@
                 <span class="flex-1 truncate">{{ link.label }}</span>
                 <span
                   v-if="link.badge"
-                  class="rounded-full bg-warn-600 px-1.5 py-0.5 text-[0.65rem] font-bold text-white leading-none min-w-[1.15rem] text-center"
+                  class="rounded-full bg-warn-solid px-1.5 py-0.5 text-[0.65rem] font-bold text-white leading-none min-w-[1.15rem] text-center"
                 >
                   {{ link.badge }}
                 </span>
@@ -130,7 +133,7 @@
             <Icon name="cart" :size="22" />
             <span
               v-if="cart.lines.length"
-              class="absolute top-1 right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-600 px-1 text-[0.6rem] font-bold text-white"
+              class="absolute top-1 right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-solid px-1 text-[0.6rem] font-bold text-white"
             >
               {{ cart.lines.length }}
             </span>
@@ -147,7 +150,9 @@
       </header>
 
       <main
+        id="main-content"
         ref="mainEl"
+        tabindex="-1"
         class="app-main min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain
                [-webkit-overflow-scrolling:touch]
                px-4
@@ -184,7 +189,7 @@
               <Icon :name="tab.icon" :size="22" />
               <span
                 v-if="tab.badge"
-                class="absolute -top-0.5 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-warn-600 px-1 text-[0.58rem] font-bold text-white leading-none"
+                class="absolute -top-0.5 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-warn-solid px-1 text-[0.58rem] font-bold text-white leading-none"
               >
                 {{ tab.badge > 9 ? '9+' : tab.badge }}
               </span>

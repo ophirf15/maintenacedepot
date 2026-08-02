@@ -11,8 +11,8 @@
       <Icon :name="icon" :size="19" />
     </span>
     <div class="min-w-0 flex-1">
-      <p class="text-xl sm:text-2xl font-semibold leading-none tracking-tight text-neutral-900">{{ value }}</p>
-      <p class="text-[0.8rem] sm:text-sm font-medium text-neutral-700 mt-1 leading-snug line-clamp-2">{{ label }}</p>
+      <p class="text-xl sm:text-2xl font-semibold leading-none tracking-tight text-content">{{ value }}</p>
+      <p class="text-[0.8rem] sm:text-sm font-medium text-content-muted mt-1 leading-snug line-clamp-2">{{ label }}</p>
       <p v-if="hint" class="hidden sm:block text-xs muted mt-0.5 truncate">{{ hint }}</p>
     </div>
   </component>
@@ -33,7 +33,7 @@ const props = defineProps({
 });
 
 const TONE_CLASSES = {
-  neutral: 'bg-neutral-100 text-neutral-600',
+  neutral: 'bg-neutral-100 text-content-muted',
   brand: 'bg-brand-100 text-brand-700',
   info: 'bg-info-100 text-info-600',
   warn: 'bg-warn-100 text-warn-600',

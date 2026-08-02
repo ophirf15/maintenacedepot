@@ -14,11 +14,11 @@
             v-for="(s, i) in steps"
             :key="s.label"
             class="flex flex-1 items-center gap-2 text-xs font-medium"
-            :class="i <= step ? 'text-neutral-900' : 'muted'"
+            :class="i <= step ? 'text-content' : 'muted'"
           >
             <span
               class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
-              :class="i <= step ? 'bg-brand-600 text-white' : 'bg-neutral-100 text-neutral-400'"
+              :class="i <= step ? 'bg-brand-solid text-white' : 'bg-neutral-100 text-content-muted'"
             >
               <Icon :name="i < step ? 'check' : s.icon" :size="15" :stroke-width="2" />
             </span>
@@ -77,7 +77,7 @@
               placeholder="At least 8 characters"
             />
           </div>
-          <label class="flex items-start gap-2.5 rounded-xl bg-neutral-50 p-3 text-sm text-neutral-700">
+          <label class="flex items-start gap-2.5 rounded-xl bg-surface p-3 text-sm text-content-muted">
             <input v-model="form.seed_demo_data" type="checkbox" class="mt-0.5 h-4 w-4 rounded border-neutral-300" />
             <span>
               Add example data
@@ -108,7 +108,7 @@
                 <Icon :name="row.icon" :size="15" />
                 {{ row.label }}
               </dt>
-              <dd class="truncate font-medium text-neutral-900">{{ row.value }}</dd>
+              <dd class="truncate font-medium text-content">{{ row.value }}</dd>
             </div>
           </dl>
 
@@ -134,7 +134,7 @@
             <Icon name="check-circle" :size="30" />
           </span>
           <div>
-            <p class="font-semibold text-neutral-900">All done</p>
+            <p class="font-semibold text-content">All done</p>
             <p class="mt-1 text-sm muted">You can now sign in as {{ result?.admin_email }}.</p>
           </div>
           <RouterLink to="/login" class="btn-primary">

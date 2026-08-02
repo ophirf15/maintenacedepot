@@ -32,7 +32,7 @@
             </span>
 
             <div class="min-w-0 flex-1">
-              <p class="font-semibold text-neutral-900 truncate">{{ tt.name }}</p>
+              <p class="font-semibold text-content truncate">{{ tt.name }}</p>
               <p class="text-xs font-medium mt-0.5" :class="tt.available_count ? 'text-brand-700' : 'text-warn-600'">
                 <span v-if="tt.available_count">{{ tt.available_count }} of {{ tt.total_count }} free now</span>
                 <span v-else-if="tt.allow_waitlist">None free — join the waitlist</span>
@@ -65,7 +65,7 @@
             </button>
           </div>
 
-          <div v-if="expanded === tt.id" class="border-t border-line bg-neutral-50/70 p-4">
+          <div v-if="expanded === tt.id" class="border-t border-line bg-surface/70 p-4">
             <p v-if="itemsLoading" class="text-sm muted py-2">Loading units…</p>
             <p v-else-if="!items.length" class="text-sm muted py-2">No units recorded for this tool.</p>
             <ul v-else class="space-y-2">
@@ -76,7 +76,7 @@
               >
                 <button
                   type="button"
-                  class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-neutral-100 text-neutral-500"
+                  class="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-neutral-100 text-content-muted"
                   :aria-label="`Details for ${item.label || item.asset_tag}`"
                   @click="openPeek(item, tt)"
                 >
@@ -90,11 +90,11 @@
                 </button>
 
                 <button type="button" class="min-w-0 flex-1 text-left" @click="openPeek(item, tt)">
-                  <p class="truncate text-sm font-medium text-neutral-900">
+                  <p class="truncate text-sm font-medium text-content">
                     {{ item.label || item.asset_tag }}
                   </p>
                   <p class="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs muted">
-                    <span class="font-mono font-semibold text-neutral-700">#{{ item.numeric_id }}</span>
+                    <span class="font-mono font-semibold text-content-muted">#{{ item.numeric_id }}</span>
                     <span aria-hidden="true">·</span>
                     <Icon name="qr" :size="13" />
                     <span class="font-mono">{{ item.asset_tag }}</span>
@@ -106,7 +106,7 @@
                     <span
                       v-for="spec in item.specs.slice(0, 3)"
                       :key="spec.key"
-                      class="inline-flex items-center rounded-lg border border-line bg-white px-2 py-0.5 text-[0.7rem] font-medium text-neutral-700"
+                      class="inline-flex items-center rounded-lg border border-line bg-surface-raised px-2 py-0.5 text-[0.7rem] font-medium text-content-muted"
                     >
                       {{ spec.label }}: {{ spec.display }}
                     </span>
@@ -158,7 +158,7 @@
               <Icon name="clock" :size="20" />
             </span>
             <div>
-              <h2 class="font-semibold text-neutral-900">Join the waitlist</h2>
+              <h2 class="font-semibold text-content">Join the waitlist</h2>
               <p class="text-sm muted">We'll note you want {{ waitlistFor.name }} when a unit is free.</p>
             </div>
           </div>

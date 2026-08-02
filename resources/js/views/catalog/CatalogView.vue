@@ -11,7 +11,7 @@
           Cart
           <span
             v-if="cart.lines.length"
-            class="ml-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-700 px-1 text-[0.65rem] font-bold text-white"
+            class="ml-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-brand-solid px-1 text-[0.65rem] font-bold text-white"
           >
             {{ cart.lines.length }}
           </span>
@@ -56,12 +56,12 @@
           <Icon :name="iconFor(cat)" :size="30" :stroke-width="1.6" />
         </span>
         <div class="min-w-0">
-          <p class="font-semibold text-neutral-900 leading-tight">{{ cat.name }}</p>
-          <p class="mt-1.5 text-xs font-medium" :class="cat.available_count ? 'text-brand-700' : 'text-neutral-400'">
+          <p class="font-semibold text-content leading-tight">{{ cat.name }}</p>
+          <p class="mt-1.5 text-xs font-medium" :class="cat.available_count ? 'text-brand-700' : 'text-warn-600'">
             <span v-if="cat.available_count">{{ cat.available_count }} ready to borrow</span>
             <span v-else>All out right now</span>
           </p>
-          <p class="text-[0.7rem] muted">{{ cat.total_count }} total</p>
+          <p class="text-[0.7rem] text-content-muted">{{ cat.total_count }} total</p>
         </div>
       </RouterLink>
     </div>

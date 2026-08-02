@@ -23,17 +23,17 @@
     <template v-else>
       <section v-if="items.length" class="card">
         <header class="flex items-center gap-2 p-4 pb-3">
-          <Icon name="boxes" :size="18" class="text-neutral-400" />
+          <Icon name="boxes" :size="18" class="text-content-muted" />
           <p class="section-title">Tools ({{ items.length }})</p>
         </header>
         <ul class="divide-rows border-t border-line">
           <li v-for="item in items" :key="item.id">
-            <RouterLink :to="itemLink(item)" class="flex items-center gap-3 px-4 py-3 hover:bg-neutral-50">
-              <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 text-neutral-500 shrink-0">
+            <RouterLink :to="itemLink(item)" class="flex items-center gap-3 px-4 py-3 hover:bg-surface">
+              <span class="flex h-9 w-9 items-center justify-center rounded-lg bg-neutral-100 text-content-muted shrink-0">
                 <Icon :name="iconForItem(item)" :size="18" />
               </span>
               <div class="min-w-0 flex-1">
-                <p class="text-sm font-medium text-neutral-900 truncate">{{ item.label || item.asset_tag }}</p>
+                <p class="text-sm font-medium text-content truncate">{{ item.label || item.asset_tag }}</p>
                 <p class="text-xs muted font-mono">{{ item.asset_tag }} · {{ item.depot?.name || 'No depot' }}</p>
               </div>
               <StatusBadge :status="item.status?.slug" :label="item.status?.name" :color="item.status?.color" />
@@ -45,14 +45,14 @@
 
       <section v-if="requests.length" class="card">
         <header class="flex items-center gap-2 p-4 pb-3">
-          <Icon name="clipboard" :size="18" class="text-neutral-400" />
+          <Icon name="clipboard" :size="18" class="text-content-muted" />
           <p class="section-title">Requests ({{ requests.length }})</p>
         </header>
         <ul class="divide-rows border-t border-line">
           <li v-for="r in requests" :key="r.id">
-            <RouterLink :to="`/requests/${r.id}`" class="flex items-center gap-3 px-4 py-3 hover:bg-neutral-50">
+            <RouterLink :to="`/requests/${r.id}`" class="flex items-center gap-3 px-4 py-3 hover:bg-surface">
               <div class="min-w-0 flex-1">
-                <p class="text-sm font-medium text-neutral-900 truncate">{{ r.summary }}</p>
+                <p class="text-sm font-medium text-content truncate">{{ r.summary }}</p>
                 <p class="text-xs muted font-mono">{{ r.reference }}</p>
               </div>
               <StatusBadge :status="r.status" />

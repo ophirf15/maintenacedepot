@@ -15,7 +15,7 @@
 
     <section class="card overflow-hidden">
       <header class="flex items-center gap-2 border-b border-line p-4 sm:p-5">
-        <Icon name="filter" :size="18" class="text-neutral-400" />
+        <Icon name="filter" :size="18" class="text-content-muted" />
         <p class="section-title">Narrow it down</p>
       </header>
       <div class="grid gap-3 p-4 sm:p-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -51,14 +51,14 @@
 
     <template v-else>
       <ul class="card divide-rows overflow-hidden">
-        <li v-for="e in events" :key="e.id" class="p-3 sm:p-4 hover:bg-neutral-50">
+        <li v-for="e in events" :key="e.id" class="p-3 sm:p-4 hover:bg-surface">
           <div class="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-neutral-500">
+            <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-neutral-100 text-content-muted">
               <Icon name="user" :size="19" />
             </span>
 
             <div class="min-w-0 flex-1 basis-48">
-              <p class="truncate font-medium text-neutral-900">{{ e.user?.name || e.actor_label || 'The system' }}</p>
+              <p class="truncate font-medium text-content">{{ e.user?.name || e.actor_label || 'The system' }}</p>
               <p class="flex items-center gap-1.5 text-xs muted">
                 <Icon name="clock" :size="13" />
                 {{ formatDateTime(e.occurred_at) }}
@@ -68,7 +68,7 @@
             <StatusBadge :status="e.event" />
           </div>
 
-          <p v-if="e.description" class="mt-2 text-sm text-neutral-700">{{ e.description }}</p>
+          <p v-if="e.description" class="mt-2 text-sm text-content-muted">{{ e.description }}</p>
 
           <p class="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs muted">
             <span class="flex items-center gap-1">
