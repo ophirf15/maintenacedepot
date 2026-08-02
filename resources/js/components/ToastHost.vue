@@ -1,5 +1,7 @@
 <template>
-  <div class="pointer-events-none fixed inset-x-0 bottom-[calc(5.75rem+env(safe-area-inset-bottom,0px))] sm:bottom-6 z-50 flex flex-col items-center gap-2 px-4">
+  <div class="pointer-events-none fixed inset-x-0 z-50 flex flex-col items-center gap-2 px-4
+              bottom-[calc(4.25rem+env(safe-area-inset-bottom,0px))]
+              sm:bottom-6">
     <TransitionGroup name="toast">
       <div
         v-for="item in toasts.items"

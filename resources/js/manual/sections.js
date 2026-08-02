@@ -70,7 +70,9 @@ export const MANUAL_SECTIONS = [
         steps: [
           'Use the left sidebar (or phone menu) for main areas: Borrow, Depot, Admin.',
           'Use the top search box to find tools (and requests/people if you approve loans).',
-          'On phones, the bottom bar keeps Home, Catalog, and Scan up front (plus Approve or Loans by role).',
+          'On phones the top bar and bottom tabs stay fixed like an app; content scrolls between them.',
+          'Bottom tabs keep Home, Catalog, and Scan up front (plus Approve or Loans by role).',
+          'Open the menu (☰) for everything else, including Theme and Help.',
           'Open Help (book icon) in the top bar anytime for this manual.',
         ],
       },

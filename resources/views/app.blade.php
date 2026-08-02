@@ -3,7 +3,13 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <meta name="theme-color" content="#E7660B">
+    <meta name="theme-color" content="#E7660B" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0f0f12" media="(prefers-color-scheme: dark)">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Maint. Depot">
+    <meta name="format-detection" content="telephone=no">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="alternate icon" href="/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="/icons/app-icon-512.png">
@@ -24,7 +30,7 @@
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="min-h-screen bg-surface antialiased">
+<body class="min-h-dvh bg-surface antialiased">
     <div id="app"></div>
     <script>
         if ('serviceWorker' in navigator) {
