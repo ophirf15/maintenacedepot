@@ -111,6 +111,8 @@ class UpdaterService
 
         Artisan::call('down', ['--retry' => 60]);
 
+        $filesApplied = false;
+
         try {
             $zipPath = storage_path('app/update-package.zip');
             $bytes = Http::timeout(180)->get($url)->body();
@@ -142,6 +144,7 @@ class UpdaterService
             $packageRoot = $this->resolvePackageRoot($extractTo);
             $this->overlayPackage($packageRoot, base_path());
             $this->mirrorWebAssetsForSharedHosting();
+            $filesApplied = true;
 
             Artisan::call('migrate', ['--force' => true]);
 
@@ -150,18 +153,30 @@ class UpdaterService
             $this->writeInstalledVersion($latest);
             $this->recordAppliedVersion($latest, $previous, $info['release_notes'] ?? null);
 
-            Artisan::call('up');
-            Artisan::call('config:clear');
-            Artisan::call('cache:clear');
-            Artisan::call('view:clear');
-            Artisan::call('route:clear');
-
             return ['ok' => true, 'version' => $latest];
         } catch (\Throwable $e) {
-            Artisan::call('up');
-            Log::error('Update failed', ['error' => $e->getMessage()]);
+            Log::error('Update failed', ['error' => $e->getMessage(), 'files_applied' => $filesApplied]);
 
-            return ['ok' => false, 'message' => $e->getMessage()];
+            return [
+                'ok' => false,
+                'message' => $e->getMessage(),
+                'files_applied' => $filesApplied,
+            ];
+        } finally {
+            Artisan::call('up');
+            // Always refresh caches after a successful file overlay — even if version
+            // bookkeeping fails — otherwise shared hosts keep serving stale config/JS.
+            if ($filesApplied) {
+                try {
+                    $this->mirrorWebAssetsForSharedHosting();
+                    Artisan::call('config:clear');
+                    Artisan::call('cache:clear');
+                    Artisan::call('view:clear');
+                    Artisan::call('route:clear');
+                } catch (\Throwable $clearError) {
+                    Log::warning('Post-update cache clear failed', ['error' => $clearError->getMessage()]);
+                }
+            }
         }
     }
 
