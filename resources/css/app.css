@@ -38,6 +38,7 @@
 html {
     background: var(--color-surface);
     color-scheme: light;
+    overflow-x: hidden;
 }
 
 html.dark {

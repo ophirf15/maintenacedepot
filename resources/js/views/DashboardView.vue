@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-4 sm:space-y-6">
+  <div class="space-y-4 sm:space-y-6 min-w-0 overflow-x-hidden">
     <!-- Hero: greeting + status. Primary actions live in the phone bottom bar. -->
     <section class="rounded-2xl bg-ink-950 p-4 sm:p-7 text-white">
       <p class="text-sm text-white/50">{{ greeting }},</p>
@@ -39,8 +39,8 @@
       <StatTile v-for="tile in tiles" :key="tile.label" v-bind="tile" />
     </div>
 
-    <div class="grid lg:grid-cols-2 gap-3 sm:gap-6">
-      <section class="card">
+    <div class="grid lg:grid-cols-2 gap-3 sm:gap-6 min-w-0">
+      <section class="card min-w-0 overflow-hidden">
         <header class="flex items-center justify-between gap-3 px-3.5 py-3 sm:p-5 sm:pb-3">
           <div class="flex items-center gap-2 min-w-0">
             <Icon name="clipboard" :size="18" class="text-neutral-400 shrink-0" />
@@ -49,21 +49,27 @@
           <RouterLink to="/requests" class="shrink-0 text-sm font-medium text-brand-700 hover:underline">See all</RouterLink>
         </header>
         <ul v-if="recentRequests.length" class="divide-rows border-t border-line">
-          <li v-for="r in recentRequests" :key="r.id">
-            <RouterLink :to="`/requests/${r.id}`" class="flex items-center gap-2.5 px-3.5 sm:px-5 py-3 hover:bg-neutral-50">
-              <div class="min-w-0 flex-1">
+          <li v-for="r in recentRequests" :key="r.id" class="min-w-0">
+            <RouterLink
+              :to="`/requests/${r.id}`"
+              class="flex min-w-0 items-start gap-2 px-3.5 sm:px-5 py-3 hover:bg-neutral-50 sm:items-center"
+            >
+              <div class="min-w-0 flex-1 overflow-hidden">
                 <p class="text-sm font-medium text-neutral-900 truncate">{{ r.summary }}</p>
                 <p class="text-xs muted mt-0.5 font-mono truncate">{{ r.reference }}</p>
+                <div class="mt-1.5 sm:hidden">
+                  <StatusBadge :status="r.status" compact />
+                </div>
               </div>
-              <StatusBadge :status="r.status" />
-              <Icon name="chevron-right" :size="16" class="text-neutral-300 shrink-0" />
+              <StatusBadge :status="r.status" class="hidden sm:inline-flex shrink-0" />
+              <Icon name="chevron-right" :size="16" class="mt-1 text-neutral-300 shrink-0 sm:mt-0" />
             </RouterLink>
           </li>
         </ul>
         <p v-else class="px-4 py-5 sm:px-5 sm:py-8 text-center text-sm muted">Nothing here yet.</p>
       </section>
 
-      <section class="card">
+      <section class="card min-w-0 overflow-hidden">
         <header class="flex items-center justify-between gap-3 px-3.5 py-3 sm:p-5 sm:pb-3">
           <div class="flex items-center gap-2 min-w-0">
             <Icon name="handshake" :size="18" class="text-neutral-400 shrink-0" />
@@ -72,17 +78,23 @@
           <RouterLink to="/loans" class="shrink-0 text-sm font-medium text-brand-700 hover:underline">See all</RouterLink>
         </header>
         <ul v-if="recentLoans.length" class="divide-rows border-t border-line">
-          <li v-for="l in recentLoans" :key="l.id">
-            <RouterLink :to="`/loans/${l.id}`" class="flex items-center gap-2.5 px-3.5 sm:px-5 py-3 hover:bg-neutral-50">
-              <div class="min-w-0 flex-1">
+          <li v-for="l in recentLoans" :key="l.id" class="min-w-0">
+            <RouterLink
+              :to="`/loans/${l.id}`"
+              class="flex min-w-0 items-start gap-2 px-3.5 sm:px-5 py-3 hover:bg-neutral-50 sm:items-center"
+            >
+              <div class="min-w-0 flex-1 overflow-hidden">
                 <p class="text-sm font-medium text-neutral-900 truncate">{{ l.summary }}</p>
-                <p class="text-xs muted mt-0.5 flex items-center gap-1.5">
-                  <Icon name="calendar" :size="13" />
-                  {{ dueLabel(l) }}
+                <p class="text-xs muted mt-0.5 flex items-center gap-1.5 truncate">
+                  <Icon name="calendar" :size="13" class="shrink-0" />
+                  <span class="truncate">{{ dueLabel(l) }}</span>
                 </p>
+                <div class="mt-1.5 sm:hidden">
+                  <StatusBadge :status="l.status" compact />
+                </div>
               </div>
-              <StatusBadge :status="l.status" />
-              <Icon name="chevron-right" :size="16" class="text-neutral-300 shrink-0" />
+              <StatusBadge :status="l.status" class="hidden sm:inline-flex shrink-0" />
+              <Icon name="chevron-right" :size="16" class="mt-1 text-neutral-300 shrink-0 sm:mt-0" />
             </RouterLink>
           </li>
         </ul>

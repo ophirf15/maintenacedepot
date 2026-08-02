@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-surface md:flex">
+  <div class="min-h-screen bg-surface md:flex overflow-x-hidden">
     <!-- Mobile slide-over backdrop -->
     <div
       v-if="navOpen"
@@ -63,7 +63,7 @@
       </div>
     </aside>
 
-    <div class="flex min-w-0 flex-1 flex-col">
+    <div class="flex min-w-0 max-w-full flex-1 flex-col overflow-x-hidden">
       <header class="sticky top-0 z-30 flex h-16 items-center gap-2 border-b border-line bg-surface-raised/85 px-3 sm:px-5 backdrop-blur">
         <button class="md:hidden btn-ghost h-10 w-10 px-0" aria-label="Open menu" @click="navOpen = true">
           <Icon name="menu" :size="20" />
@@ -119,40 +119,40 @@
         </RouterLink>
       </header>
 
-      <main class="flex-1 p-4 sm:p-6 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-8">
-        <div class="mx-auto w-full max-w-6xl">
+      <main class="min-w-0 flex-1 overflow-x-hidden p-4 sm:p-6 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-8">
+        <div class="mx-auto w-full max-w-6xl min-w-0">
           <RouterView />
         </div>
       </main>
-
-      <!-- Phone bottom bar: Home + Catalog + Scan are always primary -->
-      <nav
-        class="md:hidden fixed bottom-0 inset-x-0 z-30 border-t border-line bg-surface-raised/95 backdrop-blur"
-        style="padding-bottom: env(safe-area-inset-bottom, 0px)"
-        aria-label="Primary"
-      >
-        <ul class="grid h-14" :class="bottomTabs.length === 5 ? 'grid-cols-5' : 'grid-cols-4'">
-          <li v-for="tab in bottomTabs" :key="tab.to">
-            <RouterLink
-              :to="tab.to"
-              class="bottom-tab"
-              :class="{ 'bottom-tab-active': isBottomTabActive(tab) }"
-            >
-              <span class="relative">
-                <Icon :name="tab.icon" :size="22" />
-                <span
-                  v-if="tab.badge"
-                  class="absolute -top-1 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-warn-600 px-1 text-[0.6rem] font-bold text-white leading-none"
-                >
-                  {{ tab.badge > 9 ? '9+' : tab.badge }}
-                </span>
-              </span>
-              <span>{{ tab.label }}</span>
-            </RouterLink>
-          </li>
-        </ul>
-      </nav>
     </div>
+
+    <!-- Fixed to the viewport (not inside the scrolling column) so overflow pages can't drag it. -->
+    <nav
+      class="md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-line bg-surface-raised/95 backdrop-blur"
+      style="padding-bottom: env(safe-area-inset-bottom, 0px)"
+      aria-label="Primary"
+    >
+      <ul class="grid h-14" :class="bottomTabs.length === 5 ? 'grid-cols-5' : 'grid-cols-4'">
+        <li v-for="tab in bottomTabs" :key="tab.to" class="min-w-0">
+          <RouterLink
+            :to="tab.to"
+            class="bottom-tab"
+            :class="{ 'bottom-tab-active': isBottomTabActive(tab) }"
+          >
+            <span class="relative">
+              <Icon :name="tab.icon" :size="22" />
+              <span
+                v-if="tab.badge"
+                class="absolute -top-1 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-warn-600 px-1 text-[0.6rem] font-bold text-white leading-none"
+              >
+                {{ tab.badge > 9 ? '9+' : tab.badge }}
+              </span>
+            </span>
+            <span class="truncate max-w-full px-0.5">{{ tab.label }}</span>
+          </RouterLink>
+        </li>
+      </ul>
+    </nav>
   </div>
 </template>
 
