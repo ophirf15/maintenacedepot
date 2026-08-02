@@ -83,6 +83,17 @@ body {
         height: 100dvh;
         overflow: hidden;
     }
+
+    html.nav-sheet-open,
+    html.nav-sheet-open body {
+        overflow: hidden;
+        touch-action: none;
+    }
+
+    html.nav-sheet-open .nav-sheet-panel,
+    html.nav-sheet-open .nav-sheet-scroll {
+        touch-action: pan-y;
+    }
 }
 
 /* Remove tap flash; keep press feedback via CSS :active where needed. */

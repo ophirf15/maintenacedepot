@@ -1,17 +1,9 @@
 <template>
   <div class="app-shell bg-surface md:flex overflow-x-hidden">
-    <!-- Mobile slide-over backdrop -->
-    <div
-      v-if="navOpen"
-      class="fixed inset-0 z-40 bg-black/40 md:hidden"
-      @click="navOpen = false"
-    />
-
+    <!-- Desktop sidebar (Material-style permanent rail content) -->
     <aside
-      class="fixed md:sticky top-0 z-50 md:z-auto h-dvh w-[17rem] shrink-0 bg-ink-950 text-white/80
-             flex flex-col transition-transform duration-200 ease-out md:translate-x-0 md:h-screen"
-      :class="navOpen ? 'translate-x-0' : '-translate-x-full'"
-      style="padding-top: env(safe-area-inset-top, 0px)"
+      class="hidden md:sticky md:top-0 md:z-auto md:flex md:h-screen w-[17rem] shrink-0
+             flex-col bg-ink-950 text-white/80"
     >
       <div class="flex items-center gap-2.5 px-4 h-14 shrink-0">
         <span class="flex h-9 w-9 items-center justify-center overflow-hidden rounded-xl bg-white/10 ring-1 ring-white/15">
@@ -21,24 +13,16 @@
           <p class="text-sm font-semibold text-white truncate">{{ appName }}</p>
           <p class="text-[0.7rem] text-white/45 truncate">Maintenance tools</p>
         </div>
-        <button
-          type="button"
-          class="md:hidden flex h-11 w-11 items-center justify-center -mr-1 text-white/60 hover:text-white"
-          aria-label="Close menu"
-          @click="navOpen = false"
-        >
-          <Icon name="x" :size="18" />
-        </button>
       </div>
 
-      <nav class="flex-1 overflow-y-auto overscroll-contain px-3 pb-4 space-y-5 [-webkit-overflow-scrolling:touch]">
+      <nav class="flex-1 overflow-y-auto overscroll-contain px-3 pb-4 space-y-5">
         <div v-for="group in navGroups" :key="group.label">
           <p class="px-2.5 pb-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-white/35">
             {{ group.label }}
           </p>
           <ul class="space-y-0.5">
             <li v-for="link in group.links" :key="link.to">
-              <RouterLink :to="link.to" class="nav-link" @click="navOpen = false">
+              <RouterLink :to="link.to" class="nav-link">
                 <Icon :name="link.icon" :size="18" />
                 <span class="flex-1 truncate">{{ link.label }}</span>
                 <span
@@ -53,18 +37,7 @@
         </div>
       </nav>
 
-      <div
-        class="border-t border-white/10 p-3 shrink-0 space-y-2"
-        style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px))"
-      >
-        <button
-          type="button"
-          class="md:hidden flex w-full items-center gap-2.5 rounded-xl px-2 py-2.5 text-left text-white/70 hover:bg-white/5 hover:text-white"
-          @click="theme.cycle()"
-        >
-          <Icon :name="theme.icon" :size="18" />
-          <span class="text-sm font-medium">Theme: {{ theme.label }}</span>
-        </button>
+      <div class="border-t border-white/10 p-3 shrink-0">
         <div class="flex items-center gap-2.5 rounded-xl px-2 py-2">
           <span class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-xs font-bold text-white">
             {{ initials }}
@@ -85,11 +58,27 @@
       </div>
     </aside>
 
+    <MobileNavSheet
+      :open="navOpen"
+      :groups="navGroups"
+      :app-name="appName"
+      :user-name="auth.user?.name || ''"
+      :role-label="roleLabel"
+      :theme-label="theme.label"
+      :theme-icon="theme.icon"
+      @close="navOpen = false"
+      @cycle-theme="theme.cycle()"
+      @logout="logout"
+    />
+
     <div class="flex min-w-0 max-w-full flex-1 flex-col overflow-x-hidden max-md:h-full max-md:min-h-0">
-      <!-- Fixed app chrome on phones; sticky on desktop -->
       <header
-        class="app-topbar z-30 flex items-center gap-1.5 border-b border-line bg-surface-raised/95 px-2 sm:gap-2 sm:px-5 backdrop-blur
-               fixed inset-x-0 top-0 md:sticky md:top-0"
+        class="app-topbar z-30 flex items-center gap-1.5 px-2 sm:gap-2 sm:px-5
+               fixed inset-x-0 top-0 md:sticky md:top-0
+               border-b transition-[background,box-shadow,border-color] duration-200"
+        :class="headerElevated
+          ? 'border-line bg-surface-raised shadow-[0_1px_0_rgba(0,0,0,0.04),0_8px_24px_-16px_rgba(0,0,0,0.35)]'
+          : 'border-transparent bg-surface-raised/92 backdrop-blur-xl md:border-line'"
         style="padding-top: env(safe-area-inset-top, 0px)"
       >
         <div class="flex h-14 w-full items-center gap-1.5 sm:gap-2">
@@ -97,6 +86,8 @@
             type="button"
             class="md:hidden btn-ghost h-11 w-11 px-0 shrink-0"
             aria-label="Open menu"
+            :aria-expanded="navOpen"
+            aria-controls="mobile-nav-sheet"
             @click="navOpen = true"
           >
             <Icon name="menu" :size="22" />
@@ -112,7 +103,7 @@
               enterkeyhint="search"
               autocomplete="off"
               :placeholder="searchPlaceholder"
-              class="input h-11 pl-9 text-base md:text-sm"
+              class="input h-11 pl-9 text-base md:text-sm rounded-2xl border-transparent bg-neutral-100/90 dark:bg-white/5 focus:border-line focus:bg-surface-raised"
             />
           </form>
 
@@ -160,33 +151,40 @@
         class="app-main min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain
                [-webkit-overflow-scrolling:touch]
                px-4
-               pt-[calc(3.5rem+env(safe-area-inset-top,0px)+1rem)]
+               pt-[calc(3.5rem+env(safe-area-inset-top,0px)+0.85rem)]
                pb-[calc(3.75rem+env(safe-area-inset-bottom,0px)+1rem)]
                md:px-6 md:pt-6 md:pb-8"
+        @scroll="onMainScroll"
       >
         <div class="mx-auto w-full max-w-6xl min-w-0">
-          <RouterView />
+          <RouterView v-slot="{ Component }">
+            <Transition name="page-fade" mode="out-in">
+              <component :is="Component" />
+            </Transition>
+          </RouterView>
         </div>
       </main>
     </div>
 
     <nav
-      class="app-tabbar md:hidden fixed bottom-0 inset-x-0 z-40 border-t border-line bg-surface-raised/95 backdrop-blur"
+      class="app-tabbar md:hidden fixed bottom-0 inset-x-0 z-40
+             border-t border-line/70 bg-surface-raised/94 backdrop-blur-2xl
+             shadow-[0_-8px_28px_-18px_rgba(0,0,0,0.35)]"
       style="padding-bottom: env(safe-area-inset-bottom, 0px)"
       aria-label="Primary"
     >
-      <ul class="grid h-14" :class="bottomTabs.length === 5 ? 'grid-cols-5' : 'grid-cols-4'">
+      <ul class="grid h-[3.75rem]" :class="bottomTabs.length === 5 ? 'grid-cols-5' : 'grid-cols-4'">
         <li v-for="tab in bottomTabs" :key="tab.to" class="min-w-0">
           <RouterLink
             :to="tab.to"
             class="bottom-tab"
             :class="{ 'bottom-tab-active': isBottomTabActive(tab) }"
           >
-            <span class="relative">
+            <span class="bottom-tab-icon" :class="{ 'bottom-tab-icon-active': isBottomTabActive(tab) }">
               <Icon :name="tab.icon" :size="22" />
               <span
                 v-if="tab.badge"
-                class="absolute -top-1 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-warn-600 px-1 text-[0.6rem] font-bold text-white leading-none"
+                class="absolute -top-0.5 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full bg-warn-600 px-1 text-[0.58rem] font-bold text-white leading-none"
               >
                 {{ tab.badge > 9 ? '9+' : tab.badge }}
               </span>
@@ -200,11 +198,12 @@
 </template>
 
 <script setup>
-import { computed, nextTick, onMounted, ref, watch } from 'vue';
+import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router';
 import api from '../api';
 import BrandMark from './BrandMark.vue';
 import Icon from './Icon.vue';
+import MobileNavSheet from './MobileNavSheet.vue';
 import { useAuthStore, useCartStore } from '../stores/auth';
 import { useThemeStore } from '../stores/theme';
 
@@ -219,6 +218,7 @@ const searchTerm = ref('');
 const unread = ref(0);
 const pendingApprovals = ref(0);
 const mainEl = ref(null);
+const headerElevated = ref(false);
 
 const appName = computed(() => auth.config?.branding?.app_name || 'Maintenance Depot');
 
@@ -226,19 +226,24 @@ watch(appName, (name) => {
   if (name) document.title = name;
 }, { immediate: true });
 
-// App-like: reset scroll when changing screens.
 watch(
   () => route.fullPath,
   async () => {
     navOpen.value = false;
     await nextTick();
-    if (mainEl.value) {
-      mainEl.value.scrollTop = 0;
-    } else {
-      window.scrollTo(0, 0);
-    }
+    if (mainEl.value) mainEl.value.scrollTop = 0;
+    else window.scrollTo(0, 0);
+    headerElevated.value = false;
   },
 );
+
+watch(navOpen, (open) => {
+  document.documentElement.classList.toggle('nav-sheet-open', open);
+});
+
+onUnmounted(() => {
+  document.documentElement.classList.remove('nav-sheet-open');
+});
 
 const initials = computed(() =>
   (auth.user?.name || '?')
@@ -262,10 +267,7 @@ const roleLabel = computed(() =>
 );
 
 const isApprover = computed(() => auth.can('approve_requests'));
-
-const searchPlaceholder = computed(() =>
-  isApprover.value ? 'Search tools…' : 'Search tools…',
-);
+const searchPlaceholder = computed(() => 'Search tools…');
 
 const navGroups = computed(() => {
   const groups = [
@@ -334,7 +336,6 @@ const navGroups = computed(() => {
 
 const bottomTabs = computed(() => {
   const canScan = auth.can('checkout_items') || auth.can('borrow_items');
-
   const tabs = [
     { to: '/', label: 'Home', icon: 'home', match: ['/'] },
     { to: '/catalog', label: 'Catalog', icon: 'grid', match: ['/catalog', '/items'] },
@@ -367,14 +368,18 @@ function isBottomTabActive(tab) {
   return (tab.match || [tab.to]).some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
 }
 
+function onMainScroll(event) {
+  headerElevated.value = (event.target?.scrollTop || 0) > 4;
+}
+
 function runSearch() {
   const term = searchTerm.value.trim();
   if (!term) return;
-
   router.push({ path: '/search', query: { q: term } });
 }
 
 async function logout() {
+  navOpen.value = false;
   await auth.logout();
   router.push('/login');
 }
@@ -405,7 +410,7 @@ onMounted(async () => {
   align-items: center;
   gap: 0.7rem;
   padding: 0.7rem 0.65rem;
-  border-radius: 0.7rem;
+  border-radius: 999px;
   font-size: 0.875rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.62);
@@ -417,30 +422,61 @@ onMounted(async () => {
   color: #fff;
 }
 .nav-link.router-link-exact-active {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   color: #fff;
 }
+
 .bottom-tab {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.15rem;
+  gap: 0.2rem;
   height: 100%;
   min-height: 3.5rem;
-  padding: 0.35rem 0.15rem;
-  font-size: 0.65rem;
+  padding: 0.25rem 0.15rem 0.35rem;
+  font-size: 0.62rem;
   font-weight: 600;
   line-height: 1.1;
   color: var(--color-content-muted);
   text-align: center;
   -webkit-tap-highlight-color: transparent;
-  transition: color 0.12s, transform 0.12s;
+  transition: color 0.15s ease;
 }
 .bottom-tab:active {
-  transform: scale(0.94);
+  opacity: 0.75;
 }
 .bottom-tab-active {
   color: var(--color-brand-700);
+}
+.bottom-tab-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 2rem;
+  border-radius: 999px;
+  transition: background 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.bottom-tab-icon-active {
+  background: color-mix(in srgb, var(--color-brand-600) 18%, transparent);
+  transform: translateY(-1px) scale(1.02);
+}
+.bottom-tab-active .bottom-tab-icon-active :deep(svg) {
+  stroke-width: 2;
+}
+
+.page-fade-enter-active,
+.page-fade-leave-active {
+  transition: opacity 0.16s ease, transform 0.16s ease;
+}
+.page-fade-enter-from {
+  opacity: 0;
+  transform: translateY(6px);
+}
+.page-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-4px);
 }
 </style>
