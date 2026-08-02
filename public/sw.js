@@ -1,4 +1,4 @@
-const CACHE_NAME = 'maintenance-depot-shell-v3';
+const CACHE_NAME = 'maintenance-depot-shell-v4';
 const SHELL_ASSETS = ['/manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {

@@ -120,16 +120,20 @@
             <Icon :name="theme.icon" :size="20" />
           </button>
 
-          <RouterLink
-            to="/help"
-            class="btn-ghost hidden md:inline-flex h-10 w-10 px-0"
-            title="User manual"
-            aria-label="Open user manual"
-          >
-            <Icon name="book" :size="20" />
+          <RouterLink to="/notifications" class="btn-ghost relative h-11 w-11 px-0 shrink-0" title="Notifications">
+            <Icon name="bell" :size="22" />
+            <span
+              v-if="unread"
+              class="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-warn-600 ring-2 ring-[var(--color-surface-raised)]"
+            />
           </RouterLink>
 
-          <RouterLink to="/cart" class="btn-ghost relative h-11 w-11 px-0 shrink-0" title="Tool bag" aria-label="Tool bag">
+          <RouterLink
+            to="/cart"
+            class="btn-ghost relative ml-1.5 h-11 w-11 px-0 shrink-0 sm:ml-2.5"
+            title="Tool bag"
+            aria-label="Tool bag"
+          >
             <Icon name="toolbag" :size="22" />
             <span
               v-if="cart.lines.length"
@@ -137,14 +141,6 @@
             >
               {{ cart.lines.length }}
             </span>
-          </RouterLink>
-
-          <RouterLink to="/notifications" class="btn-ghost relative h-11 w-11 px-0 shrink-0" title="Notifications">
-            <Icon name="bell" :size="22" />
-            <span
-              v-if="unread"
-              class="absolute top-2.5 right-2.5 h-2 w-2 rounded-full bg-warn-600 ring-2 ring-[var(--color-surface-raised)]"
-            />
           </RouterLink>
         </div>
       </header>

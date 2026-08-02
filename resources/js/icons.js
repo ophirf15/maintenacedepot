@@ -19,9 +19,6 @@ const LOCAL = {
   package:
     '<path d="M21 8v8a2 2 0 0 1-1.1 1.8l-7 3.6a2 2 0 0 1-1.8 0l-7-3.6A2 2 0 0 1 3 16V8"/><path d="m3.3 7.2 8.7 4.4 8.7-4.4"/><path d="M12 21.8V11.6"/><path d="M12 2.2 3.3 6.6l8.7 4.4 8.7-4.4Z"/>',
   cart: '<circle cx="9" cy="20" r="1.4"/><circle cx="18" cy="20" r="1.4"/><path d="M2.5 3h2.2l2.3 11.2a1.6 1.6 0 0 0 1.6 1.3h9.6a1.6 1.6 0 0 0 1.6-1.3L21 7H6"/>',
-  // Soft work bag — borrow “tool bag” (wordplay on shopping cart).
-  toolbag:
-    '<path d="M8 7V5.5A2.5 2.5 0 0 1 10.5 3h3A2.5 2.5 0 0 1 16 5.5V7"/><path d="M5 7h14l-1.2 12.2A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.8L5 7Z"/><path d="M9.5 12.5v4"/><path d="M14.5 12.5v4"/><path d="M12 11.5v5"/>',
   clipboard:
     '<rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9.5 4V3a1.5 1.5 0 0 1 1.5-1.5h2A1.5 1.5 0 0 1 14.5 3v1"/><path d="M9.5 10h5"/><path d="M9.5 14h5"/><path d="M9.5 18h3"/>',
   check: '<path d="m4 12.5 5 5L20 6.5"/>',
