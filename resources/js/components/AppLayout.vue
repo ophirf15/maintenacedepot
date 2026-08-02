@@ -119,18 +119,34 @@
         </RouterLink>
       </header>
 
-      <main class="flex-1 p-4 sm:p-6 pb-24 md:pb-8">
+      <main class="flex-1 p-4 sm:p-6 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] md:pb-8">
         <div class="mx-auto w-full max-w-6xl">
           <RouterView />
         </div>
       </main>
 
-      <!-- Phone bottom bar: the four things field crews actually do -->
-      <nav class="md:hidden fixed bottom-0 inset-x-0 z-30 border-t border-line bg-surface-raised/95 backdrop-blur">
-        <ul class="grid grid-cols-4">
+      <!-- Phone bottom bar: Home + Catalog + Scan are always primary -->
+      <nav
+        class="md:hidden fixed bottom-0 inset-x-0 z-30 border-t border-line bg-surface-raised/95 backdrop-blur"
+        style="padding-bottom: env(safe-area-inset-bottom, 0px)"
+        aria-label="Primary"
+      >
+        <ul class="grid h-14" :class="bottomTabs.length === 5 ? 'grid-cols-5' : 'grid-cols-4'">
           <li v-for="tab in bottomTabs" :key="tab.to">
-            <RouterLink :to="tab.to" class="bottom-tab">
-              <Icon :name="tab.icon" :size="21" />
+            <RouterLink
+              :to="tab.to"
+              class="bottom-tab"
+              :class="{ 'bottom-tab-active': isBottomTabActive(tab) }"
+            >
+              <span class="relative">
+                <Icon :name="tab.icon" :size="22" />
+                <span
+                  v-if="tab.badge"
+                  class="absolute -top-1 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-warn-600 px-1 text-[0.6rem] font-bold text-white leading-none"
+                >
+                  {{ tab.badge > 9 ? '9+' : tab.badge }}
+                </span>
+              </span>
               <span>{{ tab.label }}</span>
             </RouterLink>
           </li>
@@ -142,7 +158,7 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from 'vue';
-import { RouterLink, RouterView, useRouter } from 'vue-router';
+import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router';
 import api from '../api';
 import BrandMark from './BrandMark.vue';
 import Icon from './Icon.vue';
@@ -153,6 +169,7 @@ const auth = useAuthStore();
 const cart = useCartStore();
 const theme = useThemeStore();
 const router = useRouter();
+const route = useRoute();
 
 const navOpen = ref(false);
 const searchTerm = ref('');
@@ -258,22 +275,40 @@ const navGroups = computed(() => {
 });
 
 const bottomTabs = computed(() => {
-  if (isApprover.value) {
-    return [
-      { to: '/', label: 'Home', icon: 'home' },
-      { to: '/approvals', label: 'Approve', icon: 'check-circle' },
-      { to: '/scan', label: 'Scan', icon: 'scan' },
-      { to: '/loans', label: 'Loans', icon: 'handshake' },
-    ];
+  const canScan = auth.can('checkout_items') || auth.can('borrow_items');
+
+  // Catalog + Scan are always primary on phones (most common field actions).
+  const tabs = [
+    { to: '/', label: 'Home', icon: 'home', match: ['/'] },
+    { to: '/catalog', label: 'Catalog', icon: 'grid', match: ['/catalog', '/items'] },
+  ];
+
+  if (canScan) {
+    tabs.push({ to: '/scan', label: 'Scan', icon: 'scan', match: ['/scan'] });
   }
 
-  return [
-    { to: '/', label: 'Home', icon: 'home' },
-    { to: '/catalog', label: 'Browse', icon: 'grid' },
-    { to: '/requests', label: 'Requests', icon: 'clipboard' },
-    { to: '/loans', label: 'My loans', icon: 'handshake' },
-  ];
+  if (isApprover.value) {
+    tabs.push({
+      to: '/approvals',
+      label: 'Approve',
+      icon: 'check-circle',
+      match: ['/approvals'],
+      badge: pendingApprovals.value || null,
+    });
+  } else if (auth.can('borrow_items')) {
+    tabs.push({ to: '/loans', label: 'Loans', icon: 'handshake', match: ['/loans'] });
+  } else {
+    tabs.push({ to: '/tickets', label: 'Reports', icon: 'ticket', match: ['/tickets'] });
+  }
+
+  return tabs;
 });
+
+function isBottomTabActive(tab) {
+  const path = route.path;
+  if (tab.to === '/') return path === '/';
+  return (tab.match || [tab.to]).some((prefix) => path === prefix || path.startsWith(`${prefix}/`));
+}
 
 function runSearch() {
   const term = searchTerm.value.trim();
@@ -331,13 +366,18 @@ onMounted(async () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 0.15rem;
-  padding: 0.5rem 0 0.6rem;
-  font-size: 0.68rem;
+  height: 100%;
+  min-height: 3.5rem;
+  padding: 0.35rem 0.15rem;
+  font-size: 0.65rem;
   font-weight: 600;
+  line-height: 1.1;
   color: var(--color-content-muted);
+  text-align: center;
 }
-.bottom-tab.router-link-exact-active {
+.bottom-tab-active {
   color: var(--color-brand-700);
 }
 </style>

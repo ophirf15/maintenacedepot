@@ -2,18 +2,18 @@
   <component
     :is="to ? RouterLink : 'div'"
     :to="to"
-    class="card-pad card-hover flex items-start gap-3"
+    class="card-pad card-hover flex items-start gap-2.5 sm:gap-3 min-h-[4.75rem]"
   >
     <span
-      class="flex h-10 w-10 items-center justify-center rounded-xl shrink-0"
+      class="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl shrink-0"
       :class="accentClasses"
     >
-      <Icon :name="icon" :size="20" />
+      <Icon :name="icon" :size="19" />
     </span>
-    <div class="min-w-0">
-      <p class="text-2xl font-semibold leading-none tracking-tight text-neutral-900">{{ value }}</p>
-      <p class="text-sm font-medium text-neutral-700 mt-1.5 truncate">{{ label }}</p>
-      <p v-if="hint" class="text-xs muted truncate">{{ hint }}</p>
+    <div class="min-w-0 flex-1">
+      <p class="text-xl sm:text-2xl font-semibold leading-none tracking-tight text-neutral-900">{{ value }}</p>
+      <p class="text-[0.8rem] sm:text-sm font-medium text-neutral-700 mt-1 leading-snug line-clamp-2">{{ label }}</p>
+      <p v-if="hint" class="hidden sm:block text-xs muted mt-0.5 truncate">{{ hint }}</p>
     </div>
   </component>
 </template>

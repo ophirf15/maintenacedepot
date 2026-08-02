@@ -1,65 +1,79 @@
 <template>
-  <div class="space-y-6">
-    <!-- Hero: greeting, plain-language status line, and the buttons people press most -->
-    <section class="rounded-2xl bg-ink-950 p-5 sm:p-7 text-white">
+  <div class="space-y-4 sm:space-y-6">
+    <!-- Hero: greeting + status. Primary actions live in the phone bottom bar. -->
+    <section class="rounded-2xl bg-ink-950 p-4 sm:p-7 text-white">
       <p class="text-sm text-white/50">{{ greeting }},</p>
-      <h1 class="mt-1 text-2xl sm:text-3xl font-semibold tracking-tight flex items-center gap-2">
+      <h1 class="mt-0.5 text-xl sm:text-3xl font-semibold tracking-tight flex items-center gap-2">
         {{ firstName }}
-        <Icon name="sparkles" :size="22" class="text-brand-500" />
+        <Icon name="sparkles" :size="20" class="text-brand-500" />
       </h1>
-      <p class="mt-2 max-w-2xl text-sm text-white/65 leading-relaxed">{{ heroLine }}</p>
+      <p class="mt-1.5 sm:mt-2 max-w-2xl text-sm text-white/65 leading-relaxed">{{ heroLine }}</p>
 
-      <div class="mt-5 flex flex-wrap gap-2">
+      <!-- Desktop / tablet quick actions. On phones Catalog + Scan are in the bottom bar. -->
+      <div class="mt-4 sm:mt-5 hidden sm:flex flex-wrap gap-2">
         <RouterLink v-for="action in quickActions" :key="action.to" :to="action.to" class="hero-action">
           <Icon :name="action.icon" :size="17" />
           {{ action.label }}
         </RouterLink>
       </div>
+
+      <!-- Compact phone-only extras that are not on the bottom bar -->
+      <div class="mt-3 grid grid-cols-2 gap-2 sm:hidden">
+        <RouterLink
+          v-for="action in mobileExtraActions"
+          :key="action.to"
+          :to="action.to"
+          class="hero-action justify-center text-center"
+        >
+          <Icon :name="action.icon" :size="16" />
+          {{ action.label }}
+        </RouterLink>
+      </div>
     </section>
 
-    <div v-if="loading" class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-      <div v-for="i in 4" :key="i" class="skeleton h-24" />
+    <div v-if="loading" class="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
+      <div v-for="i in 4" :key="i" class="skeleton h-20 sm:h-24" />
     </div>
 
-    <div v-else class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+    <div v-else class="grid grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4">
       <StatTile v-for="tile in tiles" :key="tile.label" v-bind="tile" />
     </div>
 
-    <div class="grid lg:grid-cols-2 gap-4 sm:gap-6">
+    <div class="grid lg:grid-cols-2 gap-3 sm:gap-6">
       <section class="card">
-        <header class="flex items-center justify-between gap-3 p-4 sm:p-5 pb-3">
-          <div class="flex items-center gap-2">
-            <Icon name="clipboard" :size="18" class="text-neutral-400" />
-            <p class="section-title">{{ isAdmin ? 'Latest requests' : 'My requests' }}</p>
+        <header class="flex items-center justify-between gap-3 px-3.5 py-3 sm:p-5 sm:pb-3">
+          <div class="flex items-center gap-2 min-w-0">
+            <Icon name="clipboard" :size="18" class="text-neutral-400 shrink-0" />
+            <p class="section-title truncate">{{ isAdmin ? 'Latest requests' : 'My requests' }}</p>
           </div>
-          <RouterLink to="/requests" class="text-sm font-medium text-brand-700 hover:underline">See all</RouterLink>
+          <RouterLink to="/requests" class="shrink-0 text-sm font-medium text-brand-700 hover:underline">See all</RouterLink>
         </header>
         <ul v-if="recentRequests.length" class="divide-rows border-t border-line">
           <li v-for="r in recentRequests" :key="r.id">
-            <RouterLink :to="`/requests/${r.id}`" class="flex items-center gap-3 px-4 sm:px-5 py-3 hover:bg-neutral-50">
+            <RouterLink :to="`/requests/${r.id}`" class="flex items-center gap-2.5 px-3.5 sm:px-5 py-3 hover:bg-neutral-50">
               <div class="min-w-0 flex-1">
                 <p class="text-sm font-medium text-neutral-900 truncate">{{ r.summary }}</p>
-                <p class="text-xs muted mt-0.5 font-mono">{{ r.reference }}</p>
+                <p class="text-xs muted mt-0.5 font-mono truncate">{{ r.reference }}</p>
               </div>
               <StatusBadge :status="r.status" />
-              <Icon name="chevron-right" :size="16" class="text-neutral-300" />
+              <Icon name="chevron-right" :size="16" class="text-neutral-300 shrink-0" />
             </RouterLink>
           </li>
         </ul>
-        <p v-else class="px-5 py-8 text-center text-sm muted">Nothing here yet.</p>
+        <p v-else class="px-4 py-5 sm:px-5 sm:py-8 text-center text-sm muted">Nothing here yet.</p>
       </section>
 
       <section class="card">
-        <header class="flex items-center justify-between gap-3 p-4 sm:p-5 pb-3">
-          <div class="flex items-center gap-2">
-            <Icon name="handshake" :size="18" class="text-neutral-400" />
-            <p class="section-title">{{ isAdmin ? 'Active loans' : 'My loans' }}</p>
+        <header class="flex items-center justify-between gap-3 px-3.5 py-3 sm:p-5 sm:pb-3">
+          <div class="flex items-center gap-2 min-w-0">
+            <Icon name="handshake" :size="18" class="text-neutral-400 shrink-0" />
+            <p class="section-title truncate">{{ isAdmin ? 'Active loans' : 'My loans' }}</p>
           </div>
-          <RouterLink to="/loans" class="text-sm font-medium text-brand-700 hover:underline">See all</RouterLink>
+          <RouterLink to="/loans" class="shrink-0 text-sm font-medium text-brand-700 hover:underline">See all</RouterLink>
         </header>
         <ul v-if="recentLoans.length" class="divide-rows border-t border-line">
           <li v-for="l in recentLoans" :key="l.id">
-            <RouterLink :to="`/loans/${l.id}`" class="flex items-center gap-3 px-4 sm:px-5 py-3 hover:bg-neutral-50">
+            <RouterLink :to="`/loans/${l.id}`" class="flex items-center gap-2.5 px-3.5 sm:px-5 py-3 hover:bg-neutral-50">
               <div class="min-w-0 flex-1">
                 <p class="text-sm font-medium text-neutral-900 truncate">{{ l.summary }}</p>
                 <p class="text-xs muted mt-0.5 flex items-center gap-1.5">
@@ -68,11 +82,11 @@
                 </p>
               </div>
               <StatusBadge :status="l.status" />
-              <Icon name="chevron-right" :size="16" class="text-neutral-300" />
+              <Icon name="chevron-right" :size="16" class="text-neutral-300 shrink-0" />
             </RouterLink>
           </li>
         </ul>
-        <p v-else class="px-5 py-8 text-center text-sm muted">Nothing out right now.</p>
+        <p v-else class="px-4 py-5 sm:px-5 sm:py-8 text-center text-sm muted">Nothing out right now.</p>
       </section>
     </div>
   </div>
@@ -112,9 +126,9 @@ const heroLine = computed(() => {
       `${s.pending_requests ?? 0} request${s.pending_requests === 1 ? '' : 's'} ready to approve`,
       `${s.active_loans ?? 0} active loan${s.active_loans === 1 ? '' : 's'}`,
     ];
-    if (s.awaiting_borrower_requests) parts.push(`${s.awaiting_borrower_requests} waiting for borrower to accept changes`);
+    if (s.awaiting_borrower_requests) parts.push(`${s.awaiting_borrower_requests} waiting on borrower`);
     if (s.overdue_loans) parts.push(`${s.overdue_loans} overdue`);
-    if (s.open_tickets) parts.push(`${s.open_tickets} damage report${s.open_tickets === 1 ? '' : 's'} open`);
+    if (s.open_tickets) parts.push(`${s.open_tickets} open report${s.open_tickets === 1 ? '' : 's'}`);
 
     return `${parts.join(' · ')}.`;
   }
@@ -147,6 +161,21 @@ const quickActions = computed(() => {
   ];
 });
 
+/** Phone hero chips for actions not already on the bottom bar. */
+const mobileExtraActions = computed(() => {
+  if (isAdmin.value) {
+    return [
+      { to: '/tickets', label: 'Damage reports', icon: 'ticket' },
+      { to: '/loans', label: 'Active loans', icon: 'handshake' },
+    ];
+  }
+
+  return [
+    { to: '/requests', label: 'My requests', icon: 'clipboard' },
+    { to: '/tickets', label: 'Damage reports', icon: 'ticket' },
+  ];
+});
+
 const tiles = computed(() => {
   const s = stats.value;
 
@@ -160,7 +189,7 @@ const tiles = computed(() => {
         to: '/approvals?status=submitted',
       },
       {
-        label: 'Waiting for borrower',
+        label: 'Waiting on borrower',
         value: s.awaiting_borrower_requests ?? 0,
         icon: 'clock',
         tone: (s.awaiting_borrower_requests || 0) > 0 ? 'warn' : 'neutral',
@@ -169,14 +198,14 @@ const tiles = computed(() => {
       },
       { label: 'Active loans', value: s.active_loans ?? 0, icon: 'truck', tone: 'neutral', to: '/loans' },
       {
-        label: 'Overdue returns',
+        label: 'Overdue',
         value: s.overdue_loans ?? 0,
         icon: 'alert',
         tone: (s.overdue_loans || 0) > 0 ? 'danger' : 'neutral',
         to: '/loans?overdue=1',
       },
       {
-        label: 'Open damage reports',
+        label: 'Damage reports',
         value: s.open_tickets ?? 0,
         icon: 'ticket',
         tone: (s.open_tickets || 0) > 0 ? 'warn' : 'neutral',
@@ -197,7 +226,7 @@ const tiles = computed(() => {
     { label: 'My requests', value: s.my_requests ?? 0, icon: 'clipboard', tone: 'neutral', to: '/requests' },
     { label: 'My loans', value: s.my_active_loans ?? 0, icon: 'handshake', tone: 'brand', to: '/loans' },
     {
-      label: 'Overdue returns',
+      label: 'Overdue',
       value: s.my_overdue_loans ?? 0,
       icon: 'alert',
       tone: (s.my_overdue_loans || 0) > 0 ? 'danger' : 'neutral',
@@ -240,7 +269,7 @@ onMounted(async () => {
   gap: 0.45rem;
   border-radius: 0.7rem;
   background: rgba(255, 255, 255, 0.1);
-  padding: 0.55rem 0.9rem;
+  padding: 0.55rem 0.75rem;
   font-size: 0.8125rem;
   font-weight: 600;
   color: #fff;
