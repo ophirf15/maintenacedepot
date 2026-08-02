@@ -125,6 +125,13 @@ class UpdaterService
             }
             mkdir($extractTo, 0755, true);
 
+            $header = (string) file_get_contents($zipPath, false, null, 0, 4);
+            if (! str_starts_with($header, 'PK')) {
+                throw new \RuntimeException(
+                    'Download was not a zip file (check the release asset URL). Got: '.substr(trim((string) file_get_contents($zipPath, false, null, 0, 80)), 0, 60)
+                );
+            }
+
             $zip = new ZipArchive;
             if ($zip->open($zipPath) !== true) {
                 throw new \RuntimeException('Unable to open update zip');
@@ -141,17 +148,7 @@ class UpdaterService
             $previous = $this->currentVersion();
             $latest = $info['latest'];
             $this->writeInstalledVersion($latest);
-
-            AppVersion::query()->where('is_current', true)->update(['is_current' => false]);
-            AppVersion::query()->create([
-                'version' => $latest,
-                'previous_version' => $previous,
-                'applied_at' => now(),
-                'applied_by' => auth()->id(),
-                'status' => 'applied',
-                'release_notes' => $info['release_notes'] ?? null,
-                'is_current' => true,
-            ]);
+            $this->recordAppliedVersion($latest, $previous, $info['release_notes'] ?? null);
 
             Artisan::call('up');
             Artisan::call('config:clear');
@@ -272,6 +269,24 @@ class UpdaterService
             File::ensureDirectoryExists(base_path('brand'));
             File::copyDirectory(base_path('public/brand'), base_path('brand'));
         }
+    }
+
+    protected function recordAppliedVersion(string $latest, string $previous, ?string $releaseNotes): void
+    {
+        AppVersion::query()->where('is_current', true)->update(['is_current' => false]);
+
+        // Idempotent: re-running the same version (or a partial prior attempt) must not 500.
+        AppVersion::query()->updateOrCreate(
+            ['version' => $latest],
+            [
+                'previous_version' => $previous,
+                'applied_at' => now(),
+                'applied_by' => auth()->id(),
+                'status' => 'applied',
+                'release_notes' => $releaseNotes,
+                'is_current' => true,
+            ]
+        );
     }
 
     protected function writeInstalledVersion(string $version): void
