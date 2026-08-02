@@ -347,6 +347,16 @@ export const MANUAL_SECTIONS = [
           'Staff with approve permission decide Allow extra time or Decline.',
         ],
       },
+      {
+        title: 'Handle tools with no reservation (staff)',
+        anyOf: ['checkout_items'],
+        steps: [
+          'Open Scan pick-up or return → section 4 (No matching loan?).',
+          'For a grab-and-go tool: Walk-in pick-up — borrower, dates, then check out.',
+          'For a tool coming back with no checkout record: Orphan return — borrower, condition/hours, then close.',
+          'Both create a real loan so the activity log and usage stay consistent.',
+        ],
+      },
     ],
     actions: [
       { name: 'Scan pick-up or return', where: 'Loan list', does: 'Opens the scan workflow.', anyOf: ['checkout_items', 'borrow_items'] },
@@ -405,6 +415,26 @@ export const MANUAL_SECTIONS = [
           'If you have No signal, scans stay on the phone until you have signal and confirm again.',
         ],
       },
+      {
+        title: 'Walk-in pick-up (no prior request)',
+        anyOf: ['checkout_items'],
+        steps: [
+          'If Confirm scans says no active loan, tap Start walk-in checkout on the failed row — or open section 4.',
+          'Enter the tool number, search and select the borrower, choose property and depot.',
+          'Set Return by and optional notes (why there was no request).',
+          'Tap Create walk-in loan & check out. Open the loan link to confirm details.',
+        ],
+      },
+      {
+        title: 'Orphan return (tool never checked out)',
+        anyOf: ['checkout_items'],
+        steps: [
+          'On a failed Return scan with no loan, tap Record orphan return — or use section 4 → Orphan return.',
+          'Select who had the tool, property, depot, inbound condition, fuel, and hours used.',
+          'Flag damage if needed, add notes, then Create loan & record return.',
+          'The system creates a short loan, checks it out, and closes the return so usage is audited.',
+        ],
+      },
     ],
     actions: [
       { name: 'Use the camera / Stop the camera', where: 'Scan page', does: 'Starts or stops the device camera QR reader.' },
@@ -415,10 +445,17 @@ export const MANUAL_SECTIONS = [
       { name: 'Remove', where: 'Queued row', does: 'Deletes a queued scan before confirm.' },
       { name: 'Confirm scans', where: 'Scan page', does: 'Sends the queue to the depot (requires checkout permission for sync).', anyOf: ['checkout_items'] },
       { name: 'You have signal / No signal', where: 'Badge', does: 'Shows whether the browser is online.' },
+      { name: 'Start walk-in checkout… / Record orphan return…', where: 'Failed scan row', does: 'Opens the exception form for that tool number.', anyOf: ['checkout_items'] },
+      { name: 'Walk-in pick-up / Orphan return', where: 'Section 4', does: 'Switches exception mode.', anyOf: ['checkout_items'] },
+      { name: 'Borrower search', where: 'Exception form', does: 'Finds active people to attach to the ad-hoc loan.', anyOf: ['checkout_items'] },
+      { name: 'Create walk-in loan & check out', where: 'Exception form', does: 'Creates a loan and checks the tool out immediately.', anyOf: ['checkout_items'] },
+      { name: 'Create loan & record return', where: 'Exception form', does: 'Creates a short loan, checks out, then closes with return inspection.', anyOf: ['checkout_items'] },
+      { name: 'Open loan #…', where: 'After exception', does: 'Jumps to the loan detail page.', anyOf: ['checkout_items'] },
     ],
     tips: [
       { text: 'Offline scanning must be enabled under Settings → Features.', anyOf: ['manage_settings', 'manage_it', 'checkout_items'] },
       'Successful rows show Saved to the depot; failures show Did not send with an error.',
+      { text: 'Walk-in and orphan return need signal — they are not queued offline.', anyOf: ['checkout_items'] },
     ],
     troubles: [
       {
@@ -432,7 +469,12 @@ export const MANUAL_SECTIONS = [
       },
       {
         problem: 'No active loan for this QR',
-        fix: 'The tool is not on a reserved/out loan, or the wrong action (Pick-up vs Return) is selected.',
+        fix: 'Wrong action (Pick-up vs Return), or the tool was never reserved. Staff: use Walk-in pick-up or Orphan return in section 4.',
+      },
+      {
+        problem: 'Walk-in says tool already on a loan',
+        fix: 'Open that loan reference and use normal check-out or return. Do not create a second loan for the same tool.',
+        anyOf: ['checkout_items'],
       },
     ],
   },

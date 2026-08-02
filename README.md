@@ -37,11 +37,20 @@ Open http://127.0.0.1:8000
 
 ## Client install (shared PHP/nginx + MySQL)
 
-1. Upload a **release zip** (includes `vendor/` + built `public/build`) — no Composer/Node required on the host.
+1. Download a **release zip** from GitHub Releases (`maintenance-depot-{version}-install.zip`, or the plain `maintenance-depot-{version}.zip`). It includes `vendor/` and built `public/build` — no Composer/Node required on the host.
 2. Point the web root at `/public`.
-3. Create a MySQL database; copy `.env.example` → `.env` and set `APP_URL`, `DB_*`.
+3. Create a MySQL database; copy `.env.example` → `.env` and set `APP_URL`, `DB_*`. Never deploy a real `.env` from development.
 4. Visit `/install` and create the first IT admin (optionally seed demo data).
-5. In **IT Admin → Updates**, set `DEPOT_GITHUB_REPO` / GitHub settings to enable one-click updates.
+5. In **IT Admin → Updates**, set `DEPOT_GITHUB_REPO` / GitHub settings to enable one-click updates (uses `maintenance-depot-{version}-update.zip`).
+
+### Publishing a release
+
+```bash
+git tag v1.2.0
+git push origin v1.2.0
+```
+
+The **Release** GitHub Action builds assets, packs install/update zips (secrets and local data excluded), and attaches them to the GitHub Release. You can also run the workflow manually (**Actions → Release → Run workflow**).
 
 ## Phases shipped
 

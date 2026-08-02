@@ -6,6 +6,7 @@ use App\Http\Controllers\Concerns\AuthorizesDepotAccess;
 use App\Http\Controllers\Controller;
 use App\Models\Loan;
 use App\Models\LoanExtension;
+use App\Models\User;
 use App\Services\AuditLogger;
 use App\Services\CompanionService;
 use App\Services\LoanService;
@@ -279,5 +280,92 @@ class LoanController extends Controller
             ->map(fn (array $event) => $this->loans->syncOfflineScan($request->user(), $event));
 
         return response()->json(['data' => $results]);
+    }
+
+    /** Active borrowers for walk-in / orphan-return pickers (checkout staff). */
+    public function borrowers(Request $request)
+    {
+        $q = trim((string) $request->string('q')->toString());
+
+        $query = User::query()
+            ->where('is_active', true)
+            ->whereHas('roles', fn ($r) => $r->whereIn('name', ['borrower', 'property_manager', 'depot_admin', 'depot_maintenance', 'it_admin']))
+            ->orderBy('name')
+            ->limit(25);
+
+        if ($q !== '') {
+            $query->where(function ($builder) use ($q) {
+                $builder->where('name', 'like', "%{$q}%")
+                    ->orWhere('email', 'like', "%{$q}%");
+            });
+        }
+
+        return response()->json([
+            'data' => $query->get(['id', 'name', 'email']),
+        ]);
+    }
+
+    public function walkIn(Request $request)
+    {
+        $data = $request->validate([
+            'borrower_id' => 'required|exists:users,id',
+            'item_id' => 'nullable|exists:items,id',
+            'qr_token' => 'nullable|string',
+            'depot_id' => 'required|exists:depots,id',
+            'property_id' => 'required|exists:properties,id',
+            'due_at' => 'required|date|after:now',
+            'condition_out' => 'nullable|string|max:16',
+            'fuel_pct_out' => 'nullable|integer|min:0|max:100',
+            'notes' => 'nullable|string|max:500',
+            'maintenance_override' => 'boolean',
+            'maintenance_override_reason' => 'nullable|string|max:500',
+        ]);
+
+        if (empty($data['item_id']) && empty($data['qr_token'])) {
+            return response()->json([
+                'message' => 'Provide item_id or qr_token.',
+                'errors' => ['item_id' => ['Provide item_id or qr_token.']],
+            ], 422);
+        }
+
+        return response()->json([
+            'data' => $this->loans->createWalkInCheckout($request->user(), $data),
+        ], 201);
+    }
+
+    public function orphanReturn(Request $request)
+    {
+        $data = $request->validate([
+            'borrower_id' => 'required|exists:users,id',
+            'item_id' => 'nullable|exists:items,id',
+            'qr_token' => 'nullable|string',
+            'depot_id' => 'required|exists:depots,id',
+            'property_id' => 'required|exists:properties,id',
+            'due_at' => 'nullable|date',
+            'condition_out' => 'nullable|string|max:16',
+            'fuel_pct_out' => 'nullable|integer|min:0|max:100',
+            'condition' => 'nullable|string|max:16',
+            'fuel_pct' => 'nullable|integer|min:0|max:100',
+            'usage_hours_estimate' => 'nullable|numeric|min:0',
+            'usage_hours_reading' => 'nullable|numeric|min:0',
+            'overall_result' => 'nullable|in:pass,fail',
+            'damage_found' => 'boolean',
+            'damage_description' => 'nullable|string',
+            'end_of_life_soon' => 'boolean',
+            'take_out_of_service' => 'boolean',
+            'severity' => 'nullable|in:low,medium,high,critical',
+            'notes' => 'nullable|string|max:500',
+        ]);
+
+        if (empty($data['item_id']) && empty($data['qr_token'])) {
+            return response()->json([
+                'message' => 'Provide item_id or qr_token.',
+                'errors' => ['item_id' => ['Provide item_id or qr_token.']],
+            ], 422);
+        }
+
+        return response()->json([
+            'data' => $this->loans->createOrphanReturn($request->user(), $data),
+        ], 201);
     }
 }

@@ -1,28 +1,124 @@
-*.log
-.DS_Store
+# -----------------------------------------------------------------------------
+# Environment & secrets — never commit
+# -----------------------------------------------------------------------------
 .env
-.env.backup
-.env.production
-.phpactor.json
-.phpunit.result.cache
-/.codex
-/.cursor/
-/.idea
-/.nova
-/.phpunit.cache
-/.vscode
-/.zed
-/auth.json
+.env.*
+!.env.example
+!.env.testing
+auth.json
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+id_rsa
+id_rsa.*
+id_ed25519
+id_ed25519.*
+*_secret*
+*credentials*.json
+*credentials*.php
+.secrets/
+secrets/
+
+# -----------------------------------------------------------------------------
+# Local / runtime databases & dumps
+# -----------------------------------------------------------------------------
+*.sqlite
+*.sqlite-journal
+*.sql
+*.sql.gz
+*.dump
+/database/*.sqlite*
+
+# -----------------------------------------------------------------------------
+# Dependencies & frontend build output
+# -----------------------------------------------------------------------------
+/vendor
 /node_modules
 /public/build
-/public/fonts-manifest.dev.json
 /public/hot
+/public/fonts-manifest.dev.json
 /public/icon-sheet.html
-/public/storage
+
+# -----------------------------------------------------------------------------
+# Storage — keep directory scaffolding via nested .gitignore files only
+# -----------------------------------------------------------------------------
 /storage/*.key
 /storage/pail
-/vendor
+/storage/app/backups
+/storage/app/private/*
+!/storage/app/private/.gitignore
+/storage/app/public/*
+!/storage/app/public/.gitignore
+/storage/app/update-*.zip
+/storage/app/update-package.zip
+/storage/app/update-extract/
+/storage/app/labels-export-*.zip
+/storage/framework/cache/data/*
+!/storage/framework/cache/data/.gitignore
+/storage/framework/sessions/*
+!/storage/framework/sessions/.gitignore
+/storage/framework/testing/*
+!/storage/framework/testing/.gitignore
+/storage/framework/views/*
+!/storage/framework/views/.gitignore
+/storage/logs/*
+!/storage/logs/.gitignore
+
+# -----------------------------------------------------------------------------
+# Logs, caches, coverage, temp
+# -----------------------------------------------------------------------------
+*.log
+*.cache
+.phpunit.result.cache
+.phpunit.cache
+/.phpunit.cache
+/coverage
+/dist
+/tmp
+/temp
+*.bak
+*.tmp
+*.swp
+*~
+
+# -----------------------------------------------------------------------------
+# IDE / editor / agent tooling
+# -----------------------------------------------------------------------------
+/.cursor/
+/.codex/
+/.idea/
+/.nova/
+/.vscode/
+/.zed/
+.phpactor.json
 _ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+
+# -----------------------------------------------------------------------------
+# OS junk
+# -----------------------------------------------------------------------------
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# -----------------------------------------------------------------------------
+# Homestead / Vagrant / local deploy leftovers
+# -----------------------------------------------------------------------------
 Homestead.json
 Homestead.yaml
-Thumbs.db
+/.vagrant
+/public/storage
+
+# -----------------------------------------------------------------------------
+# Loose brand originals sometimes dropped in repo root during import
+# (canonical runtime assets live under public/brand/)
+# -----------------------------------------------------------------------------
+/favicon.png
+/logo.png
+/logo-horizontal.png

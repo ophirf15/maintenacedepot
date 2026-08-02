@@ -369,6 +369,216 @@ class LoanService
         return $extension->fresh('loan');
     }
 
+    /**
+     * Staff walk-in: create a reserved loan for an available item and check it out immediately.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function createWalkInCheckout(User $actor, array $data): Loan
+    {
+        return DB::transaction(function () use ($actor, $data) {
+            $item = $this->resolveItemForAdHoc($data);
+            $borrower = $this->resolveActiveBorrower((int) $data['borrower_id']);
+            $this->assertItemNotOnOpenLoan($item);
+
+            if (! $item->is_loanable || $item->is_consumable) {
+                throw ValidationException::withMessages([
+                    'item_id' => 'This tool cannot be borrowed.',
+                ]);
+            }
+
+            $propertyId = (int) ($data['property_id'] ?? $borrower->default_property_id);
+            $depotId = (int) ($data['depot_id'] ?? $item->depot_id);
+            if (! $propertyId || ! $depotId) {
+                throw ValidationException::withMessages([
+                    'property_id' => 'Property and depot are required for a walk-in loan.',
+                ]);
+            }
+
+            $notes = trim((string) ($data['notes'] ?? '')) ?: 'Walk-in checkout';
+            $loan = $this->createAdHocLoan($borrower, $item, $propertyId, $depotId, $data['due_at'], $notes);
+            $this->markItemReserved($item, $propertyId);
+
+            $loan = $this->checkout($loan->fresh(['items']), $actor, [
+                'items' => [[
+                    'item_id' => $item->id,
+                    'qr_token' => $data['qr_token'] ?? $item->qr_token,
+                    'condition_out' => $data['condition_out'] ?? $item->condition,
+                    'fuel_pct_out' => $data['fuel_pct_out'] ?? $item->fuel_pct,
+                ]],
+                'maintenance_override' => (bool) ($data['maintenance_override'] ?? false),
+                'maintenance_override_reason' => $data['maintenance_override_reason'] ?? null,
+                'notes' => $notes,
+            ]);
+
+            $this->audit->log('walk_in_checkout', $loan, null, [
+                'borrower_id' => $borrower->id,
+                'item_id' => $item->id,
+                'notes' => $notes,
+            ]);
+
+            return $loan->fresh(['borrower', 'depot', 'property', 'items.item.toolType']);
+        });
+    }
+
+    /**
+     * Staff orphan return: invent a short loan, check out, then inspect/close so usage is logged.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function createOrphanReturn(User $actor, array $data): Loan
+    {
+        return DB::transaction(function () use ($actor, $data) {
+            $item = $this->resolveItemForAdHoc($data);
+            $borrower = $this->resolveActiveBorrower((int) $data['borrower_id']);
+            $this->assertItemNotOnOpenLoan($item);
+
+            $propertyId = (int) ($data['property_id'] ?? $borrower->default_property_id);
+            $depotId = (int) ($data['depot_id'] ?? $item->depot_id);
+            if (! $propertyId || ! $depotId) {
+                throw ValidationException::withMessages([
+                    'property_id' => 'Property and depot are required for an orphan return.',
+                ]);
+            }
+
+            $notes = trim((string) ($data['notes'] ?? ''))
+                ?: 'Orphan return — no prior checkout recorded';
+            $dueAt = $data['due_at'] ?? now()->toDateTimeString();
+
+            $loan = $this->createAdHocLoan($borrower, $item, $propertyId, $depotId, $dueAt, $notes);
+            $this->markItemReserved($item, $propertyId);
+
+            $loan = $this->checkout($loan->fresh(['items']), $actor, [
+                'items' => [[
+                    'item_id' => $item->id,
+                    'qr_token' => $data['qr_token'] ?? $item->qr_token,
+                    'condition_out' => $data['condition_out'] ?? $item->condition,
+                    'fuel_pct_out' => $data['fuel_pct_out'] ?? $item->fuel_pct,
+                ]],
+                // Tool is physically back; do not block recording inbound condition.
+                'maintenance_override' => true,
+                'maintenance_override_reason' => 'Orphan return — recording inbound condition',
+                'notes' => $notes,
+            ]);
+
+            $loan = $this->reviewReturn($loan->fresh(['items']), $actor, [
+                'items' => [[
+                    'item_id' => $item->id,
+                    'overall_result' => $data['overall_result'] ?? 'pass',
+                    'condition' => $data['condition'] ?? $item->condition,
+                    'fuel_pct' => $data['fuel_pct'] ?? $item->fuel_pct,
+                    'usage_hours_estimate' => $data['usage_hours_estimate'] ?? null,
+                    'usage_hours_reading' => $data['usage_hours_reading'] ?? null,
+                    'damage_found' => (bool) ($data['damage_found'] ?? false),
+                    'damage_description' => $data['damage_description'] ?? null,
+                    'end_of_life_soon' => (bool) ($data['end_of_life_soon'] ?? false),
+                    'take_out_of_service' => (bool) ($data['take_out_of_service'] ?? false),
+                    'severity' => $data['severity'] ?? null,
+                    'notes' => $notes,
+                ]],
+            ]);
+
+            $loan->update(['return_notes' => $notes]);
+
+            $this->audit->log('orphan_return', $loan, null, [
+                'borrower_id' => $borrower->id,
+                'item_id' => $item->id,
+                'notes' => $notes,
+            ]);
+
+            return $loan->fresh([
+                'borrower',
+                'depot',
+                'property',
+                'items.item.toolType',
+                'items.inspection',
+            ]);
+        });
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    protected function resolveItemForAdHoc(array $data): Item
+    {
+        if (! empty($data['item_id'])) {
+            return Item::query()->with(['status', 'toolType'])->findOrFail($data['item_id']);
+        }
+
+        if (! empty($data['qr_token'])) {
+            return QrLabelService::findItemByScanCode($data['qr_token'])
+                ?? throw ValidationException::withMessages(['qr_token' => 'No tool matches that code.']);
+        }
+
+        throw ValidationException::withMessages(['item_id' => 'Provide item_id or qr_token.']);
+    }
+
+    protected function resolveActiveBorrower(int $borrowerId): User
+    {
+        $borrower = User::query()->where('id', $borrowerId)->where('is_active', true)->first();
+        if (! $borrower) {
+            throw ValidationException::withMessages(['borrower_id' => 'Borrower not found or inactive.']);
+        }
+
+        return $borrower;
+    }
+
+    protected function assertItemNotOnOpenLoan(Item $item): void
+    {
+        $open = LoanItem::query()
+            ->where('item_id', $item->id)
+            ->whereHas('loan', fn ($q) => $q->whereIn('status', ['reserved', 'checked_out', 'return_pending']))
+            ->with('loan:id,reference,status')
+            ->first();
+
+        if ($open) {
+            throw ValidationException::withMessages([
+                'item_id' => "This tool is already on loan {$open->loan->reference}. Open that loan instead.",
+            ]);
+        }
+    }
+
+    protected function createAdHocLoan(
+        User $borrower,
+        Item $item,
+        int $propertyId,
+        int $depotId,
+        mixed $dueAt,
+        string $notes,
+    ): Loan {
+        $loan = Loan::query()->create([
+            'reference' => $this->refs->make('LN'),
+            'property_id' => $propertyId,
+            'borrower_id' => $borrower->id,
+            'depot_id' => $depotId,
+            'status' => 'reserved',
+            'reserved_at' => now(),
+            'due_at' => $dueAt,
+            'original_due_at' => $dueAt,
+            'checkout_notes' => $notes,
+        ]);
+
+        LoanItem::query()->create([
+            'loan_id' => $loan->id,
+            'item_id' => $item->id,
+            'quantity' => 1,
+            'status' => 'reserved',
+        ]);
+
+        return $loan;
+    }
+
+    protected function markItemReserved(Item $item, int $propertyId): void
+    {
+        $reserved = CustomStatus::query()->where('slug', 'reserved')->first();
+        if ($reserved) {
+            $item->update([
+                'custom_status_id' => $reserved->id,
+                'current_property_id' => $propertyId,
+            ]);
+        }
+    }
+
     public function syncOfflineScan(User $user, array $event): OfflineScanEvent
     {
         $record = OfflineScanEvent::query()->firstOrCreate(

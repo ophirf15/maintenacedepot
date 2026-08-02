@@ -96,18 +96,22 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/loan-extensions/{extension}/decide', [LoanController::class, 'decideExtension']);
     });
 
-    // Loans
+    // Loans — static paths before {loan} binding
     Route::get('/loans', [LoanController::class, 'index']);
-    Route::get('/loans/{loan}', [LoanController::class, 'show']);
-    Route::post('/loans/{loan}/self-return', [LoanController::class, 'selfReturn']);
-    Route::post('/loans/{loan}/request-extension', [LoanController::class, 'requestExtension']);
 
     Route::middleware('permission:checkout_items')->group(function () {
+        Route::get('/loans/borrowers', [LoanController::class, 'borrowers']);
+        Route::post('/loans/walk-in', [LoanController::class, 'walkIn']);
+        Route::post('/loans/orphan-return', [LoanController::class, 'orphanReturn']);
+        Route::post('/loans/sync-offline', [LoanController::class, 'syncOffline']);
         Route::get('/loans/{loan}/companion-suggestions', [LoanController::class, 'companionSuggestions']);
         Route::post('/loans/{loan}/checkout', [LoanController::class, 'checkout']);
         Route::post('/loans/{loan}/review-return', [LoanController::class, 'reviewReturn']);
-        Route::post('/loans/sync-offline', [LoanController::class, 'syncOffline']);
     });
+
+    Route::get('/loans/{loan}', [LoanController::class, 'show']);
+    Route::post('/loans/{loan}/self-return', [LoanController::class, 'selfReturn']);
+    Route::post('/loans/{loan}/request-extension', [LoanController::class, 'requestExtension']);
 
     // Tickets (any authenticated user may report, management requires permission)
     Route::get('/tickets', [TicketController::class, 'index']);

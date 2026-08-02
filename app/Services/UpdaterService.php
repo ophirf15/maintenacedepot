@@ -49,9 +49,17 @@ class UpdaterService
 
             $latest = ltrim((string) $response->json('tag_name'), 'v');
             $notes = $response->json('body');
-            $asset = collect($response->json('assets') ?? [])->first(
-                fn ($a) => str_ends_with($a['name'] ?? '', '.zip')
-            );
+            $assets = collect($response->json('assets') ?? []);
+            // Prefer the dedicated update package, then the canonical zip, then any zip.
+            $asset = $assets->first(fn ($a) => str_ends_with($a['name'] ?? '', '-update.zip'))
+                ?? $assets->first(function ($a) {
+                    $name = $a['name'] ?? '';
+
+                    return str_ends_with($name, '.zip')
+                        && ! str_ends_with($name, '-install.zip')
+                        && ! str_ends_with($name, '-update.zip');
+                })
+                ?? $assets->first(fn ($a) => str_ends_with($a['name'] ?? '', '.zip'));
 
             return [
                 'current' => $this->currentVersion(),

@@ -4,29 +4,93 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release version (without leading v), e.g. 1.2.0'
+        required: true
+        type: string
+      create_github_release:
+        description: 'Publish a GitHub Release with the zips'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: shivammathur/setup-php@v2
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve version
+        id: ver
+        run: |
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            VERSION="${{ inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          VERSION="${VERSION#v}"
+          if [[ -z "$VERSION" ]]; then
+            echo "Version is empty" >&2
+            exit 1
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "Packaging Maintenance Depot v${VERSION}"
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
-          extensions: mbstring, xml, curl, zip, gd
-      - uses: actions/setup-node@v4
+          extensions: mbstring, xml, curl, zip, gd, bcmath, intl
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: composer install --no-dev --optimize-autoloader --no-interaction
-      - run: npm ci
-      - run: npm run build
-      - name: Pack release zip
+          cache: npm
+
+      - name: Install PHP dependencies
+        run: composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+
+      - name: Install JS dependencies & build assets
         run: |
-          VERSION=${GITHUB_REF_NAME#v}
-          mkdir -p dist
-          rsync -a --exclude=node_modules --exclude=.git --exclude=tests --exclude=dist ./ dist/depot-borrow/
-          cd dist && zip -r "../depot-borrow-${VERSION}.zip" depot-borrow
-      - uses: softprops/action-gh-release@v2
+          npm ci
+          npm run build
+
+      - name: Pack install & update zips
+        run: |
+          chmod +x scripts/pack-release.sh
+          ./scripts/pack-release.sh "${{ steps.ver.outputs.version }}"
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
         with:
-          files: depot-borrow-*.zip
+          name: maintenance-depot-${{ steps.ver.outputs.version }}
+          path: |
+            dist/maintenance-depot-${{ steps.ver.outputs.version }}.zip
+            dist/maintenance-depot-${{ steps.ver.outputs.version }}-install.zip
+            dist/maintenance-depot-${{ steps.ver.outputs.version }}-update.zip
+          if-no-files-found: error
+
+      - name: Publish GitHub Release
+        if: >
+          github.event_name == 'push' ||
+          (github.event_name == 'workflow_dispatch' && inputs.create_github_release)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.ver.outputs.version }}
+          name: Maintenance Depot v${{ steps.ver.outputs.version }}
           generate_release_notes: true
+          files: |
+            dist/maintenance-depot-${{ steps.ver.outputs.version }}.zip
+            dist/maintenance-depot-${{ steps.ver.outputs.version }}-install.zip
+            dist/maintenance-depot-${{ steps.ver.outputs.version }}-update.zip
+          fail_on_unmatched_files: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
