@@ -1,5 +1,5 @@
 <template>
-  <div class="app-shell bg-surface md:flex overflow-x-hidden">
+  <div class="app-shell bg-surface md:flex md:h-screen md:overflow-hidden overflow-x-clip">
     <a href="#main-content" class="skip-link">
       Skip to main content
     </a>
@@ -74,7 +74,7 @@
       @logout="logout"
     />
 
-    <div class="flex min-w-0 max-w-full flex-1 flex-col overflow-x-hidden max-md:h-full max-md:min-h-0">
+    <div class="flex min-w-0 max-w-full flex-1 flex-col overflow-x-clip min-h-0 max-md:h-full">
       <header
         class="app-topbar z-30 flex items-center gap-1.5 px-2 sm:gap-2 sm:px-5
                fixed inset-x-0 top-0 md:sticky md:top-0
@@ -149,7 +149,7 @@
         id="main-content"
         ref="mainEl"
         tabindex="-1"
-        class="app-main min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-y-contain
+        class="app-main min-w-0 min-h-0 flex-1 overflow-y-auto overflow-x-clip overscroll-y-contain
                [-webkit-overflow-scrolling:touch]
                px-4
                pt-[calc(3.5rem+env(safe-area-inset-top,0px)+0.85rem)]

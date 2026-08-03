@@ -195,6 +195,10 @@ function onDialogKeydown(event) {
 }
 
 function setBackgroundInert(active) {
+  // Only lock the shell while the mobile sheet is open — never leave desktop inert.
+  if (active && window.matchMedia('(min-width: 768px)').matches) {
+    return;
+  }
   const shell = document.querySelector('.app-shell');
   if (!shell) return;
   if (active) shell.setAttribute('inert', '');
