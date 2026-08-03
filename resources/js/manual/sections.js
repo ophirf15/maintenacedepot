@@ -187,12 +187,12 @@ export const MANUAL_SECTIONS = [
       { name: 'This exact unit / Any free unit', where: 'Tool bag line', does: 'Controls whether approval must allocate your chosen asset or any matching type.', anyOf: ['borrow_items'] },
       { name: 'Today only / Tomorrow, 1 day / Next week, 3 days', where: 'Tool bag dates', does: 'Fills need-from / return-by with common presets.', anyOf: ['borrow_items'] },
       { name: 'Urgency chips (Not urgent → Today)', where: 'Tool bag', does: 'Sets request priority for the depot.', anyOf: ['borrow_items'] },
-      { name: 'Empty tool bag', where: 'Tool bag', does: 'Clears all lines on this device.', anyOf: ['borrow_items'] },
+      { name: 'Empty tool bag', where: 'Tool bag', does: 'Clears all lines for your account (every device).', anyOf: ['borrow_items'] },
       { name: 'Submit borrow request', where: 'Tool bag', does: 'Creates and submits the request to the depot.', anyOf: ['borrow_items'] },
       { name: 'Browse tools', where: 'Empty tool bag', does: 'Returns to the catalog.' },
     ],
     tips: [
-      { text: 'Tool bag contents stay in this browser until you submit or empty them.', anyOf: ['borrow_items'] },
+      { text: 'Tool bag contents are saved to your account, so they follow you across phone and desktop.', anyOf: ['borrow_items'] },
       { text: 'Pick-up depot and property must match where you are allowed to work.', anyOf: ['borrow_items'] },
     ],
     troubles: [
@@ -947,7 +947,7 @@ export const MANUAL_SECTIONS = [
       },
       {
         problem: 'App looks wrong after an update',
-        fix: 'Hard-refresh to load new assets. Clear site data only if IT asks (you will need to sign in again; local cart/offline queue may clear).',
+        fix: 'Hard-refresh to load new assets. Clear site data only if IT asks (you will need to sign in again; offline scan queue may clear).',
       },
     ],
   },

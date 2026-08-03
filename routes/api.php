@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BackupController;
 use App\Http\Controllers\Api\BorrowRequestController;
 use App\Http\Controllers\Api\CapexController;
+use App\Http\Controllers\Api\CartController;
 use App\Http\Controllers\Api\CatalogController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\ChecklistController;
@@ -78,6 +79,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Borrow requests (borrowers)
     Route::middleware('permission:borrow_items')->group(function () {
+        Route::get('/cart', [CartController::class, 'show']);
+        Route::put('/cart', [CartController::class, 'update']);
+        Route::delete('/cart', [CartController::class, 'destroy']);
+
         Route::get('/borrow-requests', [BorrowRequestController::class, 'index']);
         Route::post('/borrow-requests', [BorrowRequestController::class, 'store']);
         Route::get('/borrow-requests/{borrowRequest}', [BorrowRequestController::class, 'show']);

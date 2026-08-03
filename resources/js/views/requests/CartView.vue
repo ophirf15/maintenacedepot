@@ -162,7 +162,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, watch } from 'vue';
 import { RouterLink, useRouter } from 'vue-router';
 import api from '../../api';
 import { useAuthStore, useCartStore } from '../../stores/auth';
@@ -204,6 +204,7 @@ function applyPreset(preset) {
 
   cart.needed_from = toLocalInput(from);
   cart.needed_until = toLocalInput(until);
+  cart.touchMeta();
 }
 
 function lineLabel(line) {
@@ -230,6 +231,8 @@ async function submit() {
 
   submitting.value = true;
   try {
+    await cart.saveNow();
+
     const { data } = await api.post('/borrow-requests', {
       property_id: cart.property_id,
       pickup_depot_id: cart.pickup_depot_id,
@@ -247,7 +250,7 @@ async function submit() {
       })),
     });
 
-    cart.clear();
+    await cart.clear();
     toasts.success('Borrow request submitted');
     router.push(`/requests/${data.data.id}`);
   } catch (e) {
@@ -257,12 +260,33 @@ async function submit() {
   }
 }
 
+watch(
+  () => [
+    cart.property_id,
+    cart.pickup_depot_id,
+    cart.needed_from,
+    cart.needed_until,
+    cart.purpose,
+    cart.priority,
+  ],
+  () => {
+    if (!cart.loaded) return;
+    cart.touchMeta();
+  }
+);
+
 onMounted(async () => {
+  if (!cart.loaded) {
+    await cart.fetch();
+  }
+
   if (!cart.property_id) {
     cart.property_id = auth.user?.default_property_id || properties.value[0]?.id || null;
   }
   if (!cart.needed_from || !cart.needed_until) {
     applyPreset(presets[1]);
+  } else {
+    cart.touchMeta();
   }
 
   try {
@@ -270,6 +294,7 @@ onMounted(async () => {
     depots.value = data.data;
     if (!cart.pickup_depot_id && depots.value.length === 1) {
       cart.pickup_depot_id = depots.value[0].id;
+      cart.touchMeta();
     }
   } catch (e) {
     depotsError.value =
