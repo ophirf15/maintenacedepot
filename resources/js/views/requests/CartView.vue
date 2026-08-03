@@ -2,7 +2,7 @@
   <div class="space-y-5 max-w-3xl">
     <PageHeader
       title="Your tool bag"
-      subtitle="Review the tools, choose pick-up and return dates, then submit the request."
+      subtitle="Review the tools and dates, then submit. Pick-up location comes from where each tool lives."
       icon="toolbag"
       back-to="/catalog"
       back-label="Back to catalog"
@@ -38,9 +38,15 @@
             </span>
             <div class="min-w-0 flex-1">
               <p class="text-sm font-medium text-content truncate">{{ lineLabel(line) }}</p>
-              <p class="text-xs muted flex items-center gap-1">
-                <Icon :name="line.request_mode === 'specific_item' ? 'pin' : 'sparkles'" :size="12" />
-                {{ line.request_mode === 'specific_item' ? 'This exact unit' : 'Any free unit' }}
+              <p class="text-xs muted flex flex-wrap items-center gap-x-2 gap-y-0.5">
+                <span class="inline-flex items-center gap-1">
+                  <Icon :name="line.request_mode === 'specific_item' ? 'pin' : 'sparkles'" :size="12" />
+                  {{ line.request_mode === 'specific_item' ? 'This exact unit' : 'Any free unit' }}
+                </span>
+                <span class="inline-flex items-center gap-1">
+                  <Icon name="depot" :size="12" />
+                  {{ linePickupLabel(line) }}
+                </span>
               </p>
             </div>
             <div class="flex items-center gap-1 shrink-0">
@@ -59,6 +65,32 @@
         </ul>
       </section>
 
+      <!-- Pick-up breakdown (read-only) -->
+      <section class="card">
+        <header class="flex items-center gap-2.5 p-4 pb-3">
+          <Icon name="depot" :size="18" class="text-content-muted" />
+          <p class="section-title">Pick up</p>
+        </header>
+        <div class="border-t border-line p-4 space-y-3">
+          <p v-if="pickupGroups.length > 1" class="text-sm text-content-muted">
+            Tools are at more than one location. We’ll create one borrow request per depot.
+          </p>
+          <ul class="space-y-3">
+            <li v-for="group in pickupGroups" :key="group.key" class="rounded-xl bg-neutral-50 dark:bg-white/5 p-3">
+              <p class="text-sm font-semibold text-content flex items-center gap-1.5">
+                <Icon name="depot" :size="15" />
+                {{ group.title }}
+              </p>
+              <ul class="mt-1.5 space-y-0.5">
+                <li v-for="(line, i) in group.lines" :key="line._key || i" class="text-xs muted truncate">
+                  {{ lineLabel(line) }}
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </section>
+
       <form class="space-y-5" @submit.prevent="submit">
         <!-- Step 2 -->
         <section class="card">
@@ -67,7 +99,7 @@
             <p class="section-title">When and where</p>
           </header>
           <div class="grid sm:grid-cols-2 gap-4 border-t border-line p-4">
-            <div>
+            <div class="sm:col-span-2">
               <label class="label">
                 <Icon name="building" :size="13" class="inline -mt-0.5 mr-1" />
                 Which property
@@ -76,17 +108,6 @@
                 <option disabled :value="null">Choose a property</option>
                 <option v-for="p in properties" :key="p.id" :value="p.id">{{ p.name }}</option>
               </select>
-            </div>
-            <div>
-              <label class="label">
-                <Icon name="depot" :size="13" class="inline -mt-0.5 mr-1" />
-                Pick up from
-              </label>
-              <select v-model.number="cart.pickup_depot_id" required class="select" :disabled="depotsLoading">
-                <option disabled :value="null">{{ depotsLoading ? 'Loading…' : 'Choose a depot' }}</option>
-                <option v-for="d in depots" :key="d.id" :value="d.id">{{ d.name }}</option>
-              </select>
-              <p v-if="depotsError" class="text-xs text-warn-600 mt-1.5">{{ depotsError }}</p>
             </div>
             <div>
               <label class="label">
@@ -153,7 +174,7 @@
           </button>
           <button type="submit" :disabled="submitting" class="btn-primary">
             <Icon :name="submitting ? 'refresh' : 'arrow-right'" :size="18" />
-            {{ submitting ? 'Submitting…' : 'Submit borrow request' }}
+            {{ submitLabel }}
           </button>
         </div>
       </form>
@@ -177,9 +198,6 @@ const cart = useCartStore();
 const toasts = useToastStore();
 const router = useRouter();
 
-const depots = ref([]);
-const depotsLoading = ref(true);
-const depotsError = ref('');
 const error = ref('');
 const submitting = ref(false);
 
@@ -198,6 +216,31 @@ const presets = [
   { label: 'Next week, 3 days', fromHours: 168, days: 3 },
 ];
 
+const pickupGroups = computed(() => {
+  const map = new Map();
+
+  for (const line of cart.lines) {
+    const isAny = line.request_mode === 'tool_type';
+    const key = isAny ? 'any' : `depot-${line.depot_id || 'unknown'}`;
+    const title = isAny
+      ? 'Assigned from stock on submit'
+      : line.depot_name || (line.depot_id ? `Depot #${line.depot_id}` : 'Unknown location');
+
+    if (!map.has(key)) {
+      map.set(key, { key, title, lines: [] });
+    }
+    map.get(key).lines.push(line);
+  }
+
+  return [...map.values()];
+});
+
+const submitLabel = computed(() => {
+  if (submitting.value) return 'Submitting…';
+  if (pickupGroups.value.length > 1) return 'Submit requests';
+  return 'Submit borrow request';
+});
+
 function applyPreset(preset) {
   const from = new Date(Date.now() + preset.fromHours * 3600 * 1000);
   const until = new Date(from.getTime() + Math.max(preset.days, 1) * 24 * 3600 * 1000);
@@ -213,11 +256,16 @@ function lineLabel(line) {
   return line.request_mode === 'specific_item' ? 'Selected unit' : 'Selected tool';
 }
 
+function linePickupLabel(line) {
+  if (line.request_mode === 'tool_type') return 'Best available depot on submit';
+  return line.depot_name || 'Location on file';
+}
+
 async function submit() {
   error.value = '';
 
-  if (!cart.property_id || !cart.pickup_depot_id) {
-    error.value = 'Please choose a property and a depot.';
+  if (!cart.property_id) {
+    error.value = 'Please choose a property.';
     return;
   }
   if (!cart.needed_from || !cart.needed_until) {
@@ -235,7 +283,6 @@ async function submit() {
 
     const { data } = await api.post('/borrow-requests', {
       property_id: cart.property_id,
-      pickup_depot_id: cart.pickup_depot_id,
       priority: cart.priority,
       purpose: cart.purpose,
       needed_from: fromLocalInput(cart.needed_from),
@@ -250,25 +297,30 @@ async function submit() {
       })),
     });
 
+    const requests = Array.isArray(data.data) ? data.data : [data.data];
     await cart.clear();
-    toasts.success('Borrow request submitted');
-    router.push(`/requests/${data.data.id}`);
+
+    if (data.split || requests.length > 1) {
+      toasts.success(`Submitted ${requests.length} borrow requests (one per depot)`);
+      router.push('/requests');
+    } else {
+      toasts.success('Borrow request submitted');
+      router.push(`/requests/${requests[0].id}`);
+    }
   } catch (e) {
-    error.value = e.response?.data?.message || 'Could not send the request. Please check the fields and try again.';
+    const errors = e.response?.data?.errors;
+    const firstFieldError = errors ? Object.values(errors).flat()[0] : null;
+    error.value =
+      firstFieldError ||
+      e.response?.data?.message ||
+      'Could not send the request. Please check the fields and try again.';
   } finally {
     submitting.value = false;
   }
 }
 
 watch(
-  () => [
-    cart.property_id,
-    cart.pickup_depot_id,
-    cart.needed_from,
-    cart.needed_until,
-    cart.purpose,
-    cart.priority,
-  ],
+  () => [cart.property_id, cart.needed_from, cart.needed_until, cart.purpose, cart.priority],
   () => {
     if (!cart.loaded) return;
     cart.touchMeta();
@@ -287,22 +339,6 @@ onMounted(async () => {
     applyPreset(presets[1]);
   } else {
     cart.touchMeta();
-  }
-
-  try {
-    const { data } = await api.get('/depots', { params: { active_only: 1 } });
-    depots.value = data.data;
-    if (!cart.pickup_depot_id && depots.value.length === 1) {
-      cart.pickup_depot_id = depots.value[0].id;
-      cart.touchMeta();
-    }
-  } catch (e) {
-    depotsError.value =
-      e.response?.status === 403
-        ? 'Ask an admin which depot to pick up from.'
-        : 'Could not load the depot list right now.';
-  } finally {
-    depotsLoading.value = false;
   }
 });
 </script>

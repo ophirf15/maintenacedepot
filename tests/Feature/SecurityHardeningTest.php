@@ -87,7 +87,7 @@ class SecurityHardeningTest extends TestCase
                 'item_id' => $item->id,
                 'quantity' => 1,
             ]],
-        ])->assertCreated()->json('data.id');
+        ])->assertCreated()->json('data.0.id');
 
         Sanctum::actingAs($this->mike());
         $this->postJson("/api/borrow-requests/{$requestId}/approve", [
@@ -146,7 +146,7 @@ class SecurityHardeningTest extends TestCase
                 'tool_type_id' => ToolType::query()->value('id'),
                 'quantity' => 1,
             ]],
-        ])->assertCreated()->json('data.id');
+        ])->assertCreated()->json('data.0.id');
 
         Sanctum::actingAs($this->otherBorrower());
         $this->getJson("/api/borrow-requests/{$requestId}")->assertForbidden();

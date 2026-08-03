@@ -139,6 +139,8 @@ function addToCart() {
     icon: iconFor(item.value.tool_type),
     specs: item.value.specs || [],
     image_url: item.value.image_url || null,
+    depot_id: item.value.depot_id || item.value.depot?.id || null,
+    depot_name: item.value.depot?.name || null,
   });
   toasts.success(`Added ${label} to your tool bag`);
   router.push('/cart');

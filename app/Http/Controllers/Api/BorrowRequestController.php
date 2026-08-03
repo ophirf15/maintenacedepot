@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BorrowRequest;
 use App\Services\AuditLogger;
 use App\Services\BorrowService;
+use App\Services\CartCheckoutService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
@@ -14,7 +15,11 @@ class BorrowRequestController extends Controller
 {
     use AuthorizesDepotAccess;
 
-    public function __construct(private BorrowService $borrow, private AuditLogger $audit) {}
+    public function __construct(
+        private BorrowService $borrow,
+        private CartCheckoutService $checkout,
+        private AuditLogger $audit,
+    ) {}
 
     public function index(Request $request)
     {
@@ -48,7 +53,8 @@ class BorrowRequestController extends Controller
         $data = $request->validate([
             'property_id' => 'required|exists:properties,id',
             'on_behalf_of_id' => 'nullable|exists:users,id',
-            'pickup_depot_id' => 'required|exists:depots,id',
+            // Ignored for correctness — pickup is derived from each tool's depot.
+            'pickup_depot_id' => 'nullable|exists:depots,id',
             'priority' => 'in:low,normal,high,urgent',
             'purpose' => 'nullable|string',
             'needed_from' => 'required|date',
@@ -69,13 +75,12 @@ class BorrowRequestController extends Controller
             }
         }
 
-        $borrowRequest = $this->borrow->createDraft($request->user(), $data);
+        $result = $this->checkout->checkout($request->user(), $data);
 
-        if ($data['submit'] ?? false) {
-            $borrowRequest = $this->borrow->submit($borrowRequest);
-        }
-
-        return response()->json(['data' => $borrowRequest], 201);
+        return response()->json([
+            'data' => $result['requests'],
+            'split' => $result['split'],
+        ], 201);
     }
 
     public function show(Request $request, BorrowRequest $borrowRequest)

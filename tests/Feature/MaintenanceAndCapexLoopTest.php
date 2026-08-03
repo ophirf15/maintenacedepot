@@ -56,7 +56,7 @@ class MaintenanceAndCapexLoopTest extends TestCase
             'lines' => [
                 ['request_mode' => 'specific_item', 'item_id' => $item->id, 'tool_type_id' => $item->tool_type_id, 'quantity' => 1],
             ],
-        ])->assertCreated()->json('data.id');
+        ])->assertCreated()->json('data.0.id');
 
         Sanctum::actingAs($this->depotAdmin());
         $this->postJson("/api/borrow-requests/{$requestId}/approve", ['lines' => []])->assertOk();

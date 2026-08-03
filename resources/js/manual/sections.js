@@ -158,7 +158,7 @@ export const MANUAL_SECTIONS = [
           'Go to Browse tools and open a tool group (category).',
           'Either tap Add any available unit, or Choose a specific unit and Add this unit to tool bag.',
           'Open Tool bag from the top bar.',
-          'Set quantities, pick This exact unit or Any free unit, choose property, depot, and dates (or use Today only / Tomorrow / Next week).',
+          'Set quantities, pick This exact unit or Any free unit, choose property and dates (or use Today only / Tomorrow / Next week). Pick-up location comes from where each tool lives.',
           'Optionally set urgency and describe the job.',
           'Tap Submit borrow request. Track it under My requests.',
         ],
@@ -188,12 +188,12 @@ export const MANUAL_SECTIONS = [
       { name: 'Today only / Tomorrow, 1 day / Next week, 3 days', where: 'Tool bag dates', does: 'Fills need-from / return-by with common presets.', anyOf: ['borrow_items'] },
       { name: 'Urgency chips (Not urgent → Today)', where: 'Tool bag', does: 'Sets request priority for the depot.', anyOf: ['borrow_items'] },
       { name: 'Empty tool bag', where: 'Tool bag', does: 'Clears all lines for your account (every device).', anyOf: ['borrow_items'] },
-      { name: 'Submit borrow request', where: 'Tool bag', does: 'Creates and submits the request to the depot.', anyOf: ['borrow_items'] },
+      { name: 'Submit borrow request', where: 'Tool bag', does: 'Creates and submits the request(s). If tools live at more than one depot, one request is created per location.', anyOf: ['borrow_items'] },
       { name: 'Browse tools', where: 'Empty tool bag', does: 'Returns to the catalog.' },
     ],
     tips: [
       { text: 'Tool bag contents are saved to your account, so they follow you across phone and desktop.', anyOf: ['borrow_items'] },
-      { text: 'Pick-up depot and property must match where you are allowed to work.', anyOf: ['borrow_items'] },
+      { text: 'Pick-up location is taken from each tool’s depot — you do not choose it. Multi-location bags become multiple requests.', anyOf: ['borrow_items'] },
     ],
     troubles: [
       {
@@ -203,7 +203,7 @@ export const MANUAL_SECTIONS = [
       },
       {
         problem: 'Submit fails validation',
-        fix: 'Check that return date is after start date, property and depot are selected, and at least one line remains in the tool bag.',
+        fix: 'Check that return date is after start date, a property is selected, and at least one line remains in the tool bag.',
         anyOf: ['borrow_items'],
       },
     ],

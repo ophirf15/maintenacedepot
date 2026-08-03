@@ -74,6 +74,8 @@ class CartController extends Controller
             'lines.*._key' => 'nullable|string|max:64',
             'lines.*.image_url' => 'nullable|string|max:2048',
             'lines.*.specs' => 'nullable|array',
+            'lines.*.depot_id' => 'nullable|integer',
+            'lines.*.depot_name' => 'nullable|string|max:190',
         ]);
 
         $from = $data['needed_from'] ?? null;
@@ -118,6 +120,8 @@ class CartController extends Controller
                 '_key' => $key,
                 'image_url' => $line['image_url'] ?? null,
                 'specs' => $line['specs'] ?? null,
+                'depot_id' => $line['depot_id'] ?? null,
+                'depot_name' => $line['depot_name'] ?? null,
             ], fn ($value) => $value !== null);
         }, $data['lines'] ?? []);
 

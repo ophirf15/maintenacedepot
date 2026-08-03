@@ -79,6 +79,8 @@ export const useCartStore = defineStore('cart', {
           _key: line._key || null,
           image_url: line.image_url || null,
           specs: line.specs || null,
+          depot_id: line.depot_id || null,
+          depot_name: line.depot_name || null,
         })),
       };
     },
@@ -155,7 +157,7 @@ export const useCartStore = defineStore('cart', {
       this.scheduleSave();
     },
 
-    /** Persist form fields (property, depot, dates, purpose, priority). */
+    /** Persist form fields (property, dates, purpose, priority). */
     touchMeta() {
       this.scheduleSave();
     },

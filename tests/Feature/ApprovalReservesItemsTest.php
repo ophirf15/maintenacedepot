@@ -48,7 +48,7 @@ class ApprovalReservesItemsTest extends TestCase
             'needed_until' => now()->addDays(3)->toDateTimeString(),
             'submit' => true,
             'lines' => $lines,
-        ])->assertCreated()->json('data.id');
+        ])->assertCreated()->json('data.0.id');
     }
 
     public function test_approval_reserves_allocated_units_and_removes_them_from_availability(): void

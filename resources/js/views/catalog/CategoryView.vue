@@ -350,6 +350,8 @@ function borrowSpecific(tt, item) {
     icon: toolTypeIcon(tt),
     specs: item.specs || [],
     image_url: item.image_url || null,
+    depot_id: item.depot_id || item.depot?.id || null,
+    depot_name: item.depot?.name || null,
   });
   toasts.success(`Added ${label} to your tool bag`);
 }
