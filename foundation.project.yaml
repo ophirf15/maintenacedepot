@@ -1,0 +1,26 @@
+data_sensitivity: moderate
+deployment:
+  profile: deployment.shared_hosting
+exceptions: []
+modules: []
+pending_foundation_review: false
+profiles:
+  design: design.default
+  project_profile: profile.internal-business-app
+  standards_pack: standards.default@0.0.0
+project:
+  id: maintenance-depot
+  name: Maintenance Depot
+  type: internal_business_tool
+schema_version: 1
+stack:
+  adapters:
+    - stack.laravel
+  languages:
+    - php
+    - javascript
+  primary: php.laravel
+validation:
+  last_at: 2026-08-05T08:15:05.654Z
+  last_run_id: run.validate-1785917705429
+  last_status: fail

@@ -1,0 +1,34 @@
+# Foundation participation
+
+This app is bound to the Foundation control plane via `foundation.project.yaml`.
+
+## Operator commands (in Cursor Agent)
+
+Type `/` and choose a Foundation workflow skill:
+
+| Skill | Purpose |
+| --- | --- |
+| `/foundation-initialize` | Classify project and create manifest |
+| `/foundation-plan` | Phased applicability plan (no edits until approved) |
+| `/foundation-audit` | Standards/module audit |
+| `/foundation-apply` | Apply a pinned module version with divergence checks |
+| `/foundation-validate` | Run validations and record evidence |
+| `/foundation-harvest` | Propose module revision from local improvements |
+| `/foundation-add-requirement` | Capture a requirement proposal |
+| `/foundation-whats-new` | Standards/modules changed since last review |
+| `/foundation-status` | Manifest, divergence, validation summary |
+
+Skills live in the Foundation repository under `.cursor/skills/`. Open Foundation as a multi-root workspace or use MCP (Phase 6) so commands resolve.
+
+## CLI fallback (MCP unavailable)
+
+From the Foundation clone:
+
+```bash
+npm run cli -- validate-manifest <path-to-app>/foundation.project.yaml
+npm run cli -- register-project <path-to-app>/foundation.project.yaml
+npm run cli -- list-modules
+npm run cli -- standards-changes <path-to-app>/foundation.project.yaml
+```
+
+You own Git. Foundation never commits for you.
