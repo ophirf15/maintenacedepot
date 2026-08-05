@@ -37,10 +37,10 @@ class UpdaterServiceTest extends TestCase
                 'body' => 'Storage + updater fixes',
                 'assets' => [[
                     'name' => 'maintenance-depot-1.0.1-update.zip',
-                    'browser_download_url' => 'https://example.test/update.zip',
+                    'browser_download_url' => 'https://objects.githubusercontent.com/acme/depot/update.zip',
                 ]],
             ]),
-            'https://example.test/update.zip' => Http::response(file_get_contents($zipPath), 200),
+            'https://objects.githubusercontent.com/*' => Http::response(file_get_contents($zipPath), 200),
         ]);
 
         $result = app(UpdaterService::class)->applyUpdate();
@@ -86,10 +86,10 @@ class UpdaterServiceTest extends TestCase
                 'body' => 'retry',
                 'assets' => [[
                     'name' => 'maintenance-depot-1.0.1-update.zip',
-                    'browser_download_url' => 'https://example.test/update.zip',
+                    'browser_download_url' => 'https://objects.githubusercontent.com/acme/depot/update.zip',
                 ]],
             ]),
-            'https://example.test/update.zip' => Http::response(file_get_contents($zipPath), 200),
+            'https://objects.githubusercontent.com/*' => Http::response(file_get_contents($zipPath), 200),
         ]);
 
         $result = app(UpdaterService::class)->applyUpdate();
@@ -99,5 +99,34 @@ class UpdaterServiceTest extends TestCase
         $this->assertTrue((bool) AppVersion::query()->where('version', '1.0.1')->value('is_current'));
 
         @unlink($zipPath);
+    }
+
+    public function test_apply_update_refuses_download_host_outside_allowlist(): void
+    {
+        $this->seed();
+        $admin = User::query()->where('email', 'admin@depotborrow.test')->firstOrFail();
+        $this->actingAs($admin);
+
+        config(['depot.version' => '1.0.0']);
+        app(\App\Services\SettingsService::class)->set('updates', 'github_repo', 'acme/depot', 'string');
+
+        Http::fake([
+            'https://api.github.com/repos/acme/depot/releases/latest' => Http::response([
+                'tag_name' => 'v1.0.1',
+                'body' => 'allowlist',
+                'assets' => [[
+                    'name' => 'maintenance-depot-1.0.1-update.zip',
+                    'browser_download_url' => 'https://objects.githubusercontent.com/acme/depot/update.zip',
+                ]],
+            ]),
+        ]);
+
+        $result = app(UpdaterService::class)->applyUpdate('https://attacker.example/evil.zip');
+
+        $this->assertFalse($result['ok'] ?? true);
+        $this->assertSame('Update package host is not allowed', $result['message']);
+        $this->assertFalse($result['files_applied'] ?? true);
+        $this->assertSame('1.0.0', $this->app->make(UpdaterService::class)->currentVersion());
+        Http::assertNotSent(fn ($request) => str_contains($request->url(), 'attacker.example'));
     }
 }

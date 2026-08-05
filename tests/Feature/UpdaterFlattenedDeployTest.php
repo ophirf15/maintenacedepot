@@ -50,10 +50,10 @@ class UpdaterFlattenedDeployTest extends TestCase
                 'body' => 'Flat deploy sync',
                 'assets' => [[
                     'name' => 'maintenance-depot-1.0.5-update.zip',
-                    'browser_download_url' => 'https://example.test/update.zip',
+                    'browser_download_url' => 'https://objects.githubusercontent.com/acme/depot/update.zip',
                 ]],
             ]),
-            'https://example.test/update.zip' => Http::response(file_get_contents($zipPath), 200),
+            'https://objects.githubusercontent.com/*' => Http::response(file_get_contents($zipPath), 200),
         ]);
 
         try {

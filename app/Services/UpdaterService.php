@@ -110,6 +110,16 @@ class UpdaterService
             return ['ok' => false, 'message' => 'No update available'];
         }
 
+        if (! $this->isAllowedDownloadUrl($url)) {
+            Log::warning('Update refused: download host not allowed', ['host' => parse_url($url, PHP_URL_HOST)]);
+
+            return [
+                'ok' => false,
+                'message' => 'Update package host is not allowed',
+                'files_applied' => false,
+            ];
+        }
+
         Artisan::call('down', ['--retry' => 60]);
 
         $filesApplied = false;
@@ -190,6 +200,18 @@ class UpdaterService
                 }
             }
         }
+    }
+
+    protected function isAllowedDownloadUrl(string $url): bool
+    {
+        $parts = parse_url($url);
+        if (! is_array($parts) || ($parts['scheme'] ?? null) !== 'https' || empty($parts['host'])) {
+            return false;
+        }
+
+        $host = strtolower(rtrim((string) $parts['host'], '.'));
+
+        return in_array($host, (array) config('depot.update_allowed_hosts', []), true);
     }
 
     protected function resolvePackageRoot(string $extractTo): string
