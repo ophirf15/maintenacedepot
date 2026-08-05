@@ -1,8 +1,58 @@
+attestations:
+  - at: 2026-08-05
+    by: phase8-pilot (agent-executed)
+    check: testing.not-executed
+    evidence:
+      - php artisan test — 77 tests, 77 passed, 454 assertions, 22.9s
+    note: Full PHPUnit suite executed against a disposable SQLite database.
+  - at: 2026-08-05
+    by: phase8-pilot (agent-executed)
+    check: testing.authz-coverage
+    evidence:
+      - SecurityHardeningTest — assertForbidden on loans, borrow-requests, tickets;
+        assertUnauthorized on guarded API paths
+      - CartTest, WalkInOrphanReturnTest, InstallFreshDatabaseTest — negative authorization
+        assertions
+      - php artisan test — 77 passed
+    note: Authorization denials are asserted, not assumed.
+  - at: 2026-08-05
+    by: phase8-pilot (agent-executed)
+    check: security.auth.existence-not-pass
+    evidence:
+      - SecurityHardeningTest — authenticated and unauthenticated round trips
+      - php artisan test — 77 passed
+    note: Session and permission behaviour is exercised by executed tests, not inferred from file paths.
+  - at: 2026-08-05
+    by: phase8-pilot (agent-executed)
+    check: security.auth.permission-static
+    evidence:
+      - SecurityHardeningTest — assertForbidden across cross-tenant reads and writes
+      - php artisan test — 77 passed
+    note: Permission denials covered by executed negative tests rather than static mentions.
+  - at: 2026-08-05
+    by: phase8-pilot (agent-executed)
+    check: security.deps.advisory
+    evidence:
+      - composer audit — no security vulnerability advisories found
+      - npm audit --omit=dev — found 0 vulnerabilities
+    note: Advisory scan run for both package managers.
+  - at: 2026-08-05
+    by: phase8-pilot (agent-executed)
+    check: val.deploy.github-updater.asset-trust
+    evidence:
+      - UpdaterServiceTest::test_apply_update_refuses_download_host_outside_allowlist
+      - UpdaterServiceTest::test_apply_update_overlays_package_files_and_writes_version
+      - php artisan test — 77 passed
+    note: Download host allowlist added in the Phase 8 pilot and covered by an executed negative test.
 data_sensitivity: moderate
 deployment:
   profile: deployment.shared_hosting
 exceptions: []
-modules: []
+modules:
+  - id: deploy.github-updater
+    integration: implementation_recipe
+    state: adapted
+    version: 0.1.0
 pending_foundation_review: false
 profiles:
   design: design.default
@@ -21,6 +71,6 @@ stack:
     - javascript
   primary: php.laravel
 validation:
-  last_at: 2026-08-05T08:25:32.960Z
-  last_run_id: run.validate-1785918332812
-  last_status: fail
+  last_at: 2026-08-05T09:03:46.945Z
+  last_run_id: run.validate-1785920626737
+  last_status: manual_verification_required

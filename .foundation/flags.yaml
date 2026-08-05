@@ -1,0 +1,161 @@
+flags:
+  - created_at: 2026-08-05T08:52:47.421Z
+    detail: "Secret-like values detected at 7 location(s) across 4 file(s):
+      app/Http/Controllers/Api/AdminUserController.php:41 (assignment_password);
+      app/Http/Controllers/Api/AdminUserController.php:80 (assignment_password);
+      app/Http/Controllers/Api/BackupController.php:34 (assignment_password);
+      app/Http/Controllers/Api/BackupController.php:89 (assignment_password);
+      app/Http/Controllers/Install/InstallController.php:56 (assignment_password) (+2 more in
+      locations)"
+    finding_id: find.security.secret-scan
+    id: flag.maintenance-depot.security.secret-scan
+    locations:
+      - excerpt: "'password' => ['required', 'string', Password::de…[REDACTED 13 chars]"
+        file: app/Http/Controllers/Api/AdminUserController.php
+        line: 41
+        matched_rule: assignment_password
+        note: A committed password grants direct access to whatever it protects and survives in Git history
+          after rotation.
+        tracked_by_vcs: true
+      - excerpt: "'password' => ['nullable', 'string', Password::de…[REDACTED 13 chars]"
+        file: app/Http/Controllers/Api/AdminUserController.php
+        line: 80
+        matched_rule: assignment_password
+        note: A committed password grants direct access to whatever it protects and survives in Git history
+          after rotation.
+        tracked_by_vcs: true
+      - excerpt: "'-u', $config['username'], '--password='.$c…[REDACTED 9 chars]'password'],
+          $config['database'],"
+        file: app/Http/Controllers/Api/BackupController.php
+        line: 34
+        matched_rule: assignment_password
+        note: A committed password grants direct access to whatever it protects and survives in Git history
+          after rotation.
+        tracked_by_vcs: true
+      - excerpt: "'-u', $config['username'], '--password='.$c…[REDACTED 9 chars]'password'],
+          $config['database'],"
+        file: app/Http/Controllers/Api/BackupController.php
+        line: 89
+        matched_rule: assignment_password
+        note: A committed password grants direct access to whatever it protects and survives in Git history
+          after rotation.
+        tracked_by_vcs: true
+      - excerpt: "'admin_password' => ['required', 'string',
+          \\Illuminate\\Validation\\Rules\\Password::de…[REDACTED 13 chars]"
+        file: app/Http/Controllers/Install/InstallController.php
+        line: 56
+        matched_rule: assignment_password
+        note: A committed password grants direct access to whatever it protects and survives in Git history
+          after rotation.
+        tracked_by_vcs: true
+      - excerpt: Password::de…[REDACTED 18 chars] () {
+        file: app/Providers/AppServiceProvider.php
+        line: 26
+        matched_rule: assignment_password
+        note: A committed password grants direct access to whatever it protects and survives in Git history
+          after rotation.
+        tracked_by_vcs: true
+      - excerpt: $rule = Password::mi…[REDACTED 9 chars]
+        file: app/Providers/AppServiceProvider.php
+        line: 27
+        matched_rule: assignment_password
+        note: A committed password grants direct access to whatever it protects and survives in Git history
+          after rotation.
+        tracked_by_vcs: true
+    project_id: maintenance-depot
+    recommended_action: Open each listed file at the given line, replace the literal with a config/env
+      reference, then rotate the credential because Git history keeps the old value
+    resolved_note: Not reproduced by run.validate-1785920048647; closed automatically.
+    risk: A committed password grants direct access to whatever it protects and survives in Git history
+      after rotation.
+    run_id: run.validate-1785919967182
+    severity: critical
+    source: validation
+    status: resolved
+    title: "foundation.security: Secret-like values detected at 7 location(s) across 4 file(s):
+      app/Http/Controllers/Api/AdminUserController.php:41 (assi"
+    updated_at: 2026-08-05T08:54:08.880Z
+  - created_at: 2026-08-05T09:06:11.935Z
+    detail: UpdaterFlattenedDeployTest applies a real update package against base_path()/public_path(),
+      so the suite rewrites public/index.php, public/build/**, and base_path('build/**') in the
+      working copy. Cleanup restores public/build/manifest.json and removes base_path('build'), but
+      nothing restores public/index.php or files the overlay adds under public/build/assets. A
+      Foundation intake run on 2026-08-05 found public/index.php replaced with package content after
+      `php artisan test`, which had to be recovered with `git checkout`.
+    id: flag.maintenance-depot.updater-tests-overlay-files-into-the-real-application-tree-ins
+    locations:
+      - excerpt: $result = app(UpdaterService::class)->applyUpdate();
+        file: tests/Feature/UpdaterFlattenedDeployTest.php
+        line: 60
+        matched_rule: test_writes_to_app_root
+        note: Runs the real overlay against the live checkout
+      - excerpt: $this->assertFileExists(base_path('public/build/manifest.json'));
+        file: tests/Feature/UpdaterFlattenedDeployTest.php
+        line: 66
+        matched_rule: test_writes_to_app_root
+        note: Asserts on files written into the repository's public/ directory
+      - excerpt: "} finally {"
+        file: tests/Feature/UpdaterFlattenedDeployTest.php
+        line: 68
+        matched_rule: incomplete_cleanup
+        note: Cleanup block restores build/manifest.json but never restores public/index.php
+      - file: public/index.php
+        matched_rule: clobbered_artifact
+        note: File observed replaced by package content after a test run
+    project_id: maintenance-depot
+    recommended_action: Point the updater at an isolated temp root in tests (inject the deploy root, or
+      copy the relevant public/ and build/ files into a per-test directory), and assert the working
+      tree is clean after the suite runs.
+    risk: A test suite that mutates the deployed front controller can leave a developer or CI checkout
+      in a broken, silently-wrong state; if the same tree is ever deployed or committed, the app
+      boots from package paths that do not exist on shared hosting.
+    severity: high
+    source: manual
+    status: open
+    title: Updater tests overlay files into the real application tree instead of a sandbox
+    updated_at: 2026-08-05T09:06:11.935Z
+  - created_at: 2026-08-05T08:52:47.415Z
+    detail: No obvious password/token logging patterns; full audit logging still needs manual review
+    finding_id: find.privacy.logging.sensitive
+    id: flag.maintenance-depot.privacy.logging.sensitive
+    project_id: maintenance-depot
+    recommended_action: Confirm audit events for auth failures and admin actions; attest scrubbing in
+      production log pipeline
+    resolved_note: Not reproduced by run.validate-1785920626737; closed automatically.
+    run_id: run.validate-1785920353728
+    severity: high
+    source: validation
+    status: resolved
+    title: "foundation.privacy: No obvious password/token logging patterns; full audit logging still
+      needs manual review"
+    updated_at: 2026-08-05T09:03:46.997Z
+  - created_at: 2026-08-05T09:03:46.993Z
+    detail: Schema/migration artifacts present (database/migrations) but migrate/rollback was not executed
+    finding_id: find.data.migrations.existence-not-pass
+    id: flag.maintenance-depot.data.migrations.existence-not-pass
+    project_id: maintenance-depot
+    recommended_action: Execute migrate on a disposable DB and document rollback; file presence is not a pass
+    run_id: run.validate-1785920626737
+    severity: high
+    source: validation
+    status: open
+    title: "foundation.data: Schema/migration artifacts present (database/migrations) but
+      migrate/rollback was not executed"
+    updated_at: 2026-08-05T09:03:46.993Z
+  - created_at: 2026-08-05T08:52:47.418Z
+    detail: Found 2 file(s) mentioning permission/deny patterns — static only
+    finding_id: find.security.auth.permission-static
+    id: flag.maintenance-depot.security.auth.permission-static
+    project_id: maintenance-depot
+    recommended_action: Add automated authorization negative tests (denied action must fail)
+    resolved_note: Not reproduced by run.validate-1785920353728; closed automatically.
+    run_id: run.validate-1785920048647
+    severity: high
+    source: validation
+    status: resolved
+    title: "foundation.security: Found 2 file(s) mentioning permission/deny patterns — static only"
+    updated_at: 2026-08-05T08:59:13.984Z
+generated_at: 2026-08-05T09:06:11.938Z
+open_count: 2
+project_id: maintenance-depot
+schema_version: 1
