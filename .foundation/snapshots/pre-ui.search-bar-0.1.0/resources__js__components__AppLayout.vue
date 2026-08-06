@@ -100,23 +100,19 @@
             <Icon name="menu" :size="22" />
           </button>
 
-          <button
-            type="button"
-            class="group relative flex h-11 min-w-0 flex-1 max-w-xl items-center gap-2 rounded-2xl
-                   border border-transparent bg-neutral-100/90 px-3 text-left text-base text-content-muted
-                   transition hover:bg-neutral-100 dark:bg-white/5 dark:hover:bg-white/8 md:text-sm"
-            title="Search (Ctrl+K)"
-            @click="openPalette"
-          >
-            <Icon name="search" :size="17" class="shrink-0" />
-            <span class="min-w-0 flex-1 truncate">{{ searchPlaceholder }}</span>
-            <kbd
-              class="pointer-events-none hidden shrink-0 items-center rounded-md border border-line
-                     bg-surface-raised px-1.5 py-0.5 text-[0.65rem] font-medium text-content-muted sm:inline-flex"
-            >
-              Ctrl K
-            </kbd>
-          </button>
+          <form class="relative min-w-0 flex-1 max-w-xl" @submit.prevent="runSearch">
+            <span class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 muted">
+              <Icon name="search" :size="17" />
+            </span>
+            <input
+              v-model="searchTerm"
+              type="search"
+              enterkeyhint="search"
+              autocomplete="off"
+              :placeholder="searchPlaceholder"
+              class="input h-11 pl-9 text-base md:text-sm rounded-2xl border-transparent bg-neutral-100/90 dark:bg-white/5 focus:border-line focus:bg-surface-raised"
+            />
+          </form>
 
           <button
             type="button"
@@ -175,8 +171,6 @@
       </main>
     </div>
 
-    <CommandPalette :nav-items="paletteNavItems" />
-
     <nav
       class="app-tabbar md:hidden fixed bottom-0 inset-x-0 z-40
              border-t border-line/70 bg-surface-raised/94 backdrop-blur-2xl
@@ -213,10 +207,8 @@ import { computed, nextTick, onMounted, onUnmounted, ref, watch } from 'vue';
 import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router';
 import api from '../api';
 import BrandMark from './BrandMark.vue';
-import CommandPalette from './CommandPalette.vue';
 import Icon from './Icon.vue';
 import MobileNavSheet from './MobileNavSheet.vue';
-import { OPEN_PALETTE_EVENT } from '../command-palette';
 import { useAuthStore, useCartStore } from '../stores/auth';
 import { useThemeStore } from '../stores/theme';
 
@@ -227,6 +219,7 @@ const router = useRouter();
 const route = useRoute();
 
 const navOpen = ref(false);
+const searchTerm = ref('');
 const unread = ref(0);
 const pendingApprovals = ref(0);
 const mainEl = ref(null);
@@ -279,7 +272,7 @@ const roleLabel = computed(() =>
 );
 
 const isApprover = computed(() => auth.can('approve_requests'));
-const searchPlaceholder = computed(() => 'Search tools, requests, loans…');
+const searchPlaceholder = computed(() => 'Search tools…');
 
 const navGroups = computed(() => {
   const groups = [
@@ -346,17 +339,6 @@ const navGroups = computed(() => {
     .filter((group) => group.links.length);
 });
 
-const paletteNavItems = computed(() => {
-  const extras = [
-    { to: '/notifications', label: 'Notifications', icon: 'bell', show: true },
-    { to: '/cart', label: 'Tool bag', icon: 'toolbag', show: auth.can('borrow_items') },
-  ];
-  return [
-    ...navGroups.value.flatMap((group) => group.links),
-    ...extras.filter((link) => link.show),
-  ].map(({ to, label, icon }) => ({ to, label, icon }));
-});
-
 const bottomTabs = computed(() => {
   const canScan = auth.can('checkout_items') || auth.can('borrow_items');
   const tabs = [
@@ -395,8 +377,10 @@ function onMainScroll(event) {
   headerElevated.value = (event.target?.scrollTop || 0) > 4;
 }
 
-function openPalette() {
-  window.dispatchEvent(new CustomEvent(OPEN_PALETTE_EVENT));
+function runSearch() {
+  const term = searchTerm.value.trim();
+  if (!term) return;
+  router.push({ path: '/search', query: { q: term } });
 }
 
 async function logout() {

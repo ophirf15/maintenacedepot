@@ -53,8 +53,7 @@ class ItemController extends Controller
                     ->orWhere('numeric_code', 'like', "%{$search}%")
                     ->orWhere('serial_number', 'like', "%{$search}%")
                     ->orWhere('supplier_name', 'like', "%{$search}%")
-                    ->orWhere('supplier_part_number', 'like', "%{$search}%")
-                    ->orWhereHas('toolType', fn ($tq) => $tq->where('name', 'like', "%{$search}%"));
+                    ->orWhere('supplier_part_number', 'like', "%{$search}%");
             });
         }
 

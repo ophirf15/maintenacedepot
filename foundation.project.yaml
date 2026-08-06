@@ -56,29 +56,27 @@ modules:
   - applied_at: 2026-08-06T09:15:00.000Z
     files:
       - content_kind: stylesheet
-        description: Adapted shell utilities (shadow-card, header-wash, fade-in) remapped to Maintenance
-          Depot brand tokens
+        description: Adapted shell utilities
         path: resources/css/app.css
         role: stylesheet
         sha256: 8d12369f3ccc56670c9ba735992c01e95750101ecf789d12a77dc74a2f2c5ccd
       - content_kind: markup
-        description: "Adapted workspace shell composition: ink outer rail + rounded main panel; kept
-          existing nav UX"
+        description: Adapted workspace shell
         path: resources/js/components/AppLayout.vue
         role: source
-        sha256: f6fe75122693167b23420872f77e0c5e09e1b06c85d6bb767427b9471521a971
+        sha256: 1c6966207587684b29787738fc8ab0bda16c0a32f6bdfbbe0a853c35702e7ab2
       - content_kind: markup
-        description: Page chrome icon well + fade-in-up aligned to module page-header
+        description: Page chrome
         path: resources/js/components/PageHeader.vue
         role: source
         sha256: 091b179e53d3f9add29fcd0a161694b616b43383e952dc6d1951f6c03092ba1d
       - content_kind: markup
-        description: Dashed empty-state chrome adapted from module EmptyState
+        description: Empty state
         path: resources/js/components/EmptyState.vue
         role: source
         sha256: 1b890bd1b665d27f7c4f0dd8ed4a58d4cf05fe0e33630b9c376619d569943e55
       - content_kind: markup
-        description: Stat tile with header-wash and shadow-card elevation
+        description: Stat tile
         path: resources/js/components/StatTile.vue
         role: source
         sha256: 1f9d7b156fa25539a2b0d6c450f72da20a2f3c9384c754e94d94b8fdd8c42e7a
@@ -86,6 +84,52 @@ modules:
     integration: implementation_recipe
     state: adapted
     version: 0.2.0
+  - applied_at: 2026-08-06T09:35:00.000Z
+    files:
+      - content_kind: markup
+        description: Vue Ctrl/Cmd+K command palette
+        path: resources/js/components/CommandPalette.vue
+        role: source
+        sha256: f4a873e54fefc5272e2aaec3f9eae345c9c479d74f3ec9b7b1b45f92cfd0b825
+      - content_kind: script
+        description: Open-palette event
+        path: resources/js/command-palette.js
+        role: source
+        sha256: f8a30301c313f2fe212e5b6302660952d45cb155b02eb0511a3fc3349e7ac7ac
+      - content_kind: markup
+        description: Topbar search trigger
+        path: resources/js/components/AppLayout.vue
+        role: source
+        sha256: 1c6966207587684b29787738fc8ab0bda16c0a32f6bdfbbe0a853c35702e7ab2
+      - content_kind: markup
+        description: Search results page
+        path: resources/js/views/SearchView.vue
+        role: source
+        sha256: 3f0dddf5c3998e6f5294d1b0a0e3e4fb482d2f4d3fcbc3011438551d0de8a829
+      - content_kind: script
+        description: Authz-gated search API
+        path: app/Http/Controllers/Api/SearchController.php
+        role: source
+        sha256: 993e5e04534b694716a471526be794bda2398bceebaae434d89080da418c8cf3
+      - content_kind: script
+        description: Item q matches tool type
+        path: app/Http/Controllers/Api/ItemController.php
+        role: source
+        sha256: b70d3c5b64b24634a2fb32c4d5ce8ccefa6184f6a9346d5424519958496216fa
+      - content_kind: script
+        description: GET /api/search
+        path: routes/api.php
+        role: source
+        sha256: 2dc7c6993c2e5da4cd26fad2017db035eb1c71ac93b3ed7d33ed8c5e463d2638
+      - content_kind: script
+        description: Global search tests
+        path: tests/Feature/GlobalSearchTest.php
+        role: test
+        sha256: e0355f7027a94a40a970a8be7df6df892b67c7154de7659a02e80deb51d96398
+    id: ui.search-bar
+    integration: implementation_recipe
+    state: adapted
+    version: 0.1.0
 pending_foundation_review: false
 profiles:
   design: design.default
@@ -103,6 +147,7 @@ stack:
     - php
     - javascript
   primary: php.laravel
+standards_last_reviewed: 2026-08-06
 validation:
   last_at: 2026-08-05T09:03:46.945Z
   last_run_id: run.validate-1785920626737

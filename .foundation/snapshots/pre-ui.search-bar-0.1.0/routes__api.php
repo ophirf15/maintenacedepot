@@ -21,7 +21,6 @@ use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\QrController;
 use App\Http\Controllers\Api\RoleController;
-use App\Http\Controllers\Api\SearchController;
 use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\StockController;
 use App\Http\Controllers\Api\TicketController;
@@ -62,7 +61,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);
 
     Route::get('/dashboard/stats', [DashboardController::class, 'stats']);
-    Route::get('/search', SearchController::class);
 
     // Catalog browsing (any authenticated user)
     Route::get('/catalog/categories', [CatalogController::class, 'categories']);
