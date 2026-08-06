@@ -1,0 +1,144 @@
+actionable_count: 7
+generated_at: 2026-08-05T22:44:38.192Z
+items:
+  - agent: foundation.data
+    agent_action: add_tests_or_evidence
+    detail: Schema/migration artifacts present (database/migrations) but migrate/rollback was not executed
+    finding_id: find.data.migrations.existence-not-pass
+    recommended_action: Execute migrate on a disposable DB and document rollback; file presence is not a pass
+    severity: high
+    status: not_tested
+    title: Schema/migration artifacts present (database/migrations) but migrate/rollback was not executed
+  - agent: foundation.deployment
+    agent_action: needs_human
+    detail: Pre-update backup verification not executed (blocked without host access)
+    finding_id: find.deploy.backup.blocked
+    recommended_action: Confirm backup step before apply/pull on the target host
+    severity: high
+    status: manual_verification_required
+    title: Pre-update backup verification not executed (blocked without host access)
+  - agent: foundation.privacy
+    agent_action: needs_human
+    detail: No privacy policy doc found in common paths; Foundation does not provide legal advice
+    finding_id: find.privacy.compliance.manual
+    recommended_action: Human review retention, PII inventory, and legal_regulatory flags; technical
+      findings ≠ legal conclusions
+    severity: high
+    status: manual_verification_required
+    title: No privacy policy doc found in common paths; Foundation does not provide legal advice
+  - agent: foundation.privacy
+    agent_action: attest_after_work
+    detail: Static scan of 80 file(s) found no password/token logging; audit-event coverage still needs
+      human review
+    finding_id: find.privacy.logging.sensitive
+    recommended_action: Confirm audit events for auth failures and admin actions; attest scrubbing in
+      the production log pipeline
+    risk: Credentials written to logs spread to log shippers, backups, and support tickets, where they
+      are rarely rotated.
+    scope_note: Line-level scan of up to 80 repository source files; log pipeline configuration and
+      runtime output were not inspected.
+    severity: high
+    standard_id: std.logging.no-sensitive-fields
+    status: manual_verification_required
+    title: Static scan of 80 file(s) found no password/token logging; audit-event coverage still needs
+      human review
+  - agent: foundation.accessibility
+    agent_action: needs_human
+    detail: Full WCAG 2.2 AA review requires human judgment (focus order, ARIA, contrast, forms)
+    finding_id: find.a11y.wcag.manual
+    recommended_action: Complete accessibility checklist against design.default and record attestation
+    severity: medium
+    status: manual_verification_required
+    title: Full WCAG 2.2 AA review requires human judgment (focus order, ARIA, contrast, forms)
+  - agent: foundation.accessibility
+    agent_action: needs_human
+    detail: Static img-alt scan clean; WCAG 2.2 AA is NOT fully assured by automation
+    finding_id: find.a11y.wcag.static-subset
+    recommended_action: Run keyboard, focus, contrast, and screen-reader manual checks; do not claim
+      automated a11y complete
+    severity: medium
+    status: manual_verification_required
+    title: Static img-alt scan clean; WCAG 2.2 AA is NOT fully assured by automation
+  - agent: foundation.data
+    agent_action: attest_after_work
+    detail: Index and pagination review requires query/plan inspection
+    finding_id: find.data.index-pagination.manual
+    recommended_action: Review hot-path queries for missing indexes and unbounded list endpoints
+    severity: medium
+    status: manual_verification_required
+    title: Index and pagination review requires query/plan inspection
+  - agent: foundation.deployment
+    agent_action: attest_after_work
+    detail: Deploy signals found (.github/workflows); rollback rehearsal not verified in this run
+    finding_id: find.deploy.rollback.manual
+    recommended_action: Document and rehearse rollback for the active deployment profile; attach attestation evidence
+    severity: medium
+    standard_id: std.deploy.rehearsed-rollback
+    status: manual_verification_required
+    title: Deploy signals found (.github/workflows); rollback rehearsal not verified in this run
+  - agent: foundation.deployment
+    agent_action: add_tests_or_evidence
+    detail: Module validation val.deploy.github-updater.pack-excludes listed but not executed in this run
+    finding_id: find.module.deploy-github-updater.val-deploy-github-updater-pack-excludes
+    module_id: deploy.github-updater
+    recommended_action: Execute module validation definition when environment allows
+    severity: medium
+    status: not_tested
+    title: Module validation val.deploy.github-updater.pack-excludes listed but not executed in this run
+  - agent: foundation.deployment
+    agent_action: add_tests_or_evidence
+    detail: Module validation val.deploy.github-updater.preserve-env listed but not executed in this run
+    finding_id: find.module.deploy-github-updater.val-deploy-github-updater-preserve-env
+    module_id: deploy.github-updater
+    recommended_action: Execute module validation definition when environment allows
+    severity: medium
+    status: not_tested
+    title: Module validation val.deploy.github-updater.preserve-env listed but not executed in this run
+  - agent: foundation.deployment
+    agent_action: add_tests_or_evidence
+    detail: Module validation val.deploy.shared-hosting.smoke listed but not executed in this run
+    finding_id: find.module.deploy-github-updater.val-deploy-shared-hosting-smoke
+    module_id: deploy.github-updater
+    recommended_action: Execute module validation definition when environment allows
+    severity: medium
+    status: not_tested
+    title: Module validation val.deploy.shared-hosting.smoke listed but not executed in this run
+open_count: 11
+project_id: maintenance-depot
+remediation:
+  - action: Confirm backup step before apply/pull on the target host
+    finding_id: find.deploy.backup.blocked
+    owner_hint: foundation.deployment
+    priority: high
+  - action: Human review retention, PII inventory, and legal_regulatory flags; technical findings ≠
+      legal conclusions
+    finding_id: find.privacy.compliance.manual
+    owner_hint: foundation.privacy
+    priority: high
+  - action: Confirm audit events for auth failures and admin actions; attest scrubbing in the production
+      log pipeline
+    finding_id: find.privacy.logging.sensitive
+    owner_hint: foundation.privacy
+    priority: high
+    risk: Credentials written to logs spread to log shippers, backups, and support tickets, where they
+      are rarely rotated.
+  - action: Complete accessibility checklist against design.default and record attestation
+    finding_id: find.a11y.wcag.manual
+    owner_hint: foundation.accessibility
+    priority: medium
+  - action: Run keyboard, focus, contrast, and screen-reader manual checks; do not claim automated a11y
+      complete
+    finding_id: find.a11y.wcag.static-subset
+    owner_hint: foundation.accessibility
+    priority: medium
+  - action: Review hot-path queries for missing indexes and unbounded list endpoints
+    finding_id: find.data.index-pagination.manual
+    owner_hint: foundation.data
+    priority: medium
+  - action: Document and rehearse rollback for the active deployment profile; attach attestation evidence
+    finding_id: find.deploy.rollback.manual
+    owner_hint: foundation.deployment
+    priority: medium
+run_id: run.validate-1785920626737
+schema_version: 1
+status: manual_verification_required

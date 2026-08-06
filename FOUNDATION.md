@@ -20,6 +20,18 @@ Type `/` and choose a Foundation workflow skill:
 
 Skills live in the Foundation repository under `.cursor/skills/`. Open Foundation as a multi-root workspace or use MCP (Phase 6) so commands resolve.
 
+## Act on validation findings
+
+After `/foundation-validate` (or a dashboard/MCP validate), Foundation writes into this repo:
+
+| File | Purpose |
+| --- | --- |
+| `.foundation/FINDINGS.md` | Cursor briefing — open findings, remediation order, what the agent can fix |
+| `.foundation/findings.yaml` | Same data, machine-readable |
+| `.foundation/FLAGS.md` | High/critical interrupts only |
+
+In this workspace ask: **"review Foundation findings and propose fixes"**.
+
 ## CLI fallback (MCP unavailable)
 
 From the Foundation clone:
