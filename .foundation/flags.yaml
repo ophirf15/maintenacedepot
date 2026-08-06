@@ -75,6 +75,19 @@ flags:
     title: "foundation.security: Secret-like values detected at 7 location(s) across 4 file(s):
       app/Http/Controllers/Api/AdminUserController.php:41 (assi"
     updated_at: 2026-08-05T08:54:08.880Z
+  - created_at: 2026-08-05T09:03:46.993Z
+    detail: Schema/migration artifacts present (database/migrations) but migrate/rollback was not executed
+    finding_id: find.data.migrations.existence-not-pass
+    id: flag.maintenance-depot.data.migrations.existence-not-pass
+    project_id: maintenance-depot
+    recommended_action: Execute migrate on a disposable DB and document rollback; file presence is not a pass
+    run_id: run.validate-1785996404093
+    severity: high
+    source: validation
+    status: open
+    title: "foundation.data: Schema/migration artifacts present (database/migrations) but
+      migrate/rollback was not executed"
+    updated_at: 2026-08-06T06:06:44.378Z
   - created_at: 2026-08-05T09:06:11.935Z
     detail: UpdaterFlattenedDeployTest applies a real update package against base_path()/public_path(),
       so the suite rewrites public/index.php, public/build/**, and base_path('build/**') in the
@@ -129,19 +142,6 @@ flags:
     title: "foundation.privacy: No obvious password/token logging patterns; full audit logging still
       needs manual review"
     updated_at: 2026-08-05T09:03:46.997Z
-  - created_at: 2026-08-05T09:03:46.993Z
-    detail: Schema/migration artifacts present (database/migrations) but migrate/rollback was not executed
-    finding_id: find.data.migrations.existence-not-pass
-    id: flag.maintenance-depot.data.migrations.existence-not-pass
-    project_id: maintenance-depot
-    recommended_action: Execute migrate on a disposable DB and document rollback; file presence is not a pass
-    run_id: run.validate-1785920626737
-    severity: high
-    source: validation
-    status: open
-    title: "foundation.data: Schema/migration artifacts present (database/migrations) but
-      migrate/rollback was not executed"
-    updated_at: 2026-08-05T09:03:46.993Z
   - created_at: 2026-08-05T08:52:47.418Z
     detail: Found 2 file(s) mentioning permission/deny patterns — static only
     finding_id: find.security.auth.permission-static
@@ -155,7 +155,7 @@ flags:
     status: resolved
     title: "foundation.security: Found 2 file(s) mentioning permission/deny patterns — static only"
     updated_at: 2026-08-05T08:59:13.984Z
-generated_at: 2026-08-05T09:06:11.938Z
+generated_at: 2026-08-06T06:06:44.384Z
 open_count: 2
 project_id: maintenance-depot
 schema_version: 1

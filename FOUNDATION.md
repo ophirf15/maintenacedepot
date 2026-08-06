@@ -18,7 +18,7 @@ Type `/` and choose a Foundation workflow skill:
 | `/foundation-whats-new` | Standards/modules changed since last review |
 | `/foundation-status` | Manifest, divergence, validation summary |
 
-Skills live in the Foundation repository under `.cursor/skills/`. Open Foundation as a multi-root workspace or use MCP (Phase 6) so commands resolve.
+Skills live in the Foundation repository under `.cursor/skills/`. For slash commands in **every** Cursor project, from the Foundation clone run `npm run skills:link` once (links into `%USERPROFILE%\.cursor\skills`), then reload Cursor. Otherwise open Foundation as a multi-root workspace, or use MCP tools without the slash menu.
 
 ## Act on validation findings
 

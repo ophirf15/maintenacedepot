@@ -2,10 +2,23 @@
 
 Foundation writes this file after a validation run. It is a to-do list for this repository's own agent, not canon.
 
-Generated: 2026-08-05T09:06:11.938Z
+Generated: 2026-08-06T06:06:44.384Z
 Open flags: 2 of 5 total
 
-Ask your agent: **"review the Foundation flags and propose fixes"**.
+Ask your agent: **"review Foundation findings and propose fixes"**.
+
+Also read `.foundation/FINDINGS.md` for the full open-findings briefing.
+
+## HIGH — foundation.data: Schema/migration artifacts present (database/migrations) but migrate/rollback was not executed
+
+- Flag: `flag.maintenance-depot.data.migrations.existence-not-pass`
+- Finding: `find.data.migrations.existence-not-pass`
+- Run: `run.validate-1785996404093`
+- Status: open
+
+**What was found.** Schema/migration artifacts present (database/migrations) but migrate/rollback was not executed
+
+**Suggested fix.** Execute migrate on a disposable DB and document rollback; file presence is not a pass
 
 ## HIGH — Updater tests overlay files into the real application tree instead of a sandbox
 
@@ -26,17 +39,6 @@ Ask your agent: **"review the Foundation flags and propose fixes"**.
 | `tests/Feature/UpdaterFlattenedDeployTest.php` | 66 | test_writes_to_app_root | $this->assertFileExists(base_path('public/build/manifest.json')); |
 | `tests/Feature/UpdaterFlattenedDeployTest.php` | 68 | incomplete_cleanup | } finally { |
 | `public/index.php` |  | clobbered_artifact |  |
-
-## HIGH — foundation.data: Schema/migration artifacts present (database/migrations) but migrate/rollback was not executed
-
-- Flag: `flag.maintenance-depot.data.migrations.existence-not-pass`
-- Finding: `find.data.migrations.existence-not-pass`
-- Run: `run.validate-1785920626737`
-- Status: open
-
-**What was found.** Schema/migration artifacts present (database/migrations) but migrate/rollback was not executed
-
-**Suggested fix.** Execute migrate on a disposable DB and document rollback; file presence is not a pass
 
 ---
 

@@ -2,8 +2,8 @@
 
 This file is written by Foundation after `validate_project`. It is the briefing for this repository's Cursor agent.
 
-Generated: 2026-08-05T22:44:38.192Z
-Run: `run.validate-1785920626737`
+Generated: 2026-08-06T06:06:44.388Z
+Run: `run.validate-1785996404093`
 Run status: **manual_verification_required**
 Open items: 11 (7 agent-actionable, 4 human-gated)
 
