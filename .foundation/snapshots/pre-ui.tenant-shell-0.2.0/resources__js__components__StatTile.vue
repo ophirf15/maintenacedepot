@@ -2,9 +2,7 @@
   <component
     :is="to ? RouterLink : 'div'"
     :to="to"
-    class="header-wash shadow-card card-hover flex items-start gap-2.5 sm:gap-3
-           min-h-[4.75rem] rounded-2xl border border-line p-4 sm:p-5
-           bg-surface-raised transition"
+    class="card-pad card-hover flex items-start gap-2.5 sm:gap-3 min-h-[4.75rem]"
   >
     <span
       class="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl shrink-0"
@@ -35,7 +33,7 @@ const props = defineProps({
 });
 
 const TONE_CLASSES = {
-  neutral: 'bg-neutral-100 text-content-muted dark:bg-ink-800 dark:text-white/70',
+  neutral: 'bg-neutral-100 text-content-muted',
   brand: 'bg-brand-100 text-brand-700',
   info: 'bg-info-100 text-info-600',
   warn: 'bg-warn-100 text-warn-600',

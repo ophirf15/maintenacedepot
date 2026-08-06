@@ -53,6 +53,39 @@ modules:
     integration: implementation_recipe
     state: adapted
     version: 0.1.0
+  - applied_at: 2026-08-06T09:15:00.000Z
+    files:
+      - content_kind: stylesheet
+        description: Adapted shell utilities (shadow-card, header-wash, fade-in) remapped to Maintenance
+          Depot brand tokens
+        path: resources/css/app.css
+        role: stylesheet
+        sha256: 8d12369f3ccc56670c9ba735992c01e95750101ecf789d12a77dc74a2f2c5ccd
+      - content_kind: markup
+        description: "Adapted workspace shell composition: ink outer rail + rounded main panel; kept
+          existing nav UX"
+        path: resources/js/components/AppLayout.vue
+        role: source
+        sha256: f6fe75122693167b23420872f77e0c5e09e1b06c85d6bb767427b9471521a971
+      - content_kind: markup
+        description: Page chrome icon well + fade-in-up aligned to module page-header
+        path: resources/js/components/PageHeader.vue
+        role: source
+        sha256: 091b179e53d3f9add29fcd0a161694b616b43383e952dc6d1951f6c03092ba1d
+      - content_kind: markup
+        description: Dashed empty-state chrome adapted from module EmptyState
+        path: resources/js/components/EmptyState.vue
+        role: source
+        sha256: 1b890bd1b665d27f7c4f0dd8ed4a58d4cf05fe0e33630b9c376619d569943e55
+      - content_kind: markup
+        description: Stat tile with header-wash and shadow-card elevation
+        path: resources/js/components/StatTile.vue
+        role: source
+        sha256: 1f9d7b156fa25539a2b0d6c450f72da20a2f3c9384c754e94d94b8fdd8c42e7a
+    id: ui.tenant-shell
+    integration: implementation_recipe
+    state: adapted
+    version: 0.2.0
 pending_foundation_review: false
 profiles:
   design: design.default

@@ -1,11 +1,9 @@
 <template>
-  <div class="fade-in-up flex flex-wrap items-start justify-between gap-3">
+  <div class="flex flex-wrap items-start justify-between gap-3">
     <div class="flex items-start gap-3 min-w-0">
       <span
         v-if="icon"
-        class="hidden sm:flex h-11 w-11 items-center justify-center rounded-xl shrink-0
-               bg-gradient-to-br from-brand-100 to-brand-100/40 text-brand-700
-               ring-1 ring-brand-600/15"
+        class="hidden sm:flex h-11 w-11 items-center justify-center rounded-xl bg-ink-900 text-white shrink-0"
       >
         <Icon :name="icon" :size="22" />
       </span>

@@ -1,5 +1,5 @@
 <template>
-  <div class="app-shell bg-ink-950 md:flex md:h-screen md:overflow-hidden overflow-x-clip">
+  <div class="app-shell bg-surface md:flex md:h-screen md:overflow-hidden overflow-x-clip">
     <a href="#main-content" class="skip-link">
       Skip to main content
     </a>
@@ -18,7 +18,7 @@
         </div>
       </div>
 
-      <nav class="sidebar-nav flex-1 overflow-y-auto overscroll-contain px-3 pb-4 space-y-5">
+      <nav class="flex-1 overflow-y-auto overscroll-contain px-3 pb-4 space-y-5">
         <div v-for="group in navGroups" :key="group.label">
           <p class="px-2.5 pb-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.12em] text-white/35">
             {{ group.label }}
@@ -74,11 +74,7 @@
       @logout="logout"
     />
 
-    <div
-      class="relative flex min-w-0 max-w-full flex-1 flex-col overflow-x-clip min-h-0 max-md:h-full
-             bg-surface md:overflow-hidden md:rounded-l-2xl md:border-l md:border-ink-800/80
-             md:shadow-[-12px_0_32px_-16px_rgba(0,0,0,0.45)]"
-    >
+    <div class="flex min-w-0 max-w-full flex-1 flex-col overflow-x-clip min-h-0 max-md:h-full">
       <header
         class="app-topbar z-30 flex items-center gap-1.5 px-2 sm:gap-2 sm:px-5
                fixed inset-x-0 top-0 md:sticky md:top-0
@@ -410,29 +406,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.sidebar-nav {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.22) transparent;
-}
-.sidebar-nav::-webkit-scrollbar {
-  width: 6px;
-}
-.sidebar-nav::-webkit-scrollbar-track {
-  background: transparent;
-}
-.sidebar-nav::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.18);
-  border-radius: 999px;
-}
-.sidebar-nav::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3);
-}
-.sidebar-nav::-webkit-scrollbar-button {
-  display: none;
-  height: 0;
-  width: 0;
-}
-
 .nav-link {
   display: flex;
   align-items: center;
@@ -442,7 +415,7 @@ onMounted(async () => {
   font-size: 0.875rem;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.62);
-  transition: background 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+  transition: background 0.15s, color 0.15s;
   -webkit-tap-highlight-color: transparent;
 }
 .nav-link:hover {
@@ -452,7 +425,6 @@ onMounted(async () => {
 .nav-link.router-link-exact-active {
   background: rgba(255, 255, 255, 0.12);
   color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .bottom-tab {

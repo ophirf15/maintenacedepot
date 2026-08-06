@@ -1,14 +1,6 @@
 <template>
-  <div
-    class="fade-in-up flex flex-col items-center justify-center gap-3 rounded-2xl
-           border border-dashed border-line px-6 py-14 text-center
-           bg-surface-raised/60"
-  >
-    <span
-      class="flex h-14 w-14 items-center justify-center rounded-full
-             bg-gradient-to-br from-brand-100 to-brand-100/40 text-brand-700
-             ring-1 ring-brand-600/15 transition-transform hover:scale-105"
-    >
+  <div class="card flex flex-col items-center justify-center gap-3 px-6 py-12 text-center">
+    <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-neutral-100 text-content-muted">
       <Icon :name="icon" :size="28" />
     </span>
     <div>

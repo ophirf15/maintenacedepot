@@ -1,5 +1,5 @@
 actionable_count: 7
-generated_at: 2026-08-06T06:06:44.388Z
+generated_at: 2026-08-06T08:26:46.259Z
 items:
   - agent: foundation.data
     agent_action: add_tests_or_evidence
@@ -139,6 +139,6 @@ remediation:
     finding_id: find.deploy.rollback.manual
     owner_hint: foundation.deployment
     priority: medium
-run_id: run.validate-1785996404093
+run_id: run.validate-1786004806060
 schema_version: 1
 status: manual_verification_required

@@ -81,13 +81,13 @@ flags:
     id: flag.maintenance-depot.data.migrations.existence-not-pass
     project_id: maintenance-depot
     recommended_action: Execute migrate on a disposable DB and document rollback; file presence is not a pass
-    run_id: run.validate-1785996404093
+    run_id: run.validate-1786004806060
     severity: high
     source: validation
     status: open
     title: "foundation.data: Schema/migration artifacts present (database/migrations) but
       migrate/rollback was not executed"
-    updated_at: 2026-08-06T06:06:44.378Z
+    updated_at: 2026-08-06T08:26:46.253Z
   - created_at: 2026-08-05T09:06:11.935Z
     detail: UpdaterFlattenedDeployTest applies a real update package against base_path()/public_path(),
       so the suite rewrites public/index.php, public/build/**, and base_path('build/**') in the
@@ -155,7 +155,7 @@ flags:
     status: resolved
     title: "foundation.security: Found 2 file(s) mentioning permission/deny patterns — static only"
     updated_at: 2026-08-05T08:59:13.984Z
-generated_at: 2026-08-06T06:06:44.384Z
+generated_at: 2026-08-06T08:26:46.256Z
 open_count: 2
 project_id: maintenance-depot
 schema_version: 1

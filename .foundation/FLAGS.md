@@ -2,7 +2,7 @@
 
 Foundation writes this file after a validation run. It is a to-do list for this repository's own agent, not canon.
 
-Generated: 2026-08-06T06:06:44.384Z
+Generated: 2026-08-06T08:26:46.256Z
 Open flags: 2 of 5 total
 
 Ask your agent: **"review Foundation findings and propose fixes"**.
@@ -13,7 +13,7 @@ Also read `.foundation/FINDINGS.md` for the full open-findings briefing.
 
 - Flag: `flag.maintenance-depot.data.migrations.existence-not-pass`
 - Finding: `find.data.migrations.existence-not-pass`
-- Run: `run.validate-1785996404093`
+- Run: `run.validate-1786004806060`
 - Status: open
 
 **What was found.** Schema/migration artifacts present (database/migrations) but migrate/rollback was not executed

@@ -206,17 +206,11 @@ button,
     .card {
         @apply rounded-2xl border border-line;
         background: var(--color-surface-raised);
-        box-shadow:
-            0 1px 2px -1px color-mix(in srgb, var(--color-content) 5%, transparent),
-            0 2px 8px -2px color-mix(in srgb, var(--color-content) 5%, transparent);
     }
 
     .card-pad {
         @apply rounded-2xl border border-line p-4 sm:p-5;
         background: var(--color-surface-raised);
-        box-shadow:
-            0 1px 2px -1px color-mix(in srgb, var(--color-content) 5%, transparent),
-            0 2px 8px -2px color-mix(in srgb, var(--color-content) 5%, transparent);
     }
 
     .card-hover {
@@ -225,9 +219,7 @@ button,
 
     .card-hover:hover {
         border-color: color-mix(in srgb, var(--color-line) 60%, var(--color-content));
-        box-shadow:
-            0 2px 4px -1px color-mix(in srgb, var(--color-content) 7%, transparent),
-            0 8px 24px -4px color-mix(in srgb, var(--color-content) 10%, transparent);
+        box-shadow: 0 8px 24px -12px color-mix(in srgb, var(--color-content) 18%, transparent);
     }
 
     .page-title {
@@ -376,71 +368,5 @@ button,
 
     .divide-rows > * + * {
         @apply border-t border-line;
-    }
-
-    /* ui.tenant-shell@0.2.0 — adapted utilities (brand remapped; no purple primary) */
-    .shadow-card {
-        box-shadow:
-            0 1px 2px -1px color-mix(in srgb, var(--color-content) 5%, transparent),
-            0 2px 8px -2px color-mix(in srgb, var(--color-content) 5%, transparent);
-    }
-
-    .shadow-card-hover {
-        box-shadow:
-            0 2px 4px -1px color-mix(in srgb, var(--color-content) 7%, transparent),
-            0 8px 24px -4px color-mix(in srgb, var(--color-content) 10%, transparent);
-    }
-
-    .dark .shadow-card {
-        box-shadow:
-            0 1px 2px -1px rgb(0 0 0 / 0.4),
-            0 2px 10px -2px rgb(0 0 0 / 0.35);
-    }
-
-    .dark .shadow-card-hover {
-        box-shadow:
-            0 2px 4px -1px rgb(0 0 0 / 0.5),
-            0 10px 28px -4px rgb(0 0 0 / 0.5);
-    }
-
-    .header-wash {
-        background-image: linear-gradient(
-            135deg,
-            color-mix(in srgb, var(--color-brand-600) 10%, transparent),
-            transparent 55%
-        );
-    }
-
-    .row-hover {
-        @apply transition-colors duration-150;
-    }
-
-    .row-hover:hover {
-        background: color-mix(in srgb, var(--color-surface) 70%, var(--color-surface-raised));
-    }
-
-    .fade-in {
-        animation: shell-fade-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-
-    .fade-in-up {
-        animation: shell-fade-in-up 0.36s cubic-bezier(0.16, 1, 0.3, 1) both;
-    }
-}
-
-@keyframes shell-fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-@keyframes shell-fade-in-up {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .fade-in,
-    .fade-in-up {
-        animation: none;
     }
 }
